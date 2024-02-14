@@ -1,0 +1,13 @@
+﻿#img_begümLogo{
+    width: 60px;
+    height: 60px;
+}
+
+#btn_show{
+    border-style: none;
+    width: 50px;
+}
+
+#btn_show img{
+    width:25px
+}

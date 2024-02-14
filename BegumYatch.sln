@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33424.131
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BegumYatch.Core", "BegumYatch.Core\BegumYatch.Core.csproj", "{5A176D50-A774-491A-8CBF-6A26C86DA196}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BegumYatch.Repository", "BegumYatch.Repository\BegumYatch.Repository.csproj", "{F7484BA0-684D-4A70-86C2-D428F82C9E95}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BegumYatch.Service", "BegumYatch.Service\BegumYatch.Service.csproj", "{6D905FBD-E47B-4B0B-9506-9755EFDC536B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BegumYatch.API", "BegumYatch.API\BegumYatch.API.csproj", "{8C261976-3CB4-4695-A982-01E6D5C002A6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BegumYatch.Web", "BegumYatch.Web\BegumYatch.Web.csproj", "{D582004A-7E55-4190-9291-DABD29BE9435}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BegumYacht_Web", "BegumYacht_Web\BegumYacht_Web.csproj", "{F08E967E-8D96-4F47-A6E9-CEBEBAA1595F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5A176D50-A774-491A-8CBF-6A26C86DA196}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A176D50-A774-491A-8CBF-6A26C86DA196}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A176D50-A774-491A-8CBF-6A26C86DA196}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A176D50-A774-491A-8CBF-6A26C86DA196}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7484BA0-684D-4A70-86C2-D428F82C9E95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7484BA0-684D-4A70-86C2-D428F82C9E95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7484BA0-684D-4A70-86C2-D428F82C9E95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7484BA0-684D-4A70-86C2-D428F82C9E95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D905FBD-E47B-4B0B-9506-9755EFDC536B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D905FBD-E47B-4B0B-9506-9755EFDC536B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D905FBD-E47B-4B0B-9506-9755EFDC536B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D905FBD-E47B-4B0B-9506-9755EFDC536B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C261976-3CB4-4695-A982-01E6D5C002A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C261976-3CB4-4695-A982-01E6D5C002A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C261976-3CB4-4695-A982-01E6D5C002A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C261976-3CB4-4695-A982-01E6D5C002A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D582004A-7E55-4190-9291-DABD29BE9435}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D582004A-7E55-4190-9291-DABD29BE9435}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D582004A-7E55-4190-9291-DABD29BE9435}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D582004A-7E55-4190-9291-DABD29BE9435}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F08E967E-8D96-4F47-A6E9-CEBEBAA1595F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F08E967E-8D96-4F47-A6E9-CEBEBAA1595F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F08E967E-8D96-4F47-A6E9-CEBEBAA1595F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F08E967E-8D96-4F47-A6E9-CEBEBAA1595F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CACE83B4-094A-4756-9C88-D06009E77727}
+	EndGlobalSection
+EndGlobal

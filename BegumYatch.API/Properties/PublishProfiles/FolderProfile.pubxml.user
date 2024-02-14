@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>C:\Users\DELL\Desktop\BegumApiPublish</_PublishTargetUrl>
+    <History>True|2024-02-10T16:16:06.7028441Z;True|2024-02-10T19:04:38.0724006+03:00;True|2024-02-10T18:20:22.0736397+03:00;True|2024-02-08T16:21:13.4793421+03:00;True|2024-02-07T22:10:08.3918450+03:00;True|2024-02-07T21:06:35.6978287+03:00;True|2023-12-08T14:39:55.0218287+03:00;True|2023-09-11T15:31:13.3615047+03:00;True|2023-09-06T14:24:25.8515966+03:00;True|2023-09-05T10:56:03.6458522+03:00;True|2023-09-05T10:55:36.3149995+03:00;True|2023-09-05T10:30:38.7918439+03:00;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+</Project>
