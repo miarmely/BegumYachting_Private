@@ -1,0 +1,29 @@
+﻿#img_begumLogo{
+    width: 300px;
+    height: 80px;
+}
+
+
+#slct_chooseValidationType {
+    text-align: left;
+}
+
+#div_login{
+    text-align: center;
+}
+
+    #div_login a {
+        color: #170065
+    }
+
+#div_login {
+    text-align: center;
+}
+
+    #div_login a {
+        color: #170065
+    }
+
+#btn_send:disabled {
+    cursor: no-drop
+}

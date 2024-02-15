@@ -2,13 +2,18 @@
 	Layout = "LoginLayout";
 }
 
+<link rel="stylesheet" href="~/css/miar_login.css">
+
+
 @*login*@
 <section class="ftco-section">
 	<div class="container">
 		@*title*@
 		<div class="row justify-content-center">
 			<div class="col-md-6 text-center mb-5">
-				<h1 class="heading-section">BEGUM YAT</h1>
+				<h1 class="heading-section">
+					<img id="img_begumLogo" src="~/images/begumLogo3.png"/>
+				</h1>
 			</div>
 		</div>
 
@@ -17,9 +22,9 @@
 			<div class="col-md-6 col-lg-5">
 				<div class="login-wrap p-4 p-md-5">
 					@*icon*@
-					<div class="d-flex align-items-center justify-content-center">
-						<img id="img_begümLogo" src="~/images/begümLogo.jpg"/>
-					</div>
+					@*<div id="div_userIcon" class="icon d-flex align-items-center justify-content-center">
+						<span class="fa fa-user-o"></span>
+					</div>*@
 
 					<form action="#" class="login-form" style="margin-top:40px">
 						@*email*@
@@ -51,15 +56,20 @@
 							</div>
 						</div>
 
+						@*create account message*@
+						<div id="div_createAccount" class="form-group">
+							<span>Hesabın yok mu? <a href="/authentication/register">Oluştur</a></span>
+						</div>
+
 						@*error message*@ 
-						<div style="text-align:center">
-							<img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px" hidden/>
+						<div class="form-group" style="text-align:center">
+							<img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px; margin-top:30px" hidden/>
 							<p id="p_resultLabel"></p>
 						</div>
 
 						@*login button*@
-						<div class="form-group" style="margin-top:20px">
-	            			<button id="btn_login" type="submit" class="btn btn-primary rounded submit p-3 px-5">Giriş Yap</button>
+						<div class="form-group">
+	            			<button id="btn_login" type="button" class="btn btn-primary rounded submit p-3 px-5">Giriş Yap</button>
 						</div>
 					</form>
 				</div>
@@ -69,3 +79,4 @@
 </section>
 
 <script></script>
+<script type="module" src="~/js/miar_login.js"></script>

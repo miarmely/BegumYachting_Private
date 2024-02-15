@@ -1,56 +1,300 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - BegumYacht_Web</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-</head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">BegumYacht_Web</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+<html>
+	<head>
+		<title>Begüm Yat</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="keywords" content="Begüm Admin Panel">	
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - BegumYacht_Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    @await RenderSectionAsync("Scripts", required: false)
-</body>
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap">
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="~/css/bootstrap.min.css" >
+		<link rel='stylesheet' href="~/css/style.css"  type='text/css' />
+		<link rel="stylesheet" href="~/css/style-responsive.css" />
+		<link rel="stylesheet" href="~/css/miar_mainLayout.css"/>
+
+		<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+		<script src="~/js/jquery2.0.3.min.js"></script>
+	</head>
+	<body>
+		<section id="container">
+			<!-- header start -->
+			<header class="header fixed-top clearfix">
+				<!-- logo -->
+				<div class="brand">
+					<a href="/homepage/index" class="logo">
+						<img id="img_begumLogo" src="~/images/begumLogo2.png"/>
+					</a>
+					<div class="sidebar-toggle-box">
+						<div id="div_sidebarMenuButton" class="fa fa-bars"></div>
+					</div>
+				</div>
+				<!-- //logo -->
+				<div class="top-nav clearfix">
+					<ul class="nav pull-right top-menu">
+						<!-- search bar start -->
+						@*<li>
+							<input id="inpt_searchBar" type="text" class="form-control search" />
+						</li>*@
+						<!-- search bar end -->
+						@*notifications*@
+						<li class="dropdown">
+							<a data-toggle="dropdown" class="dropdown-toggle" href="#">
+								<img src="/images/notification.png"/>
+								<span class="username">Bildirimler</span>
+								<b class="caret"></b>
+							</a>
+							<ul id="ul_notification" class="dropdown-menu extended"></ul>
+						</li>
+
+						@*user*@
+						<li class="dropdown">
+							<a data-toggle="dropdown" class="dropdown-toggle" href="#">
+								<img src="/images/user.png"/>
+								<span class="username">Profil</span>
+								<b class="caret"></b>
+							</a>
+							<ul id="ul_notification" class="dropdown-menu extended"></ul>
+						</li>
+
+						@*logout*@
+						<li>
+							<a data-toggle="dropdown" class="dropdown-toggle" href="#">
+								<img src="/images/logout.png"/>
+								<span class="username">Çıkış</span>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</header>
+			<!-- header end -->
+			<!-- sidebar menu start -->
+			<aside>
+				<div id="sidebar" class="nav-collapse">
+					<div class="leftside-navigation">
+						<ul id="nav-accordion" class="sidebar-menu">
+						</ul>            
+					</div>
+				</div>
+			</aside>
+			<!-- sidebar menu end -->
+			<!-- main content start -->
+			<section id="main-content">
+				<span id="spn_eventManager"></span>
+				
+				@*main content*@
+				<section class="wrapper">
+					@RenderBody()
+				</section>
+				@*/main content*@
+
+				<!-- footer -->
+				<div class="footer">
+					<div class="wthree-copyright">
+						<p>
+							<span id="spn_footerInfo"></span>
+							<a href="https://mostidea.com.tr">MostIdea</a>
+						</p>
+					</div>
+				</div>
+				<!-- / footer -->
+			</section>
+			<!-- main content end -->
+		</section>
+
+		<script>
+			const baseApiUrl = "http://localhost:7272";  // for local
+
+			const searchBarPlaceHolderByLanguages = {
+				"TR": "Ara",
+				"EN": "Search"
+			};
+			const profileOptionsByLanguages = {
+				"TR": {
+					"profile": {
+						"icon": "fa fa-user",
+						"label": " Profil",
+						"href": `/profileOption/profile`
+					},
+					"logout": {
+						"icon": "fa fa-close",
+						"label": " Çıkıp Yap",
+						"href": "/authentication/logout"
+					},
+				},
+				"EN": {
+					"profile": {
+						"icon": "fa fa-user",
+						"label": " Profile",
+						"href": `/profileOption/profile`
+					},
+					"logout": {
+						"icon": "fa fa-close",
+						"label": " Logout",
+						"href": "/authentication/logout"
+					},
+				}
+			}
+			const sidebar_mainMenus_byLanguages = {
+				"TR": {
+					"users": {
+						"icon": "fa fa-book",
+						"label": "Kullanıcılar",
+						"href": "#"
+					},
+					"machines": {
+						"icon": "fa fa-book",
+						"label": "Makineler",
+						"href": "#"
+					},
+					"sliders": {
+						"icon": "fa fa-cog",
+						"label": "Sliderlar",
+						"href": "/slider/index"
+					},
+					"forms" : {
+						"icon": "fa fa-cog",
+						"label": "Formlar",
+						"href": "#"
+					}
+				},
+				"EN": {
+					"users": {
+						"icon": "fa fa-book",
+						"label": "Users",
+						"href": "#"
+					},
+					"machines": {
+						"icon": "fa fa-book",
+						"label": "Machines",
+						"href": "#"
+					},
+					"sliders": {
+						"icon": "fa fa-cog",
+						"label": "Sliders",
+						"href": "/slider/index"
+					},
+					"forms" : {
+						"icon": "fa fa-cog",
+						"label": "Forms",
+						"href": "#"
+					}
+				}
+			};
+			const sidebar_subMenus_byLanguages = {
+				"TR": {
+					"users": {
+						"newUser": {
+							"label": "Yeni Kullanıcı",
+							"href": "/user/create",
+						},
+						"registeredUsers": {
+							"label": "Kayıtlı Kullanıcılar",
+							"href": "/user/display/all",
+						}
+					},
+					"machines": {
+						"newMachines": {
+							"label": "Yeni Makine",
+							"href": "/machine/create",
+						},
+						"registeredMachines": {
+							"label": "Kayıtlı Makineler",
+							"href": "/machine/display/all",
+						}
+					},
+					"forms": {
+						"generalCommunication": {
+							"label": "Genel iletişim Formu",
+							"href": "/form/generalCommunication"
+						},
+						"getOffer": {
+							"label": "Teklif Alma Formu",
+							"href": "/form/getOffer"
+						},
+						"renting": {
+							"label": "Kiralama Formu",
+							"href": "/form/renting"
+						}
+					}
+				},
+				"EN": {
+					"users": {
+						"newUser": {
+							"label": "New User",
+							"href": "/user/create",
+						},
+						"registeredUsers": {
+							"label": "Registered Users",
+							"href": "/user/display/all",
+						}
+					},
+					"machines": {
+						"newMachines": {
+							"label": "New Machine",
+							"href": "/machine/create",
+						},
+						"registeredMachines": {
+							"label": "Registered Machines",
+							"href": "/machine/display/all",
+						}
+					},
+					"forms": {
+						"generalCommunication": {
+							"label": "General Communication Form",
+							"href": "/form/generalCommunication"
+						},
+						"getOffer": {
+							"label": "Get Offer Form",
+							"href": "/form/getOffer"
+						},
+						"renting": {
+							"label": "Renting Form",
+							"href": "/form/renting"
+						}
+					}
+				}
+			};
+			const footerInfoByLanguages = {
+				"TR": "© 2023 Tüm hakları saklıdır. | Designed by ",
+				"EN": "© 2023 All rights reserved. | Designed by "
+			};
+
+			const sidebar_width = 240;
+			const localKeys_allRoles = "allRoles";
+			const resultLabel_errorColor = "red";
+			const resultLabel_successColor = "rgb(16, 155, 16)";
+			const spn_eventManager = $("#spn_eventManager");
+			const langPack_partnerInfoMessages = {
+				"fileLoading": {
+					"TR": "dosya yükleniyor...",
+					"EN": "file loading...",
+				}
+			}
+			const langPack_partnerErrorMessages = {
+				"invalidFileType": {
+					"TR": "geçersiz dosya tipi",
+					"EN": "invalid file type"
+				},
+				"nullArguments": {
+					"TR": "herhangi bir değişiklik yapılmadı",
+					"EN": "no changes were made"
+				},
+				"noPermission": {
+					"TR": "yetkiniz yok",
+					"EN": "you don't have permission"
+				},
+				"anErrorOccured": {
+					"TR": "bir hata oluştu", 
+					"EN": "an error occured"
+				}
+			}
+		</script>
+		<script src="~/js/bootstrap.js"></script>
+		<script src="~/js/jquery.dcjqaccordion.2.7.js"></script>
+		<script src="~/js/scripts.js"></script>
+		<script src="~/js/jquery.slimscroll.js"></script>
+		<script src="~/js/jquery.nicescroll.js"></script>
+		<script src="~/js/jquery.scrollTo.js"></script>
+	</body>
 </html>
-
-
-<script>
-    //const baseApiUrl = "http://104.247.163.183:7099";  // for iis in real server
-    const baseApiUrl = "https://localhost:7272";  // for local
-    const resultLabel = {
-		"errorColor": "red",
-		"successColor": "green"
-	}
-</script>
