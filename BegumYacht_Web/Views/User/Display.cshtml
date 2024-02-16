@@ -1,0 +1,59 @@
+﻿@model string
+
+<link rel="stylesheet" href="~/css/miar_user_display.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.0/css/dataTables.dataTables.css">
+
+
+<div class="table-agile-info">
+    <div class="panel panel-default">
+        @*title*@
+        <div class="panel-heading">
+            <div id="div_backButton" style="float:right" hidden>
+                <button id="btn_back" type="button" class="btn">
+                    <img src="~/images/close.png" alt="close"/>
+                </button>
+            </div>
+            <div id="div_panelTitle"></div>
+        </div>
+        @*/title*@
+
+        <div class="panel-body">
+            <div id="div_userDisplay">
+                 @*table*@
+                <div class="table-responsive">
+                    <table id="tbl_user" class="display">
+                        <thead>
+                            <tr>
+                                <th>Ad Soyad</th>
+                                <th>Telefon</th>
+                                <th>Email</th>
+                                <th>Bayrak</th>
+                                <th>Yeni Pasaport No</th>
+                                <th>Eski Pasaport No</th>
+                                <th>Rank</th>
+                                <th>Veriliş Tarihi</th>
+                                <th>Pasaport Süresi</th>
+                                <th>Uyruk</th>
+                                <th>Doğum Tarihi</th>
+                                <th>Doğum Yeri</th>
+                                <th>Cinsiyet</th>
+                                <th>Personel mi</th>
+                                <th>Yat Tipi</th>
+                                <th>Yat Adı</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    const accountRole = "@Html.Raw(Model)";
+</script>
+<script type="module" src="~/js/miar_user_display.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>

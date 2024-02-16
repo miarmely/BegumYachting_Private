@@ -18,6 +18,7 @@
 	</head>
 	<body>
 		<section id="container">
+			@*page menubar*@
 			<header class="header fixed-top clearfix">
 				@*logo*@
 				<div class="brand">
@@ -29,7 +30,7 @@
 					</div>
 				</div>
 				
-				@*page menubar*@
+				@*menubar*@
 				<div class="top-nav clearfix">
 					<ul class="nav pull-right top-menu">
 						<!-- search bar start -->
@@ -54,48 +55,52 @@
 								<span class="username">Profil</span>
 								<b class="caret"></b>
 							</a>
-							<ul id="ul_notification" class="dropdown-menu extended">
-								 <li>
+							<ul id="ul_notification" class="dropdown-menu extended logout">
+								@*profile*@
+								<li>
+									<a href="#"> <i class="fa fa-user"></i>Profil</a>
+								</li>
+								@*logout*@
+								<li>
 									<a href="#"> <i class="fa fa-close"></i>Çıkış Yap</a>
 								</li>
 							</ul>
-						</li>
-
-						@*logout*@
-						<li>
-							<a data-toggle="dropdown" class="dropdown-toggle" href="#">
-								<img src="/images/logout.png"/>
-								<span class="username">Çıkış</span>
-							</a>
 						</li>
 					</ul>
 				</div>
 			</header>
 			
+			@*sidebar menu*@
 			<aside>
 				<div id="sidebar" class="nav-collapse">
 					<div class="leftside-navigation">
 						<ul class="sidebar-menu">
+							@*homepage*@
 							<li>
-								<a href="#">
+								<a href="/homepage/index">
 									<i class="fa fa-settings"></i>
 									<span>Anasayfa</span>
 								</a>
 							</li>
+							
+							@*users*@
 							<li>
-								<a href="#">
+								<a href="/user/display">
 									<i class="fa fa-settings"></i>
 									<span>Kullanıcılar</span>
 								</a>
 							</li>
-							<li>
+							
+							@*orders*@
+							<li id="li_orders" class="li_dropdown">
 								<a href="#">
 									<i class="fa fa-settings"></i>
 									<span>Siparişler</span>
+									<b class="caret"></b>
 								</a>
 							</li>
-							<li>
-								<ul class="ul_submenu">
+							<li id="li_orders_submenu" class="li_submenu" hidden>
+								<ul>
 									<li>
 										<a href="#">
 											<i class="fa fa-settings"></i>
@@ -128,14 +133,17 @@
 									</li>
 								</ul>
 							</li>
-							<li>
+							
+							@*demands*@
+							<li id="li_demands" class="li_dropdown">
 								<a href="#">
 									<i class="fa fa-settings"></i>
 									<span>Talepler</span>
+									<b class="caret"></b>
 								</a>
 							</li>
-							<li>
-								<ul class="ul_submenu">
+							<li id="li_demands_submenu" class="li_submenu" hidden>
+								<ul>
 									<li>
 										<a href="#">
 											<i class="fa fa-settings"></i>
@@ -201,7 +209,7 @@
 		</section>
 
 		<script>
-			const baseApiUrl = "http://localhost:7272";  // for local
+			const baseApiUrl = "https://localhost:7272";  // for local
 
 			const searchBarPlaceHolderByLanguages = {
 				"TR": "Ara",
@@ -388,6 +396,7 @@
 				}
 			}
 		</script>
+		<script type="module" src="~/js/miar_mainLayout.js"></script>
 		<script src="~/js/bootstrap.js"></script>
 		<script src="~/js/jquery.dcjqaccordion.2.7.js"></script>
 		<script src="~/js/scripts.js"></script>

@@ -1,0 +1,15 @@
+﻿#tbl_user{
+    width: 100%;
+}
+
+#div_userDisplay{
+    margin: 30px 30px 15px 30px
+}
+
+#tbl_user_wrapper{
+    margin-bottom: 30px
+}
+
+#tbl_user_filter input{
+   font-weight:normal
+}

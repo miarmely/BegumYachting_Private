@@ -3,10 +3,17 @@
     height: 50px;
 }
 
-.ul_submenu li {
+.li_submenu li {
     background-color: #160146
 }
 
-.ul_submenu li:hover{
+.li_submenu li:hover{
     font-weight: bold
+}
+
+.li_dropdown b{
+    float: right;
+    position: relative;
+    top:7px;
+    right: 10px;
 }
