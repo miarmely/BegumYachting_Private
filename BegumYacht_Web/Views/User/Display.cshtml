@@ -1,14 +1,15 @@
 ﻿@model string
 
-<link rel="stylesheet" href="~/css/miar_user_display.css" />
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.0/css/dataTables.dataTables.css">
+<link rel="stylesheet" href="~/css/miar_user_display.css" />
+<link rel="stylesheet" href="~/css/miar_user_inputForm.css"/>
 
 
 <div class="table-agile-info">
     <div class="panel panel-default">
         @*title*@
         <div class="panel-heading">
-            <div id="div_backButton" style="float:right" hidden>
+            <div id="div_backButton" style="float:right">
                 <button id="btn_back" type="button" class="btn">
                     <img src="~/images/close.png" alt="close"/>
                 </button>
@@ -18,8 +19,80 @@
         @*/title*@
 
         <div class="panel-body">
-            <div id="div_userDisplay">
-                 @*table*@
+            <div id="div_userUpdate">
+                <form>
+                    <div id="div_form" class="form-horizontal bucket-form" style="padding-top:20px">                    
+                        @{
+                            #region add inputs
+                            var labelNames = new string[][]{
+                                new string[] {"firstName", "text", "Ad"},
+                                new string[] {"lastName", "text", "Soyad"},
+                                new string[] {"phone", "text", "Telefon"},
+                                new string[] {"email", "text", "Email"},
+                                new string[] {"flag", "text" , "Bayrak"},
+                                new string[] {"newPassportNo", "text", "Yeni Pasaport No"},
+                                new string[] {"oldPassportNo", "text", "Eski Pasaport No"},
+                                new string[] {"rank", "text", "Rank"},
+                                new string[] {"issueDate", "date", "Pasaport Veriliş Tarihi"},
+                                new string[] {"passportExpiration", "date", "Pasaport Bitiş Tarihi"},
+                                new string[] {"nationality", "text", "Uyruk"},
+                                new string[] {"birthDate", "date", "Doğum Tarihi"},
+                                new string[] {"birthPlace", "text", "Doğum Yeri"},
+                                new string[] {"gender", "text", "Cinsiyet"},
+                                new string[] {"yachtType", "text", "Yat Tipi"},
+                                new string[] {"yachtName", "text", "Yat Adı"},
+                                new string[] {"isPersonal", "text", "Personel Mi"}
+                            };
+
+                            foreach (var labelInfo in labelNames)
+                            {
+                                <div id="div_@labelInfo[0]" class="form-group">
+                                    <label class="col-sm-3 control-label">@labelInfo[2]</label>
+                                    <div class="col-sm-6">
+                                        <input id="inpt_@labelInfo[0]" type="@labelInfo[1]" class="form-control" >
+                                        <span id="spn_help_inpt_@labelInfo[0]" class="help-block"></span>
+                                    </div>
+                                    <div class="col-sm-3 div_infoMessage">
+                                        <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+                                        <ul role="menu" class="dropdown-menu"></ul>
+                                    </div>
+                                </div>    
+                            }
+                            #endregion
+                        }
+
+                        @*new password*@
+                        <div id="div_password" class="form-group">
+                            <label class="col-sm-3 control-label">Yeni Şifre</label>
+                            <div class="col-sm-6">
+                                <input id="inpt_password" type="password" class="form-control" >
+                                <span id="spn_help_inpt_password" class="help-block"></span>
+                            </div>
+                            <div class="col-sm-3 div_infoMessage">
+                                <button id="btn_showPassword" type="button"></button>
+                                <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+                                <ul role="menu" class="dropdown-menu"></ul>
+                            </div>
+                        </div>
+                    
+                        @*save button*@
+                        <div id="div_saveButton" class="form-group">
+                            <div class="col-sm-6; text-center">
+                                <button id="btn_save" type="submit" class="btn btn-danger" disabled>Kaydet</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                @*result label*@
+                <div style="text-align:center">
+                    <p id="p_resultLabel"></p>
+                    <img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px" hidden/>
+                </div>
+            </div>
+
+            @*user table*@
+            <div id="div_userDisplay" hidden>
                 <div class="table-responsive">
                     <table id="tbl_user" class="display">
                         <thead>

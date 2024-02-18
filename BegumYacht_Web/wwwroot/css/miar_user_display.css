@@ -1,4 +1,5 @@
-﻿#tbl_user{
+﻿/* --------- DISPLAY PAGE --------- */
+#tbl_user{
     width: 100%;
 }
 
@@ -6,10 +7,35 @@
     margin: 30px 30px 15px 30px
 }
 
+    #div_userDisplay tbody tr:hover {
+        background-color: #4136f1;
+        cursor: pointer
+    }
+
+        #div_userDisplay tbody tr:hover td {
+            color: white;
+        }
+
 #tbl_user_wrapper{
     margin-bottom: 30px
 }
 
 #tbl_user_filter input{
    font-weight:normal
+}
+
+
+/* --------- UPDATE PAGE --------- */
+#btn_back {
+    color: black;
+    background-color: red;
+    width: 55px;
+}
+
+#btn_save {
+    background-color: darkblue;
+}
+
+#btn_save:disabled {
+    background-color: darkgray
 }

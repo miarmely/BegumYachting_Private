@@ -7,9 +7,52 @@ const div_form_css = {
 const div_row_class = "form-group";
 //#endregion
 
+//#region
+export async function click_showPasswordButtonAsync(inpt_password, btn_showPassword) {
+    //#region show password
+    if (inpt_password.attr("type") == "password") {
+        inpt_password.attr("type", "text");
+        btn_showPassword.css("background-image", "url(/images/hide.png)");
+    }
+    //#endregion
+
+    //#region hide password
+    else {
+        inpt_password.attr("type", "password");
+        btn_showPassword.css("background-image", "url(/images/show.png)");
+    }
+    //#endregion
+}
+export async function click_inputAsync(input, lbl_result) {
+    //#region remove "red" color from border of input
+    input.removeAttr("style");
+    //#endregion
+
+    //#region reset "spn_help" of clicked input
+    let spn_help = input.siblings("span");
+    spn_help.attr("hidden", "");
+    spn_help.empty();
+    //#endregion
+
+    //#region reset result label
+    lbl_result.empty();
+    lbl_result.removeAttr("style");
+    //#endregion
+}
+export async function keyup_inputAsync(event, spn_resultLabel) {
+    //#region when clicked key is "TAB"
+    let clickedKeyNo = event.which;
+
+    // reset error messages belong to input
+    if (clickedKeyNo == 9)
+        await click_inputAsync(event, spn_resultLabel);
+    //#endregion
+}
+//#endregion
+
 //#region functions
 export async function createInputFormAsync(form, rowCount) {
-    //#region add form div
+    //#region add form <div>
     form.append(`
         <div id="${div_form_id}" class="form-horizontal bucket-form">
         </div>`);
@@ -19,7 +62,7 @@ export async function createInputFormAsync(form, rowCount) {
     div_form.css(div_form_css);
     //#endregion
 
-    //#region add rows to main div
+    //#region add rows to form <div>
     for (let repeat = 0; repeat < rowCount; repeat++)
         div_form.append(`
             <div class="${div_row_class}">
