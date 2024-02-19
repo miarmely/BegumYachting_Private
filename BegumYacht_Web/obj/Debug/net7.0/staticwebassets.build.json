@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "om5C9gJz1ZP/NZNN8if3FQ41av8WuRIb7UJ0qCi/U2A=",
+  "Hash": "6WBV8WEyLcJH/TK+lMi3S3wSfEQGeIflO1VxdR8MGts=",
   "Source": "BegumYacht_Web",
   "BasePath": "_content/BegumYacht_Web",
   "Mode": "Default",
@@ -289,6 +289,40 @@
       "OriginalItemSpec": "wwwroot\\css\\miar_mainLayout.css"
     },
     {
+      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\css\\miar_module.css",
+      "SourceId": "BegumYacht_Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\",
+      "BasePath": "_content/BegumYacht_Web",
+      "RelativePath": "css/miar_module.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\miar_module.css"
+    },
+    {
+      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\css\\miar_module.userForm.css",
+      "SourceId": "BegumYacht_Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\",
+      "BasePath": "_content/BegumYacht_Web",
+      "RelativePath": "css/miar_module.userForm.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\miar_module.userForm.css"
+    },
+    {
       "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\css\\miar_register.css",
       "SourceId": "BegumYacht_Web",
       "SourceType": "Discovered",
@@ -321,23 +355,6 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\miar_user_display.css"
-    },
-    {
-      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\css\\miar_user_inputForm.css",
-      "SourceId": "BegumYacht_Web",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\",
-      "BasePath": "_content/BegumYacht_Web",
-      "RelativePath": "css/miar_user_inputForm.css",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\css\\miar_user_inputForm.css"
     },
     {
       "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\css\\style.css",
@@ -459,6 +476,23 @@
       "OriginalItemSpec": "wwwroot\\images\\close.png"
     },
     {
+      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\images\\hide.png",
+      "SourceId": "BegumYacht_Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\",
+      "BasePath": "_content/BegumYacht_Web",
+      "RelativePath": "images/hide.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\hide.png"
+    },
+    {
       "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\images\\hidePassword.png",
       "SourceId": "BegumYacht_Web",
       "SourceType": "Discovered",
@@ -474,6 +508,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\hidePassword.png"
+    },
+    {
+      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\images\\info.png",
+      "SourceId": "BegumYacht_Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\",
+      "BasePath": "_content/BegumYacht_Web",
+      "RelativePath": "images/info.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\info.png"
     },
     {
       "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\images\\loading.gif",
@@ -542,6 +593,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\notification.png"
+    },
+    {
+      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\images\\show.png",
+      "SourceId": "BegumYacht_Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\",
+      "BasePath": "_content/BegumYacht_Web",
+      "RelativePath": "images/show.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\show.png"
     },
     {
       "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\images\\showPassword.png",
@@ -765,12 +833,12 @@
       "OriginalItemSpec": "wwwroot\\js\\miar_mainLayout.js"
     },
     {
-      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\js\\miar_module_inputForm.js",
+      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\js\\miar_module.js",
       "SourceId": "BegumYacht_Web",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\",
       "BasePath": "_content/BegumYacht_Web",
-      "RelativePath": "js/miar_module_inputForm.js",
+      "RelativePath": "js/miar_module.js",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -779,15 +847,15 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\js\\miar_module_inputForm.js"
+      "OriginalItemSpec": "wwwroot\\js\\miar_module.js"
     },
     {
-      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\js\\miar_module_login.js",
+      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\js\\miar_module.login.js",
       "SourceId": "BegumYacht_Web",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\",
       "BasePath": "_content/BegumYacht_Web",
-      "RelativePath": "js/miar_module_login.js",
+      "RelativePath": "js/miar_module.login.js",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -796,15 +864,15 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\js\\miar_module_login.js"
+      "OriginalItemSpec": "wwwroot\\js\\miar_module.login.js"
     },
     {
-      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\js\\miar_module_sidebarMenu.js",
+      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\js\\miar_module.sidebarMenu.js",
       "SourceId": "BegumYacht_Web",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\",
       "BasePath": "_content/BegumYacht_Web",
-      "RelativePath": "js/miar_module_sidebarMenu.js",
+      "RelativePath": "js/miar_module.sidebarMenu.js",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -813,15 +881,15 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\js\\miar_module_sidebarMenu.js"
+      "OriginalItemSpec": "wwwroot\\js\\miar_module.sidebarMenu.js"
     },
     {
-      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\js\\miar_module_table.js",
+      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\js\\miar_module.table.js",
       "SourceId": "BegumYacht_Web",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\",
       "BasePath": "_content/BegumYacht_Web",
-      "RelativePath": "js/miar_module_table.js",
+      "RelativePath": "js/miar_module.table.js",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -830,7 +898,24 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\js\\miar_module_table.js"
+      "OriginalItemSpec": "wwwroot\\js\\miar_module.table.js"
+    },
+    {
+      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\js\\miar_module.userForm.js",
+      "SourceId": "BegumYacht_Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\",
+      "BasePath": "_content/BegumYacht_Web",
+      "RelativePath": "js/miar_module.userForm.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\miar_module.userForm.js"
     },
     {
       "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\js\\miar_register.js",
@@ -848,23 +933,6 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\js\\miar_register.js"
-    },
-    {
-      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\js\\miar_tools.js",
-      "SourceId": "BegumYacht_Web",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\",
-      "BasePath": "_content/BegumYacht_Web",
-      "RelativePath": "js/miar_tools.js",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\js\\miar_tools.js"
     },
     {
       "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\js\\miar_user_display.js",

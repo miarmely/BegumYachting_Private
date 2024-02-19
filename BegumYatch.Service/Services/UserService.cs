@@ -27,6 +27,7 @@ namespace BegumYatch.Service.Services
         private readonly IEmailService _emailService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+
         public UserService(IGenericRepository<AppUser> userRepository, IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService, UserManager<AppUser> userManager, IGenericRepository<MailOtp> mailOtpRepository) : base(userRepository, unitOfWork)
         {
             _userRepository = userRepository;
@@ -196,8 +197,10 @@ namespace BegumYatch.Service.Services
         public async Task<GetPersonelInfoByIdDto> GetPersonelInfo(int id)
         {
             var personelInfo = await _userRepository.GetByIdAsync(id);
+
             if (personelInfo == null)
                 throw new Exception("Böyle bir kullanıcı yoktur");
+
             else
             {
                 var mapPersonelInfoDto = _mapper.Map<GetPersonelInfoByIdDto>(personelInfo);
@@ -237,18 +240,16 @@ namespace BegumYatch.Service.Services
             return crewAndPassengerUpdateDto.Id;
         }
 
-        public async Task<List<GetUsersDto>> GetAllUsers()
+        public async Task<List<TDto>> GetAllUsers<TDto>()
         {
             var users = await _userRepository.GetAll().ToListAsync();
-            var usersDto = _mapper.Map<List<GetUsersDto>>(users);
+            var usersDto = _mapper.Map<List<TDto>>(users);
 
             if (usersDto != null && usersDto.Count > 0)
                 return usersDto;
+
             else
                 return null;
-
         }
-
-
     }
 }

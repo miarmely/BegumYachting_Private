@@ -2,12 +2,8 @@
 using BegumYatch.Core.Services;
 using BegumYatch.Core.UnitOfWorks;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace BegumYatch.Service.Services
 {
@@ -15,6 +11,7 @@ namespace BegumYatch.Service.Services
     {
         private readonly IGenericRepository<T> _repository;
         private readonly IUnitOfWork _unitOfWork;
+
         public Service(IGenericRepository<T> repository, IUnitOfWork unitOfWork)
         {
             _repository = repository;

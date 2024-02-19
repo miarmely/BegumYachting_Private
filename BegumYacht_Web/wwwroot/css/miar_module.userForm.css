@@ -1,10 +1,4 @@
-﻿/*error message below the row*/
-.help-block {
-    color: red;
-    text-align: center
-}
-
-.div_infoMessage > button[class= dropdown-toggle] {
+﻿.div_infoMessage > button[class= dropdown-toggle] {
     width: 20px;
     height: 20px;
     position: relative;
@@ -39,4 +33,23 @@
 select option:disabled {
     background-color: white;
     color: lightgray;
+}
+
+#btn_back {
+    color: black;
+    background-color: red;
+    width: 55px;
+}
+
+#btn_save {
+    background-color: darkblue;
+}
+
+    #btn_save:disabled {
+        background-color: darkgray
+    }
+
+.help-block{
+    color: red;
+    text-align:center
 }

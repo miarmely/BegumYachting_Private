@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace BegumYatch.Core.Models.User
 {
 
-    public class AppUser:IdentityUser<int>
+    public class AppUser: IdentityUser<int>
     {
         public string? NameSurname { get; set; }
         public string? YacthName { get; set; }
@@ -19,8 +19,8 @@ namespace BegumYatch.Core.Models.User
         public string? Flag { get; set; }
         public bool IsUpdated { get; set; }
         public int? ConfirmCode { get; set; }
-        public string? NewPassportNo { get; set; } //7 haneli 
-        public string? OldPassportNo { get; set; } //9 haneli
+        public string? NewPassportNo { get; set; } // 7 haneli 
+        public string? OldPassportNo { get; set; } // 9 haneli
         public string? Rank { get; set; }
         public DateTime? DateOfIssue { get; set; }
         public DateTime? PassPortExpiry { get; set; }
@@ -30,13 +30,14 @@ namespace BegumYatch.Core.Models.User
         public string? Gender { get; set; }
         public bool? IsPersonel { get; set; }
         public bool  IsDeleted { get; set; }
-        public virtual List<ConciergeServiceDemand> ConciergeServiceDemands { get; set; }
+        public virtual List<ConciergeServiceDemand> ConciergeServiceDemands 
+            { get; set; }
         public virtual List<ExcursionDemand> ExcursionDemands { get; set; }
         public virtual List<FuelPurchaseDemand> FuelPurchaseDemands { get; set; }
-        public virtual List<SecurityServiceDemand> SecurityServiceDemands { get; set; }
+        public virtual List<SecurityServiceDemand> SecurityServiceDemands 
+            { get; set; }
         public virtual List<ProvisionOrder> ProvisionOrders { get; set; }
         public virtual List<FlowerOrder> FlowerOrders { get; set; }
         public virtual List<TechnicalAssitanceandSparePartOrder> TechnicalAssitanceandSparePartOrders { get; set; }
-
     }
 }

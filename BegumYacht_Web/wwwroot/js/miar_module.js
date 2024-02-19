@@ -544,31 +544,6 @@ export async function getKeysOfBlankValuesAsync(data) {
 
     return keysWithBlankValue;
 }
-export async function showOrHideBackButtonAsync(
-    mode,
-    div_backButton,
-    div_panelTitle,
-    btn_back
-) {
-    switch (mode) {
-        case "show":
-            // show back button
-            div_backButton.removeAttr("hidden");
-
-            // shift the panel title to right
-            div_panelTitle.css(
-                "padding-left",
-                btn_back.css("width"));
-            break;
-        case "hide":
-            // hide back button
-            div_backButton.attr("hidden", "");
-
-            // shift the panel title to left
-            div_panelTitle.css("padding-left", "");
-            break;
-    }
-}
 export async function isUserRoleThisRoleAsync(userRole, targetRole) {
     //#region check user role whether is desired role
     switch (targetRole) {

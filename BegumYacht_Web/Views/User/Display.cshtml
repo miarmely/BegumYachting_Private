@@ -2,31 +2,29 @@
 
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.0/css/dataTables.dataTables.css">
 <link rel="stylesheet" href="~/css/miar_user_display.css" />
-<link rel="stylesheet" href="~/css/miar_user_inputForm.css"/>
+<link rel="stylesheet" href="~/css/miar_module.userForm.css" />
 
 
 <div class="table-agile-info">
     <div class="panel panel-default">
         @*title*@
         <div class="panel-heading">
-            <div id="div_backButton" style="float:right">
+            <div id="div_backButton" style="float:right" hidden>
                 <button id="btn_back" type="button" class="btn">
                     <img src="~/images/close.png" alt="close"/>
                 </button>
             </div>
-            <div id="div_panelTitle"></div>
+            <div id="div_panelTitle">KULLANICILAR</div>
         </div>
         @*/title*@
-
         <div class="panel-body">
-            <div id="div_userUpdate">
+            <div id="div_userUpdate" hidden>
                 <form>
                     <div id="div_form" class="form-horizontal bucket-form" style="padding-top:20px">                    
                         @{
                             #region add inputs
                             var labelNames = new string[][]{
-                                new string[] {"firstName", "text", "Ad"},
-                                new string[] {"lastName", "text", "Soyad"},
+                                new string[] {"firstnameLastname", "text", "Ad Soyad"},
                                 new string[] {"phone", "text", "Telefon"},
                                 new string[] {"email", "text", "Email"},
                                 new string[] {"flag", "text" , "Bayrak"},
@@ -41,7 +39,6 @@
                                 new string[] {"gender", "text", "Cinsiyet"},
                                 new string[] {"yachtType", "text", "Yat Tipi"},
                                 new string[] {"yachtName", "text", "Yat Adı"},
-                                new string[] {"isPersonal", "text", "Personel Mi"}
                             };
 
                             foreach (var labelInfo in labelNames)
@@ -61,11 +58,31 @@
                             #endregion
                         }
 
+                        @*is personal*@
+                        <div id="div_isPersonal" class="form-group">
+                            <label class="col-sm-3 control-label">Personel Mi</label>
+                            <div class="col-sm-6">
+                                <div id="div_radio">
+                                    @*radio 1*@ 
+                                    <div class="form-check" style="float: left;  margin-right: 15px">
+                                        <input id="rad_yes" class="form-check-input" type="radio" name="isPersonal">
+                                        <label class="form-check-label" for="rad_isPersonal1">Evet</label>
+                                    </div>
+                                    @*radio 2*@ 
+                                    <div class="form-check">
+                                        <input id="rad_no" class="form-check-input" type="radio" name="isPersonal">
+                                        <label class="form-check-label" for="rad_isPersonal2">Hayır</label>
+                                    </div>
+                                </div>
+                                <span id="spn_help_inpt_isPersonal" class="help-block"></span>
+                            </div>
+                        </div>
+
                         @*new password*@
                         <div id="div_password" class="form-group">
                             <label class="col-sm-3 control-label">Yeni Şifre</label>
                             <div class="col-sm-6">
-                                <input id="inpt_password" type="password" class="form-control" >
+                                <input id="inpt_password" type="password" class="form-control" />
                                 <span id="spn_help_inpt_password" class="help-block"></span>
                             </div>
                             <div class="col-sm-3 div_infoMessage">
@@ -78,7 +95,7 @@
                         @*save button*@
                         <div id="div_saveButton" class="form-group">
                             <div class="col-sm-6; text-center">
-                                <button id="btn_save" type="submit" class="btn btn-danger" disabled>Kaydet</button>
+                                <button id="btn_save" type="submit" class="btn btn-danger">Kaydet</button>
                             </div>
                         </div>
                     </div>
@@ -90,9 +107,7 @@
                     <img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px" hidden/>
                 </div>
             </div>
-
-            @*user table*@
-            <div id="div_userDisplay" hidden>
+            <div id="div_userDisplay">
                 <div class="table-responsive">
                     <table id="tbl_user" class="display">
                         <thead>
@@ -110,9 +125,9 @@
                                 <th>Doğum Tarihi</th>
                                 <th>Doğum Yeri</th>
                                 <th>Cinsiyet</th>
-                                <th>Personel mi</th>
                                 <th>Yat Tipi</th>
                                 <th>Yat Adı</th>
+                                <th>Personel mi</th>
                             </tr>
                         </thead>
                         <tbody>

@@ -19,6 +19,6 @@ app.UseRouting();
 app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=User}/{action=Display}/{id?}");
+    pattern: "{controller=Authentication}/{action=Login}/{id?}");
 app.Run();
 #endregion

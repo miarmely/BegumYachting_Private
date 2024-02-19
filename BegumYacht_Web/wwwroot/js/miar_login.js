@@ -1,5 +1,5 @@
-﻿import { click_showPasswordAsync } from "./miar_module_login.js"
-import { updateResultLabel } from "./miar_tools.js"
+﻿import { click_showPasswordAsync } from "./miar_module.login.js"
+import { updateResultLabel } from "./miar_module.js"
 
 
 $(function () {
@@ -26,13 +26,6 @@ $(function () {
     //#endregion
 
     //#region events
-    btn.showPassword.click(async () => {
-        await click_showPasswordAsync(
-            inpt.password,
-            img.showPassword,
-            "/images/showPassword.png",
-            "/images/hidePassword.png");
-    })
     btn.login.click(async () => {
         //#region sign in
         let accountId = await loginAsync();
@@ -41,6 +34,13 @@ $(function () {
         if (accountId != null)
             await afterLoginAsync(accountId);
         //#endregion
+    })
+    btn.showPassword.click(async () => {
+        await click_showPasswordAsync(
+            inpt.password,
+            img.showPassword,
+            "/images/showPassword.png",
+            "/images/hidePassword.png");
     })
     //#endregion
 
@@ -118,7 +118,7 @@ $(function () {
     async function afterLoginAsync(accountId) {
         $.ajax({
             method: "GET",
-            url: baseApiUrl + `/getPersonelInfo?id=${accountId}`,
+            url: baseApiUrl + `/adminPanel/userInfos?userId=${accountId}`,
             contentType: "application/json",
             dataType: "json",
             success: (accountInfos) => {

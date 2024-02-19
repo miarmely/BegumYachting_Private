@@ -18,7 +18,7 @@ namespace BegumYatch.Core.Services
         Task<List<ReturnResponseModel>> VerifyConfirmCode(VerifyConfirmCode verifyConfirmCode);
         Task<String> SendOtp(MailOtp model);
         Task<String> VerifyOtp(String code, int UserId);
-        Task<List<GetUsersDto>> GetAllUsers();
+        Task<List<TDto>> GetAllUsers<TDto>();
         Task<int> UpdateCrewAndPassenger(CrewAndPassengerUpdateDto crewAndPassengerUpdateDto);
       //  Task<IDataResult<UsersDto>> CreateUser(UserAddViewModel userAddViewModel);
         //bunun updateni eklemeyi unutma

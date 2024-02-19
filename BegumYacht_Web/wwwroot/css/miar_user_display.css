@@ -26,16 +26,7 @@
 
 
 /* --------- UPDATE PAGE --------- */
-#btn_back {
-    color: black;
-    background-color: red;
-    width: 55px;
-}
-
-#btn_save {
-    background-color: darkblue;
-}
-
-#btn_save:disabled {
-    background-color: darkgray
+#div_isPersonal #div_radio{
+    position: relative;
+    top: 7px;
 }

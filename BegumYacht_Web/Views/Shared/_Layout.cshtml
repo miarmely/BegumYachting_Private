@@ -52,10 +52,10 @@
 						<li class="dropdown">
 							<a data-toggle="dropdown" class="dropdown-toggle" href="#">
 								<img src="/images/user.png"/>
-								<span class="username">Profil</span>
+								<span id="spn_username" class="username"></span>
 								<b class="caret"></b>
 							</a>
-							<ul id="ul_notification" class="dropdown-menu extended logout">
+							<ul id="ul_user" class="dropdown-menu extended logout">
 								@*profile*@
 								<li>
 									<a href="#"> <i class="fa fa-user"></i>Profil</a>
@@ -210,7 +210,6 @@
 
 		<script>
 			const baseApiUrl = "https://localhost:7272";  // for local
-
 			const searchBarPlaceHolderByLanguages = {
 				"TR": "Ara",
 				"EN": "Search"
@@ -365,12 +364,13 @@
 				"TR": "© 2023 Tüm hakları saklıdır. | Designed by ",
 				"EN": "© 2023 All rights reserved. | Designed by "
 			};
-
 			const sidebar_width = 240;
-			const localKeys_allRoles = "allRoles";
 			const resultLabel_errorColor = "red";
 			const resultLabel_successColor = "rgb(16, 155, 16)";
 			const spn_eventManager = $("#spn_eventManager");
+			const localKeys = {
+				accountInfos: "accountInfos",
+			}
 			const langPack_partnerInfoMessages = {
 				"fileLoading": {
 					"TR": "dosya yükleniyor...",
@@ -395,6 +395,8 @@
 					"EN": "an error occured"
 				}
 			}
+			let accountInfos = JSON.parse(
+				localStorage.getItem(localKeys.accountInfos));
 		</script>
 		<script type="module" src="~/js/miar_mainLayout.js"></script>
 		<script src="~/js/bootstrap.js"></script>
