@@ -559,7 +559,7 @@ export async function isUserRoleThisRoleAsync(userRole, targetRole) {
     }
     //#endregion
 }
-export function getDateTimeInString(dateTime) {
+export function getDateTimeInString(dateTime, pattern = "dd/mm/yyyy_HH:MM") {
     //#region set year
     let date = new Date(dateTime);
     let year = date.getFullYear();
@@ -601,7 +601,53 @@ export function getDateTimeInString(dateTime) {
         : minutes.toString();  // don't add
     //#endregion
 
-    return `${dayInString}.${monthInString}.${year}__${hoursInString}:${minutesInString}`;
+    //#region populate pattern
+    pattern = pattern.replace("dd", dayInString);
+    pattern = pattern.replace("mm", monthInString);
+    pattern = pattern.replace("yyyy", year);
+    pattern = pattern.replace("HH", hoursInString);
+    pattern = pattern.replace("MM", minutesInString);
+    //#endregion
+
+    return pattern;
+}
+export function getDateTimeInString2(dateTime) {
+    //#region when datetime is invalid
+    if (dateTime == null)
+        return;
+    //#endregion
+
+    //#egion set formatter
+    let formatter = new Intl.DateTimeFormat(
+        window.navigator.language,
+        {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false,  // close am/pm
+        });
+    let utcDate = new Date(dateTime);
+    let localDate = new Date(Date.UTC(2002, 2, 12, , 13, 22));
+    let x = new Date(utcDate).getTimezoneOffset();
+    let y = new Date(utcDate).toLocaleTimeString();
+
+    let z = formatter.format(date);
+    //#endregion
+
+    return z;
+}
+export function getStringDateTimeInDateTime(dateInString = "") {
+    // split date in string  (01.03.2002_05:00)
+    let day = dateInString.substr(0, 2);
+    let month = dateInString.substr(3, 2);
+    let year = dateInString.substr(6, 4);
+    let hours = dateInString.substr(11, 2);
+    let minutes = dateInString.substr(14, 2);
+
+    return new Date(year, month - 1, day, hours, minutes);
 }
 export function getHeaderFromLocalInJson(headerName) {
     return JSON.parse(

@@ -1,9 +1,11 @@
 ﻿import { getCellInfosOfClickedRowAsync } from "./miar_module.table.js";
-import { getDateTimeInString } from "./miar_module.js"
+import {
+    getDateTimeInString, getDateTimeInString2, getStringDateTimeInDateTime
+} from "./miar_module.js"
 
 import {
     checkInputsWhetherBlankAsync, click_inputAsync, click_showPasswordButtonAsync,
-    keyup_inputAsync, populateInfoMessagesAsync, showOrHideBackButtonAsync
+    keyup_inputAsync, resetFormAsync, showOrHideBackButtonAsync
 } from "./miar_module.userForm.js";
 
 
@@ -32,7 +34,8 @@ $(function () {
         gender: $("#inpt_gender"),
         yachtType: $("#inpt_yachtType"),
         yachtName: $("#inpt_yachtName"),
-        password: $("#inpt_password")
+        password: $("#inpt_password"),
+        isPersonal: $("#inpt_isPersonal")
     }
     const div = {
         userDisplay: $("#div_userDisplay"),
@@ -40,8 +43,7 @@ $(function () {
         backButton: $("#div_backButton"),
         panelTitle: $("#div_panelTitle")
     }
-    let cellInfosOfLastClickedRow = [];
-    let user_emailsAndInfos = {}
+    let userInfosOfLastClickedRow = [];
     //#endregion
 
     //#region events
@@ -49,9 +51,8 @@ $(function () {
     //#region update page
     $("form").submit(async (event) => {
         event.preventDefault();
-        await checkInputsWhetherBlankAsync([
-            inpt.firstName,
-            inpt.lastName,
+        if (await checkInputsWhetherBlankAsync([
+            inpt.firstnameLastname,
             inpt.phone,
             inpt.email,
             inpt.flag,
@@ -65,9 +66,9 @@ $(function () {
             inpt.birthPlace,
             inpt.gender,
             inpt.yachtType,
-            inpt.yachtName,
-            inpt.isPersonal
-        ])
+            inpt.yachtName
+        ])) return;
+        await updateUserAsync();
     })
     $("input").click(async (event) => {
         await click_inputAsync(event, p_resultLabel);
@@ -79,11 +80,7 @@ $(function () {
         await click_showPasswordButtonAsync(inpt.password, btn.showPassword);
     })
     btn.back.click(async () => {
-        //#region reset form
-        $("form")[0].reset();
-        p_resultLabel.empty();
-        //#endregion
-
+        await resetFormAsync(p_resultLabel);
         await showOrHideBackButtonAsync(
             "hide",
             div.backButton,
@@ -99,7 +96,7 @@ $(function () {
 
     //#region display page
     tbl_user.children("tbody").on("click", "tr", async (event) => {
-        cellInfosOfLastClickedRow = await getCellInfosOfClickedRowAsync(event);
+        userInfosOfLastClickedRow = await getCellInfosOfClickedRowAsync(event);
         await openUpdatePageAsync();
         await addDefaultValuesToFormAsync();
     })
@@ -107,15 +104,43 @@ $(function () {
 
     //#endregion
 
-    //#region
+    //#region functions
     async function populateTableAsync() {
         $.ajax({
             method: "GET",
             url: baseApiUrl + "/getAllUsers",
             dataType: "json",
             success: (users) => {
-                // populate datatable
-                let dataTable = tbl_user.DataTable({
+                //#region set data to be add to table
+                let modifiedData = []
+
+                for (let index in users) {
+                    let userInfo = users[index];
+
+                    modifiedData.push({
+                        nameSurname: userInfo.nameSurname,
+                        phoneNumber: userInfo.phoneNumber,
+                        email: userInfo.email,
+                        flag: userInfo.flag,
+                        email: userInfo.email,
+                        newPassportNo: userInfo.newPassportNo,
+                        oldPassportNo: userInfo.oldPassportNo,
+                        rank: userInfo.rank,
+                        dateOfIssue: getDateTimeInString2(userInfo.dateOfIssue),
+                        passPortExpiry: getDateTimeInString2(userInfo.passPortExpiry),
+                        nationality: userInfo.nationality,
+                        dateOfBirth: getDateTimeInString2(userInfo.dateOfBirth),
+                        placeOfBirth: userInfo.placeOfBirth,
+                        gender: userInfo.gender,
+                        yacthType: userInfo.yacthType,
+                        yacthName: userInfo.yacthName,
+                        isPersonel: userInfo.isPersonel,
+                    })
+                }
+                //#endregion
+
+                tbl_user.DataTable({
+                    data: modifiedData,
                     columns: [
                         { data: "nameSurname" },
                         { data: "phoneNumber" },
@@ -151,30 +176,8 @@ $(function () {
                         },
                         zeroRecords: "eşleşen kişi bulunamadı",
                         emptyTable: "kullanıcı bulunamadı",
-                    },
-                    select: true
+                    }
                 })
-
-                for(let user in users)
-                    dataTable.row.add([
-                        user.nameSurname,
-                        user.phoneNumber,
-                        user.email,
-                        user.flag,
-                        user.newPassportNo,
-                        user.oldPassportNo,
-                        user.rank,
-                        user.dateOfIssue,
-                        user.passPortExpiry,
-                        user.nationality,
-                        user.dateOfBirth,
-                        user.placeOfBirth,
-                        user.gender,
-                        user.yacthType,
-                        user.yacthName,
-                        user.isPersonel
-                    ])
-                    
             }
         })
     }
@@ -191,30 +194,118 @@ $(function () {
             btn.back);
     }
     async function addDefaultValuesToFormAsync() {
-        inpt.firstnameLastname.val(cellInfosOfLastClickedRow[0]);
-        inpt.phone.val(cellInfosOfLastClickedRow[1]);
-        inpt.email.val(cellInfosOfLastClickedRow[2]);
-        inpt.flag.val(cellInfosOfLastClickedRow[3]);
-        inpt.newPassportNo.val(cellInfosOfLastClickedRow[4]);
-        inpt.oldPassportNo.val(cellInfosOfLastClickedRow[5]);
-        inpt.rank.val(cellInfosOfLastClickedRow[6]);
-        inpt.issueDate.val(cellInfosOfLastClickedRow[7]);
-        inpt.passportExpiration.val(cellInfosOfLastClickedRow[8]);
-        inpt.nationality.val(cellInfosOfLastClickedRow[9]);
-        inpt.birthDate.val(cellInfosOfLastClickedRow[10]);
-        inpt.birthPlace.val(cellInfosOfLastClickedRow[11]);
-        inpt.gender.val(cellInfosOfLastClickedRow[12]);
-        inpt.yachtType.val(cellInfosOfLastClickedRow[13]);
-        inpt.yachtName.val(cellInfosOfLastClickedRow[14]);
+        //let date = getStringDateTimeInDateTime(userInfosOfLastClickedRow[7]);
+
+
+
+
+        inpt.firstnameLastname.val(userInfosOfLastClickedRow[0]);
+        inpt.phone.val(userInfosOfLastClickedRow[1]);
+        inpt.email.val(userInfosOfLastClickedRow[2]);
+        inpt.flag.val(userInfosOfLastClickedRow[3]);
+        inpt.newPassportNo.val(userInfosOfLastClickedRow[4]);
+        inpt.oldPassportNo.val(userInfosOfLastClickedRow[5]);
+        inpt.rank.val(userInfosOfLastClickedRow[6]);
+        inpt.issueDate.val(
+            getDateTimeInString(
+                getStringDateTimeInDateTime(userInfosOfLastClickedRow[7]),
+                "yyyy-mm-ddTHH:MM"));
+        inpt.passportExpiration.val(
+            getDateTimeInString(
+                getStringDateTimeInDateTime(userInfosOfLastClickedRow[8]),
+                "yyyy-mm-ddTHH:MM"));
+        inpt.nationality.val(userInfosOfLastClickedRow[9]);
+        inpt.birthDate.val(
+            getDateTimeInString(
+                getStringDateTimeInDateTime(userInfosOfLastClickedRow[10]),
+                "yyyy-mm-dd"));
+        inpt.birthPlace.val(userInfosOfLastClickedRow[11]);
+        inpt.gender.val(userInfosOfLastClickedRow[12]);
+        inpt.yachtType.val(userInfosOfLastClickedRow[13]);
+        inpt.yachtName.val(userInfosOfLastClickedRow[14]);
         //#region set "isPersonal"
-        if (cellInfosOfLastClickedRow[15] == true)
+        if (userInfosOfLastClickedRow[15] == "true")
             $("#rad_yes").prop("checked", true);
 
         else
             $("#rad_no").prop("checked", true);
         //#endregion
     }
-    //#region functions
+    async function updateUserAsync() {
+        let inputValues = {
+            nameSurname: inpt.firstnameLastname.val(),
+            phoneNumber: inpt.phone.val(),
+            email: inpt.email.val(),
+            flag: inpt.flag.val(),
+            newPassportNo: inpt.newPassportNo.val(),
+            oldPassportNo: inpt.oldPassportNo.val(),
+            rank: inpt.rank.val(),
+            dateOfIssue: inpt.issueDate.val(),
+            passPortExpiry: inpt.passportExpiration.val(),
+            nationality: inpt.nationality.val(),
+            birthDate: inpt.birthDate.val(),
+            birthPlace: inpt.birthPlace.val(),
+            gender: inpt.gender.val(),
+            yachtType: inpt.yachtType.val(),
+            yachtName: inpt.yachtName.val(),
+            isPersonel: $("input[type= radio][name= isPersonal]:checked").attr("id") == "rad_yes" ? "true" : "false",
+            password: inpt.password.val()
+        };
+        let y = {
+            nameSurname: inputValues.nameSurname == userInfosOfLastClickedRow[0] ? null : inputValues.nameSurname,
+            phoneNumber: inputValues.phoneNumber == userInfosOfLastClickedRow[1] ? null : inputValues.phoneNumber,
+            email: inputValues.email == userInfosOfLastClickedRow[2] ? null : inputValues.email,
+            flag: inputValues.flag == userInfosOfLastClickedRow[3] ? null : inputValues.flag,
+            newPassportNo: inputValues.newPassportNo == userInfosOfLastClickedRow[4] ? null : inputValues.newPassportNo,
+            oldPassportNo: inputValues.oldPassportNo == userInfosOfLastClickedRow[5] ? null : inputValues.oldPassportNo,
+            rank: inputValues.rank == userInfosOfLastClickedRow[6] ? null : inputValues.rank,
+            dateOfIssue: inputValues.dateOfIssue == userInfosOfLastClickedRow[7] ? null : inputValues.dateOfIssue,
+            passPortExpiry: inputValues.passPortExpiry == userInfosOfLastClickedRow[8] ? null : inputValues.passPortExpiry,
+            nationality: inputValues.nationality == userInfosOfLastClickedRow[9] ? null : inputValues.nationality,
+            dateOfBirth: inputValues.dateOfBirth == userInfosOfLastClickedRow[10] ? null : inputValues.birthDate,
+            placeOfBirth: inputValues.placeOfBirth == userInfosOfLastClickedRow[11] ? null : inputValues.birthPlace,
+            gender: inputValues.gender == userInfosOfLastClickedRow[12] ? null : inputValues.gender,
+            yacthType: inputValues.yachtType == userInfosOfLastClickedRow[13] ? null : inputValues.yachtType,
+            yacthName: inputValues.yachtName == userInfosOfLastClickedRow[14] ? null : inputValues.yachtName,
+            isPersonal: inputValues.isPersonal == userInfosOfLastClickedRow[15] ? null : inputValues.isPersonel,
+            password: inputValues.password == "" ? null : inputValues.password
+        }
+
+        return;
+
+        $.ajax({
+            method: "POST",
+            url: baseApiUrl + `/adminPanel/update?userId=${userInfosOfLastClickedRow[2]}`,
+            data: JSON.stringify({
+                nameSurname: inputValues.nameSurname == userInfosOfLastClickedRow[0] ? null : inputValues.nameSurname,
+                phoneNumber: inputValues.phoneNumber == userInfosOfLastClickedRow[1] ? null : inputValues.phoneNumber,
+                email: inputValues.email == userInfosOfLastClickedRow[2] ? null : inputValues.email,
+                flag: inputValues.flag == userInfosOfLastClickedRow[3] ? null : inputValues.flag,
+                newPassportNo: inputValues.newPassportNo == userInfosOfLastClickedRow[4] ? null : inputValues.newPassportNo,
+                oldPassportNo: inputValues.oldPassportNo == userInfosOfLastClickedRow[5] ? null : inputValues.oldPassportNo,
+                rank: inputValues.rank == userInfosOfLastClickedRow[6] ? null : inputValues.rank,
+                dateOfIssue: inputValues.dateOfIssue == userInfosOfLastClickedRow[7] ? null : inputValues.dateOfIssue,
+                passPortExpiry: inputValues.passPortExpiry == userInfosOfLastClickedRow[8] ? null : inputValues.passPortExpiry,
+                nationality: inputValues.nationality == userInfosOfLastClickedRow[9] ? null : inputValues.nationality,
+                dateOfBirth: inputValues.dateOfBirth == userInfosOfLastClickedRow[10] ? null : inputValues.dateOfBirth,
+                placeOfBirth: inputValues.placeOfBirth == userInfosOfLastClickedRow[11] ? null : inputValues.placeOfBirth,
+                gender: inputValues.gender == userInfosOfLastClickedRow[12] ? null : inputValues.gender,
+                yacthType: inputValues.yacthType == userInfosOfLastClickedRow[13] ? null : inputValues.yacthType,
+                yacthName: inputValues.yacthName == userInfosOfLastClickedRow[14] ? null : inputValues.yacthName,
+                isPersonal: inputValues.isPersonal == userInfosOfLastClickedRow[15] ? null : inputValues.isPersonel,
+                password: inputValues.password == "" ? null : inputValues.password
+            }),
+            contentType: "application/json",
+            dataType: "json",
+            success: () => {
+                alert("success");
+            },
+            error: () => {
+                alert("error");
+            }
+        })
+    }
+    //#endregion
 
     populateTableAsync();
 })

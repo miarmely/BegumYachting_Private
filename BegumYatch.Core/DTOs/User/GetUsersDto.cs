@@ -1,5 +1,6 @@
 ﻿using BegumYatch.Core.Enums;
 
+
 namespace BegumYatch.Core.DTOs.User
 {
     public class GetUsersDto

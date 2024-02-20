@@ -9,7 +9,6 @@ namespace BegumYatch.Core.ViewModels
 {
     public class UserUpdateAjaxViewModel
     {
-        public UserUpdateDto UserUpdateDto { get; set; }
         public string UserUpdatePartial { get; set; }
         public UsersDto UserDto { get; set; }
     }

@@ -1,4 +1,6 @@
-﻿//#region variables
+﻿import { getStringDateTimeInDateTime } from "./miar_module.js";
+
+//#region variables
 export let div_form;
 const div_form_id = "div_form";
 const div_form_css = {
@@ -63,6 +65,15 @@ export async function click_inputAsync(event, lbl_result) {
     //#region reset result label
     lbl_result.empty();
     lbl_result.removeAttr("style");
+    //#endregion
+}
+export async function click_radioButtonTextAsync(event) {
+    //#region click to radio button belong to clicked text
+    let lbl_radioButton = $("#" + event.target.id);
+
+    lbl_radioButton
+        .siblings("input")
+        .trigger("click");
     //#endregion
 }
 export async function keyup_inputAsync(event, spn_resultLabel) {
@@ -213,5 +224,31 @@ export async function showOrHideBackButtonAsync(
             div_panelTitle.css("padding-left", "");
             break;
     }
+}
+export async function resetFormAsync(lbl_result) {
+    // reset inputs and result label
+    $("form")[0].reset();
+    lbl_result.empty();
+
+    // remove error message and border color of inputs
+    $("form .help-block").empty(); // error message
+    $("form input").css("border-color", ""); // border color
+}
+export async function addValueToDateTimeInputAsync(input, dateTimeInStr, pattern) {
+    //#region when system language is TR
+    let dateTime = getStringDateTimeInDateTime(dateTimeInStr);
+
+    if (window.navigator.language == "tr-TR")
+        input.val(dateTime);
+    //#endregion
+
+    else {
+       
+    }
+       
+
+
+
+    input.val()
 }
 //#endregion

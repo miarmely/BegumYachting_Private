@@ -31,8 +31,8 @@
                                 new string[] {"newPassportNo", "text", "Yeni Pasaport No"},
                                 new string[] {"oldPassportNo", "text", "Eski Pasaport No"},
                                 new string[] {"rank", "text", "Rank"},
-                                new string[] {"issueDate", "date", "Pasaport Veriliş Tarihi"},
-                                new string[] {"passportExpiration", "date", "Pasaport Bitiş Tarihi"},
+                                new string[] {"issueDate", "datetime-local", "Pasaport Veriliş Tarihi"},
+                                new string[] {"passportExpiration", "datetime-local", "Pasaport Bitiş Tarihi"},
                                 new string[] {"nationality", "text", "Uyruk"},
                                 new string[] {"birthDate", "date", "Doğum Tarihi"},
                                 new string[] {"birthPlace", "text", "Doğum Yeri"},
@@ -66,12 +66,12 @@
                                     @*radio 1*@ 
                                     <div class="form-check" style="float: left;  margin-right: 15px">
                                         <input id="rad_yes" class="form-check-input" type="radio" name="isPersonal">
-                                        <label class="form-check-label" for="rad_isPersonal1">Evet</label>
+                                        <label for="rad_yes" class="form-check-label">Evet</label>
                                     </div>
                                     @*radio 2*@ 
                                     <div class="form-check">
                                         <input id="rad_no" class="form-check-input" type="radio" name="isPersonal">
-                                        <label class="form-check-label" for="rad_isPersonal2">Hayır</label>
+                                        <label for="rad_no" class="form-check-label">Hayır</label>
                                     </div>
                                 </div>
                                 <span id="spn_help_inpt_isPersonal" class="help-block"></span>

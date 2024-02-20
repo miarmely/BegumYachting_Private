@@ -154,15 +154,6 @@ namespace BegumYatch.API.Controllers
         }
 
 
-        [HttpPut]
-        [Route("UpdateCrewandPassenger")]
-        public async Task<IActionResult> UpdateCrewandPassenger([FromBody] CrewAndPassengerUpdateDto crewAndPassenger)
-        {
-            var response = await _userService.UpdateCrewAndPassenger(crewAndPassenger);
-            return Ok(response);
-        }
-
-
         [HttpDelete]
         [Route("UserDelete")]
         public async Task<IActionResult> UserDelete(int id)
@@ -267,7 +258,6 @@ namespace BegumYatch.API.Controllers
             }
         }
 
-
         #region writed by mert 
         [HttpGet("adminPanel/getAllUsers/paging")]
         // [Authorize(Policy = "Permissions.AllEntity.ReadCreateUpdate")]
@@ -294,15 +284,32 @@ namespace BegumYatch.API.Controllers
 
 
         [HttpGet("adminPanel/userInfos")]
-        public async Task<IActionResult> GetAccountInfos(
+        public async Task<IActionResult> GetUserInfos(
             [FromQuery(Name = "userId")] int userId)
         {
-            #region get account infos
+            #region get user infos (error)
             var userInfos = await _userService.GetByIdAsync(userId);
+
+            // when user not found
+            if (userInfos == null)
+                return NotFound("User Not Found.");
+                
             var userDto = _mapper.Map<GetUsersDto>(userInfos);
             #endregion
 
             return Ok(userDto);
+        }
+
+
+        [HttpPost]
+        [Route("adminPanel/update")]
+        public async Task<IActionResult> UpdateUser(
+            [FromQuery(Name = "email")] string email,
+            [FromBody] UserDtoForUpdate userDto)
+        {
+            return NoContent();
+
+            await _userService.UpdateUserAsync(email, userDto);            
         }
         #endregion
     }

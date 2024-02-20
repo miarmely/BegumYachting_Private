@@ -208,38 +208,6 @@ namespace BegumYatch.Service.Services
             }
         }
 
-        public async Task<int> UpdateCrewAndPassenger(CrewAndPassengerUpdateDto crewAndPassengerUpdateDto)
-        {
-            var distanceMonth = crewAndPassengerUpdateDto.PassPortExpiry.Month - DateTime.Now.Month;
-
-            var currentUser = _userRepository.Where(x => x.Id == crewAndPassengerUpdateDto.Id).FirstOrDefault();
-            if (currentUser == null)
-                throw new Exception("There is no user with this information.");
-            if (crewAndPassengerUpdateDto.IsPersonel)
-            {
-                currentUser.IsPersonel = true;
-                currentUser.Rank = crewAndPassengerUpdateDto.Rank;
-            }
-            else
-            {
-                currentUser.IsPersonel = false;
-                currentUser.Rank = null;
-            }
-            //pasaportun bitiş tarihi bilgilendirme maili, 6 ay / 180 gün önce atılması sağlanmalıdır.
-
-            if (distanceMonth < 0)
-                distanceMonth = (-1) * distanceMonth;
-
-            if (distanceMonth == 6)
-                await _emailService.SendEmailAsync("Information about passport expiry date", "Dear " + $"{currentUser.NameSurname}" + " , there are 6 months until the expiry date of your passport. For your information.", currentUser.Email);
-            //yeni ve eski pasaport doluluğunu kontrol et. ve bunu yukarıdaki kontrol kısmına oturt
-
-            _userRepository.Update(currentUser);
-            await _unitOfWork.CommitAsync();
-
-            return crewAndPassengerUpdateDto.Id;
-        }
-
         public async Task<List<TDto>> GetAllUsers<TDto>()
         {
             var users = await _userRepository.GetAll().ToListAsync();
@@ -251,5 +219,83 @@ namespace BegumYatch.Service.Services
             else
                 return null;
         }
+
+        public async Task UpdateUserAsync(string email, UserDtoForUpdate userDto)
+        {
+            #region  get user by id (error)
+            var user = _userRepository
+                .Where(x => x.Email == email)
+                .FirstOrDefault();
+
+            // when user not found
+            if (user == null)
+                throw new Exception("User not found.");
+            #endregion
+
+            #region update user
+            if (userDto.NameSurname != null) user.NameSurname = userDto.NameSurname;
+            if (userDto.PhoneNumber != null) user.PhoneNumber = userDto.PhoneNumber;
+            if (userDto.Email != null) user.Email = userDto.Email;
+            if (userDto.Flag != null) user.Flag = userDto.Flag;
+            if (userDto.NewPassportNo != null) 
+                user.NewPassportNo = userDto.NewPassportNo;
+            if (userDto.OldPassportNo != null) 
+                user.OldPassportNo = userDto.OldPassportNo;
+            if (userDto.Rank != null) user.Rank = userDto.Rank;
+            if (userDto.DateOfIssue != null) user.DateOfIssue = userDto.DateOfIssue;
+            if (userDto.PassPortExpiry != null) 
+                user.PassPortExpiry = userDto.PassPortExpiry;
+            if (userDto.Nationality != null) user.Nationality = userDto.Nationality;
+            if (userDto.DateOfBirth != null) user.DateOfBirth = userDto.DateOfBirth;
+            if (userDto.PlaceOfBirth != null) 
+                user.PlaceOfBirth = userDto.PlaceOfBirth;
+            if (userDto.Gender != null) user.Gender = userDto.Gender;
+            if (userDto.YacthType != null) user.YacthType = userDto.YacthType;
+            if (userDto.YacthName != null) user.YacthName = userDto.YacthName;
+            if (userDto.IsPersonel != null) user.IsPersonel = userDto.IsPersonel;
+
+            _userRepository.Update(user);
+            await _unitOfWork.CommitAsync();
+            #endregion
+        }
+
+
+        //public async Task<int> UpdateCrewAndPassenger(
+        //    CrewAndPassengerUpdateDto crewAndPassengerUpdateDto)
+        //{
+        //    var distanceMonth = crewAndPassengerUpdateDto.PassPortExpiry.Month - DateTime.Now.Month;
+
+        //    var currentUser = _userRepository
+        //        .Where(x => x.Id == crewAndPassengerUpdateDto.Id)
+        //        .FirstOrDefault();
+
+        //    if (currentUser == null)
+        //        throw new Exception("There is no user with this information.");
+
+        //    if (crewAndPassengerUpdateDto.IsPersonel)
+        //    {
+        //        currentUser.IsPersonel = true;
+        //        currentUser.Rank = crewAndPassengerUpdateDto.Rank;
+        //    }
+
+        //    else
+        //    {
+        //        currentUser.IsPersonel = false;
+        //        currentUser.Rank = null;
+        //    }
+        //    //pasaportun bitiş tarihi bilgilendirme maili, 6 ay / 180 gün önce atılması sağlanmalıdır.
+
+        //    if (distanceMonth < 0)
+        //        distanceMonth = (-1) * distanceMonth;
+
+        //    if (distanceMonth == 6)
+        //        await _emailService.SendEmailAsync("Information about passport expiry date", "Dear " + $"{currentUser.NameSurname}" + " , there are 6 months until the expiry date of your passport. For your information.", currentUser.Email);
+        //    //yeni ve eski pasaport doluluğunu kontrol et. ve bunu yukarıdaki kontrol kısmına oturt
+
+        //    _userRepository.Update(currentUser);
+        //    await _unitOfWork.CommitAsync();
+
+        //    return crewAndPassengerUpdateDto.Id;
+        //}
     }
 }

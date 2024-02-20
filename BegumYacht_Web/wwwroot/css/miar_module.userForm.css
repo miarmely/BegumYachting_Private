@@ -53,3 +53,8 @@ select option:disabled {
     color: red;
     text-align:center
 }
+
+
+form input[type= radio]{
+    cursor: pointer;
+}

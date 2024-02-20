@@ -1,13 +1,7 @@
 ﻿using BegumYatch.Core.DTOs.User;
 using BegumYatch.Core.DTOs.UserRegister;
 using BegumYatch.Core.Models.User;
-using BegumYatch.Core.Repositories;
-using BegumYatch.Core.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace BegumYatch.Core.Services
 {
@@ -19,7 +13,7 @@ namespace BegumYatch.Core.Services
         Task<String> SendOtp(MailOtp model);
         Task<String> VerifyOtp(String code, int UserId);
         Task<List<TDto>> GetAllUsers<TDto>();
-        Task<int> UpdateCrewAndPassenger(CrewAndPassengerUpdateDto crewAndPassengerUpdateDto);
+        Task UpdateUserAsync(string email, UserDtoForUpdate userDto);
       //  Task<IDataResult<UsersDto>> CreateUser(UserAddViewModel userAddViewModel);
         //bunun updateni eklemeyi unutma
     }

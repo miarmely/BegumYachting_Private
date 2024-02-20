@@ -38,8 +38,7 @@ namespace BegumYatch.Service.Mapping
             CreateMap<AppUser, GetPersonelInfoByIdDto>().ReverseMap();
             CreateMap<AppUser, GetUsersDto>().ReverseMap();
             CreateMap<AppUser, UserAddViewModel>().ReverseMap();
-            CreateMap<AppUser, UserUpdateDto>().ReverseMap();
-
+            
             CreateMap<AppRole, RoleCreateDto>().ReverseMap();
             CreateMap<AppRole, RolesListDto>().ReverseMap();
             CreateMap<AppRole, RoleUpdateDto>().ReverseMap();
