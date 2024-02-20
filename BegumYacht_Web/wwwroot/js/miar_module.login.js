@@ -23,6 +23,12 @@ export async function click_showPasswordAsync(
     }
     //#endregion
 }
+export async function keyup_enterKeyAsync(event, btn_submit) {
+    //#region when enter key is pressed
+    if (event.key == "Enter")
+        btn_submit.trigger("click")
+    //#endregion
+}
 //#endregion
 
 //#region functions
@@ -42,5 +48,20 @@ export async function isEmailValidAsync(email) {
     //#endregion
 
     return true;
+}
+export async function saveOrRemoveUsernameFromLocalAsync(
+    chck_rememberMe,
+    inpt_username,
+    localKeys_username
+) {
+    //#region when remember me button is checked/unchecked
+    // save username to local
+    if (chck_rememberMe.prop("checked"))
+        localStorage.setItem(localKeys_username, inpt_username.val());
+
+    // remove username from local
+    else
+        localStorage.removeItem(localKeys_username);
+    //#endregion
 }
 //#endregion

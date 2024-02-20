@@ -1,4 +1,4 @@
-﻿import { click_showPasswordAsync } from "./miar_module.login.js"
+﻿import { click_showPasswordAsync, keyup_enterKeyAsync, saveOrRemoveUsernameFromLocalAsync } from "./miar_module.login.js"
 import { updateResultLabel } from "./miar_module.js"
 
 
@@ -22,10 +22,15 @@ $(function () {
     };
     const p_resultLabel = $("#p_resultLabel");
     const img_loading = $("#img_loading");
+    const localKeys_username = "username";
+    const chck_rememberMe = $("#chck_rememberMe");
     let unsuccessfulLoginCount = 0;
     //#endregion
 
     //#region events
+    $(window).keyup(async (event) => {
+        await keyup_enterKeyAsync(event, btn.login);
+    })
     btn.login.click(async () => {
         //#region sign in
         let accountId = await loginAsync();
@@ -45,6 +50,14 @@ $(function () {
     //#endregion
 
     //#region functions
+    async function setFormAsync() {
+        //#region populate email input if saved previous
+        let username = localStorage.getItem(localKeys_username);
+
+        if (username != null)
+            inpt.email.val(username);
+        //#endregion
+    }
     async function loginAsync() {
         return await new Promise(resolve => {
             $.ajax({
@@ -116,6 +129,11 @@ $(function () {
         })
     }
     async function afterLoginAsync(accountId) {
+        await saveOrRemoveUsernameFromLocalAsync(
+            chck_rememberMe,
+            inpt.email,
+            localKeys_username);  // by "remember me" checkbox
+
         $.ajax({
             method: "GET",
             url: baseApiUrl + `/adminPanel/userInfos?userId=${accountId}`,
@@ -134,4 +152,6 @@ $(function () {
         })
     }
     //#endregion
+
+    setFormAsync();
 })

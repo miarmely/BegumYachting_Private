@@ -1,4 +1,5 @@
 ﻿import { getCellInfosOfClickedRowAsync } from "./miar_module.table.js";
+
 import {
     getDateTimeInString, getDateTimeInString2, getStringDateTimeInDateTime
 } from "./miar_module.js"

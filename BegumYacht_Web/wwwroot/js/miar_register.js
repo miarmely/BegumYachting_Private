@@ -1,4 +1,6 @@
-﻿$(function () {
+﻿import { keyup_enterKeyAsync } from "./miar_module.login.js";
+
+$(function () {
     //#region variables
     const slct_chooseValidationType = $("#slct_chooseValidationType");
     const inpt_validation = $("#inpt_validation");
@@ -7,6 +9,13 @@
     //#endregion
 
     //#region events
+    $(window).keyup(async (event) => {
+        //#region when send button is active
+        if(btn_send.attr("disabled") == null)
+            await keyup_enterKeyAsync(event, btn_send);
+        //#endregion
+    })
+    btn_send.click(() => { alert(2) })
     slct_chooseValidationType.change(() => {
         //#region resets
         p_resultLabel.empty();
@@ -29,9 +38,5 @@
                 break;
         }
     })
-    btn_send.click(() => {})
-    //#endregion
-
-    //#region functions
     //#endregion
 })

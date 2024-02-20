@@ -611,13 +611,14 @@ export function getDateTimeInString(dateTime, pattern = "dd/mm/yyyy_HH:MM") {
 
     return pattern;
 }
-export function getDateTimeInString2(dateTime) {
+export function getUtcDateTimeInString(utcDateTime) {
     //#region when datetime is invalid
-    if (dateTime == null)
+    if (dateTime == null
+        || dateTime == "")
         return;
     //#endregion
 
-    //#egion set formatter
+    //#region set formatter
     let formatter = new Intl.DateTimeFormat(
         window.navigator.language,
         {
@@ -629,15 +630,17 @@ export function getDateTimeInString2(dateTime) {
             second: "2-digit",
             hour12: false,  // close am/pm
         });
-    let utcDate = new Date(dateTime);
-    let localDate = new Date(Date.UTC(2002, 2, 12, , 13, 22));
-    let x = new Date(utcDate).getTimezoneOffset();
-    let y = new Date(utcDate).toLocaleTimeString();
 
-    let z = formatter.format(date);
-    //#endregion
+    let localDateTime = new Date(Date.UTC(
+        utcDateTime.getFullYear(),
+        utcDateTime.getMonth() - 1,
+        utcDateTime.getDate(),
+        utcDateTime.getHours(),
+        utcDateTime.getMinutes()
+    ));
+   //#endregion
 
-    return z;
+    return formatter.format(localDateTime);
 }
 export function getStringDateTimeInDateTime(dateInString = "") {
     // split date in string  (01.03.2002_05:00)

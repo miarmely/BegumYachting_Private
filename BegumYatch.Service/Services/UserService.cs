@@ -260,6 +260,7 @@ namespace BegumYatch.Service.Services
         }
 
 
+        // BELONG TO RUMEYSA (REMOVED SERVICES) (By MERT)
         //public async Task<int> UpdateCrewAndPassenger(
         //    CrewAndPassengerUpdateDto crewAndPassengerUpdateDto)
         //{

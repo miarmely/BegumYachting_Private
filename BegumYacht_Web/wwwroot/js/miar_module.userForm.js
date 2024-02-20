@@ -234,21 +234,4 @@ export async function resetFormAsync(lbl_result) {
     $("form .help-block").empty(); // error message
     $("form input").css("border-color", ""); // border color
 }
-export async function addValueToDateTimeInputAsync(input, dateTimeInStr, pattern) {
-    //#region when system language is TR
-    let dateTime = getStringDateTimeInDateTime(dateTimeInStr);
-
-    if (window.navigator.language == "tr-TR")
-        input.val(dateTime);
-    //#endregion
-
-    else {
-       
-    }
-       
-
-
-
-    input.val()
-}
 //#endregion
