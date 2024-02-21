@@ -340,7 +340,25 @@ export function getDateTimeInString(dateTime, pattern = "dd/mm/yyyy_HH:MM") {
 
     return pattern;
 }
-export async function convertUtcDateStrToLocalDateStrAsync(utcDateTimeInStr) {
+export async function getDateInfosInJsonAsync(dateTime) {
+    //#region set variables
+    let month = dateTime.getMonth() + 1;
+    let day = dateTime.getDate();
+    let hours = dateTime.getHours();
+    let minutes = dateTime.getMinutes();
+    let seconds = dateTime.getSeconds();
+    //#endregion
+
+    return {
+        year: dateTime.getFullYear(),
+        month: month < 10 ? '0' + month : month,
+        day: day < 10 ? '0' + day : day,
+        hours: hours < 10 ? '0' + hours : hours,
+        minutes: minutes < 10 ? '0' + minutes : minutes,
+        seconds: seconds < 10 ? '0' + seconds : seconds,
+    };
+}
+export async function convertStrUtcDateToStrLocalDateAsync(utcDateTimeInStr) {
     //#region when datetime is invalid
     if (utcDateTimeInStr == null
         || utcDateTimeInStr == "")
@@ -379,45 +397,27 @@ export async function convertUtcDateStrToLocalDateStrAsync(utcDateTimeInStr) {
 
     return formattedDate;
 }
-export async function getDateInfosInJsonAsync(dateTime) {
-    //#region set variables
-    let month = dateTime.getMonth() + 1;
-    let day = dateTime.getDate();
-    let hours = dateTime.getHours();
-    let minutes = dateTime.getMinutes();
-    let seconds = dateTime.getSeconds();
-    //#endregion
-    
-    return {
-        year: dateTime.getFullYear(),
-        month: month < 10 ? '0' + month : month,
-        day: day < 10 ? '0' + day : day,
-        hours: hours < 10 ? '0' + hours : hours,
-        minutes: minutes < 10 ? '0' + minutes : minutes,
-        seconds: seconds < 10 ? '0' + seconds : seconds,
-    };
-}
-export async function convertStrDateTimeToDateTimeAsync(dateTimeInStr) {
-    dateTimeInStr = dateTimeInStr.replace("__", ",");
+export async function convertStrDateToDateAsync(dateInStr) {
+    dateInStr = dateInStr.replace("__", ",");  // "01.03.2002__13.00" ~~> "01.03.2002, 13.00"
 
-    return new Date(dateTimeInStr);
+    return new Date(dateInStr);
 }
 export async function addValueToDateInputAsync(input, inputType, dateTime = null, dateTimeInStr = null) {
     // inputType? "datetime" | "date"
 
     //#region when sended datetime is str (convert)
     if (dateTimeInStr != null)
-        dateTime = await convertStrDateTimeToDateTimeAsync(dateTimeInStr);
+        dateTime = await convertStrDateToDateAsync(dateTimeInStr);
     //#endregion
 
     //#region add value to date input
     let dateInfos = await getDateInfosInJsonAsync(dateTime);
-    
+
     switch (inputType) {
         case "datetime":
             input.val(
                 dateInfos.year + "-" +
-                dateInfos.month+ "-" +
+                dateInfos.month + "-" +
                 dateInfos.day + "T" +
                 dateInfos.hours + ":" +
                 dateInfos.minutes);
@@ -429,8 +429,30 @@ export async function addValueToDateInputAsync(input, inputType, dateTime = null
                 dateInfos.month + "-" +
                 dateInfos.day);
             break;
-    }   
+    }
     //#endregion
+}
+export async function isDatesEqualAsync(pDate1, pDate2, check = {
+    year: true,
+    month: true,
+    day: true,
+    hours: true,
+    minutes: true,
+    seconds: true
+}) {
+    // region compare dates
+    let date1 = new Date(pDate1);
+    let date2 = new Date(pDate2);
+
+    if (check.year && date1.getFullYear() != date2.getFullYear()) return false;
+    if (check.month && date1.getMonth() != date2.getMonth()) return false;
+    if (check.day && date1.getDate() != date2.getDate()) return false;
+    if (check.hours && date1.getHours() != date2.getHours()) return false;
+    if (check.minutes && date1.getMinutes() != date2.getMinutes()) return false;
+    if (check.seconds && date1.getSeconds() != date2.getSeconds()) return false;
+    //#endregion
+
+    return true;
 }
 //#endregion
 

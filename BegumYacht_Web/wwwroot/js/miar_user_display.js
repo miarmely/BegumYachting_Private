@@ -1,5 +1,10 @@
 ﻿import { getCellInfosOfClickedRowAsync } from "./miar_module.table.js";
-import { addValueToDateInputAsync, convertUtcDateStrToLocalDateStrAsync } from "./miar_module.js"
+
+import {
+    addValueToDateInputAsync, convertStrDateToDateAsync,
+    convertStrUtcDateToStrLocalDateAsync,
+    isDatesEqualAsync
+} from "./miar_module.js"
 
 import {
     checkInputsWhetherBlankAsync, click_inputAsync, click_showPasswordButtonAsync,
@@ -125,10 +130,10 @@ $(function () {
                             newPassportNo: userInfo.newPassportNo,
                             oldPassportNo: userInfo.oldPassportNo,
                             rank: userInfo.rank,
-                            dateOfIssue: await convertUtcDateStrToLocalDateStrAsync(userInfo.dateOfIssue),
-                            passPortExpiry: await convertUtcDateStrToLocalDateStrAsync(userInfo.passPortExpiry),
+                            dateOfIssue: await convertStrUtcDateToStrLocalDateAsync(userInfo.dateOfIssue),
+                            passPortExpiry: await convertStrUtcDateToStrLocalDateAsync(userInfo.passPortExpiry),
                             nationality: userInfo.nationality,
-                            dateOfBirth: await convertUtcDateStrToLocalDateStrAsync(userInfo.dateOfBirth),
+                            dateOfBirth: await convertStrUtcDateToStrLocalDateAsync(userInfo.dateOfBirth),
                             placeOfBirth: userInfo.placeOfBirth,
                             gender: userInfo.gender,
                             yacthType: userInfo.yacthType,
@@ -253,27 +258,6 @@ $(function () {
             isPersonel: $("input[type= radio][name= isPersonal]:checked").attr("id") == "rad_yes" ? "true" : "false",
             password: inpt.password.val()
         };
-        let y = {
-            nameSurname: inputValues.nameSurname == userInfosOfLastClickedRow[0] ? null : inputValues.nameSurname,
-            phoneNumber: inputValues.phoneNumber == userInfosOfLastClickedRow[1] ? null : inputValues.phoneNumber,
-            email: inputValues.email == userInfosOfLastClickedRow[2] ? null : inputValues.email,
-            flag: inputValues.flag == userInfosOfLastClickedRow[3] ? null : inputValues.flag,
-            newPassportNo: inputValues.newPassportNo == userInfosOfLastClickedRow[4] ? null : inputValues.newPassportNo,
-            oldPassportNo: inputValues.oldPassportNo == userInfosOfLastClickedRow[5] ? null : inputValues.oldPassportNo,
-            rank: inputValues.rank == userInfosOfLastClickedRow[6] ? null : inputValues.rank,
-            dateOfIssue: inputValues.dateOfIssue == userInfosOfLastClickedRow[7] ? null : inputValues.dateOfIssue,
-            passPortExpiry: inputValues.passPortExpiry == userInfosOfLastClickedRow[8] ? null : inputValues.passPortExpiry,
-            nationality: inputValues.nationality == userInfosOfLastClickedRow[9] ? null : inputValues.nationality,
-            dateOfBirth: inputValues.dateOfBirth == userInfosOfLastClickedRow[10] ? null : inputValues.birthDate,
-            placeOfBirth: inputValues.placeOfBirth == userInfosOfLastClickedRow[11] ? null : inputValues.birthPlace,
-            gender: inputValues.gender == userInfosOfLastClickedRow[12] ? null : inputValues.gender,
-            yacthType: inputValues.yachtType == userInfosOfLastClickedRow[13] ? null : inputValues.yachtType,
-            yacthName: inputValues.yachtName == userInfosOfLastClickedRow[14] ? null : inputValues.yachtName,
-            isPersonal: inputValues.isPersonal == userInfosOfLastClickedRow[15] ? null : inputValues.isPersonel,
-            password: inputValues.password == "" ? null : inputValues.password
-        }
-
-        return;
 
         $.ajax({
             method: "POST",
@@ -286,15 +270,30 @@ $(function () {
                 newPassportNo: inputValues.newPassportNo == userInfosOfLastClickedRow[4] ? null : inputValues.newPassportNo,
                 oldPassportNo: inputValues.oldPassportNo == userInfosOfLastClickedRow[5] ? null : inputValues.oldPassportNo,
                 rank: inputValues.rank == userInfosOfLastClickedRow[6] ? null : inputValues.rank,
-                dateOfIssue: inputValues.dateOfIssue == userInfosOfLastClickedRow[7] ? null : inputValues.dateOfIssue,
-                passPortExpiry: inputValues.passPortExpiry == userInfosOfLastClickedRow[8] ? null : inputValues.passPortExpiry,
+                dateOfIssue: (await isDatesEqualAsync(
+                    inputValues.dateOfIssue,
+                    await convertStrDateToDateAsync(userInfosOfLastClickedRow[7]),
+                    { year: true, month: true, day: true, hours: true, minutes: true, second: false }) ?
+                    null
+                    : inputValues.dateOfIssue),
+                passPortExpiry: (await isDatesEqualAsync(
+                    inputValues.passPortExpiry,
+                    await convertStrDateToDateAsync(userInfosOfLastClickedRow[8]),
+                    { year: true, month: true, day: true, hours: true, minutes: true, second: false }) ?
+                    null
+                    : inputValues.passPortExpiry),
                 nationality: inputValues.nationality == userInfosOfLastClickedRow[9] ? null : inputValues.nationality,
-                dateOfBirth: inputValues.dateOfBirth == userInfosOfLastClickedRow[10] ? null : inputValues.dateOfBirth,
-                placeOfBirth: inputValues.placeOfBirth == userInfosOfLastClickedRow[11] ? null : inputValues.placeOfBirth,
+                dateOfBirth: (await isDatesEqualAsync(
+                    inputValues.birthDate,
+                    await convertStrDateToDateAsync(userInfosOfLastClickedRow[10]),
+                    { year: true, month: true, day: true, hours: false, minutes: false, second: false }) ?
+                    null
+                    : inputValues.birthDate),
+                placeOfBirth: inputValues.birthPlace == userInfosOfLastClickedRow[11] ? null : inputValues.birthPlace,
                 gender: inputValues.gender == userInfosOfLastClickedRow[12] ? null : inputValues.gender,
-                yacthType: inputValues.yacthType == userInfosOfLastClickedRow[13] ? null : inputValues.yacthType,
-                yacthName: inputValues.yacthName == userInfosOfLastClickedRow[14] ? null : inputValues.yacthName,
-                isPersonal: inputValues.isPersonal == userInfosOfLastClickedRow[15] ? null : inputValues.isPersonel,
+                yacthType: inputValues.yachtType == userInfosOfLastClickedRow[13] ? null : inputValues.yachtType,
+                yacthName: inputValues.yachtName == userInfosOfLastClickedRow[14] ? null : inputValues.yachtName,
+                isPersonal: inputValues.isPersonel == userInfosOfLastClickedRow[15] ? null : inputValues.isPersonel,
                 password: inputValues.password == "" ? null : inputValues.password
             }),
             contentType: "application/json",

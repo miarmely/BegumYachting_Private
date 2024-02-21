@@ -23,42 +23,66 @@
                     <div id="div_form" class="form-horizontal bucket-form" style="padding-top:20px">                    
                         @{
                             #region add inputs
-                            var labelNames = new string[][]{
-                                new string[] {"firstnameLastname", "text", "Ad Soyad"},
-                                new string[] {"phone", "text", "Telefon"},
-                                new string[] {"email", "text", "Email"},
-                                new string[] {"flag", "text" , "Bayrak"},
-                                new string[] {"newPassportNo", "text", "Yeni Pasaport No"},
-                                new string[] {"oldPassportNo", "text", "Eski Pasaport No"},
-                                new string[] {"rank", "text", "Rank"},
-                                new string[] {"issueDate", "datetime-local", "Pasaport Veriliş Tarihi"},
-                                new string[] {"passportExpiration", "datetime-local", "Pasaport Bitiş Tarihi"},
-                                new string[] {"nationality", "text", "Uyruk"},
-                                new string[] {"birthDate", "date", "Doğum Tarihi"},
-                                new string[] {"birthPlace", "text", "Doğum Yeri"},
-                                new string[] {"gender", "text", "Cinsiyet"},
-                                new string[] {"yachtType", "text", "Yat Tipi"},
-                                new string[] {"yachtName", "text", "Yat Adı"},
-                            };
+                            var inputInfos = new string[][]{
+                                new string[] {"input", "text", "firstnameLastname", "Ad Soyad"},
+                                new string[] {"input", "text", "phone", "Telefon"},
+                                new string[] {"input", "text", "email", "Email"},
+                                new string[] {"input", "text", "flag" , "Bayrak"},
+                                new string[] {"input", "text", "newPassportNo", "Yeni Pasaport No"},
+                                new string[] {"input", "text", "oldPassportNo", "Eski Pasaport No"},
+                                new string[] {"input", "text", "rank", "Rank"},
+                                new string[] {"input", "datetime-local", "issueDate", "Pasaport Veriliş Tarihi"},
+                                new string[] {"input", "datetime-local", "passportExpiration", "Pasaport Bitiş Tarihi"},
+                                new string[] {"input", "text", "nationality", "Uyruk"},
+                                new string[] {"input", "date", "birthDate", "Doğum Tarihi"},
+                                new string[] {"input", "text", "birthPlace", "Doğum Yeri"},
+                                new string[] {"input", "text", "gender", "Cinsiyet"},
+                                new string[] {"select", "yachtType", "Yat Tipi"},
+                                new string[] {"input", "text", "yachtName", "Yat Adı"},
+                                            };
 
-                            foreach (var labelInfo in labelNames)
+                            foreach (var inputInfo in inputInfos)
                             {
-                                <div id="div_@labelInfo[0]" class="form-group">
-                                    <label class="col-sm-3 control-label">@labelInfo[2]</label>
-                                    <div class="col-sm-6">
-                                        <input id="inpt_@labelInfo[0]" type="@labelInfo[1]" class="form-control" >
-                                        <span id="spn_help_inpt_@labelInfo[0]" class="help-block"></span>
-                                    </div>
-                                    <div class="col-sm-3 div_infoMessage">
-                                        <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
-                                        <ul role="menu" class="dropdown-menu"></ul>
-                                    </div>
-                                </div>    
+                                switch (inputInfo[0])
+                                {
+                                    case "input":
+                                        <div id="div_@inputInfo[2]" class="form-group">
+                                            <label class="col-sm-3 control-label">@inputInfo[3]</label>
+                                            <div class="col-sm-6">
+                                                <input id="inpt_@inputInfo[2]" type="@inputInfo[1]" class="form-control" >
+                                                <span id="spn_help_inpt_@inputInfo[2]" class="help-block"></span>
+                                            </div>
+                                            <div class="col-sm-3 div_infoMessage">
+                                                <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+                                                <ul role="menu" class="dropdown-menu"></ul>
+                                            </div>
+                                        </div>  
+                                        break;
+
+                                    case "select":
+                                        <div id="div_@inputInfo[1]" class="form-group">
+                                            <label class="col-sm-3 control-label">@inputInfo[2]</label>
+                                            <div class="col-sm-6">
+                                                <select class="form-select form-select-sm" aria-label=".form-select-sm example">
+                                                    <option selected>Open this select menu</option>
+                                                    <option value="1">One</option>
+                                                    <option value="2">Two</option>
+                                                    <option value="3">Three</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-3 div_infoMessage">
+                                                <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+                                                <ul role="menu" class="dropdown-menu"></ul>
+                                            </div>
+                                        </div>  
+
+                                        break;
+                                }
                             }
                             #endregion
                         }
 
-                        @*is personal*@
+                        @*is personal?*@
                         <div id="div_isPersonal" class="form-group">
                             <label class="col-sm-3 control-label">Personel Mi</label>
                             <div class="col-sm-6">
