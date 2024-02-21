@@ -1,8 +1,5 @@
 ﻿import { getCellInfosOfClickedRowAsync } from "./miar_module.table.js";
-
-import {
-    getDateTimeInString, getDateTimeInString2, getStringDateTimeInDateTime
-} from "./miar_module.js"
+import { addValueToDateInputAsync, convertUtcDateStrToLocalDateStrAsync } from "./miar_module.js"
 
 import {
     checkInputsWhetherBlankAsync, click_inputAsync, click_showPasswordButtonAsync,
@@ -112,77 +109,80 @@ $(function () {
             url: baseApiUrl + "/getAllUsers",
             dataType: "json",
             success: (users) => {
-                //#region set data to be add to table
-                let modifiedData = []
+                new Promise(async resolve => {
+                    //#region set data for add to table
+                    let modifiedData = []
 
-                for (let index in users) {
-                    let userInfo = users[index];
+                    for (let index in users) {
+                        let userInfo = users[index];
 
-                    modifiedData.push({
-                        nameSurname: userInfo.nameSurname,
-                        phoneNumber: userInfo.phoneNumber,
-                        email: userInfo.email,
-                        flag: userInfo.flag,
-                        email: userInfo.email,
-                        newPassportNo: userInfo.newPassportNo,
-                        oldPassportNo: userInfo.oldPassportNo,
-                        rank: userInfo.rank,
-                        dateOfIssue: getDateTimeInString2(userInfo.dateOfIssue),
-                        passPortExpiry: getDateTimeInString2(userInfo.passPortExpiry),
-                        nationality: userInfo.nationality,
-                        dateOfBirth: getDateTimeInString2(userInfo.dateOfBirth),
-                        placeOfBirth: userInfo.placeOfBirth,
-                        gender: userInfo.gender,
-                        yacthType: userInfo.yacthType,
-                        yacthName: userInfo.yacthName,
-                        isPersonel: userInfo.isPersonel,
-                    })
-                }
-                //#endregion
-
-                tbl_user.DataTable({
-                    data: modifiedData,
-                    columns: [
-                        { data: "nameSurname" },
-                        { data: "phoneNumber" },
-                        { data: "email" },
-                        { data: "flag" },
-                        { data: "newPassportNo" },
-                        { data: "oldPassportNo" },
-                        { data: "rank" },
-                        { data: "dateOfIssue" },
-                        { data: "passPortExpiry" },
-                        { data: "nationality" },
-                        { data: "dateOfBirth" },
-                        { data: "placeOfBirth" },
-                        { data: "gender" },
-                        { data: "yacthType" },
-                        { data: "yacthName" },
-                        { data: "isPersonel" }
-                    ],
-                    ordering: true,
-                    paging: true,
-                    info: true,
-                    language: {
-                        lengthMenu: "_MENU_ kullanıcı görüntüle",
-                        search: "Ara",
-                        info: "Sayfa: _PAGE_ / _PAGES_ ~ Toplam: _MAX_",
-                        infoEmpty: "kullanıcı bulunamadı",
-                        infoFiltered: "",
-                        paginate: {
-                            previous: "Önceki",
-                            next: "Sonraki",
-                            first: "İlk",
-                            last: "Son"
-                        },
-                        zeroRecords: "eşleşen kişi bulunamadı",
-                        emptyTable: "kullanıcı bulunamadı",
+                        modifiedData.push({
+                            nameSurname: userInfo.nameSurname,
+                            phoneNumber: userInfo.phoneNumber,
+                            email: userInfo.email,
+                            flag: userInfo.flag,
+                            email: userInfo.email,
+                            newPassportNo: userInfo.newPassportNo,
+                            oldPassportNo: userInfo.oldPassportNo,
+                            rank: userInfo.rank,
+                            dateOfIssue: await convertUtcDateStrToLocalDateStrAsync(userInfo.dateOfIssue),
+                            passPortExpiry: await convertUtcDateStrToLocalDateStrAsync(userInfo.passPortExpiry),
+                            nationality: userInfo.nationality,
+                            dateOfBirth: await convertUtcDateStrToLocalDateStrAsync(userInfo.dateOfBirth),
+                            placeOfBirth: userInfo.placeOfBirth,
+                            gender: userInfo.gender,
+                            yacthType: userInfo.yacthType,
+                            yacthName: userInfo.yacthName,
+                            isPersonel: userInfo.isPersonel,
+                        })
                     }
-                })
+                    //#endregion
+
+                    tbl_user.DataTable({
+                        data: modifiedData,
+                        columns: [
+                            { data: "nameSurname" },
+                            { data: "phoneNumber" },
+                            { data: "email" },
+                            { data: "flag" },
+                            { data: "newPassportNo" },
+                            { data: "oldPassportNo" },
+                            { data: "rank" },
+                            { data: "dateOfIssue" },
+                            { data: "passPortExpiry" },
+                            { data: "nationality" },
+                            { data: "dateOfBirth" },
+                            { data: "placeOfBirth" },
+                            { data: "gender" },
+                            { data: "yacthType" },
+                            { data: "yacthName" },
+                            { data: "isPersonel" }
+                        ],
+                        ordering: true,
+                        paging: true,
+                        info: true,
+                        language: {
+                            lengthMenu: "_MENU_ kullanıcı görüntüle",
+                            search: "Ara",
+                            info: "Sayfa: _PAGE_ / _PAGES_ ~ Toplam: _MAX_",
+                            infoEmpty: "kullanıcı bulunamadı",
+                            infoFiltered: "",
+                            paginate: {
+                                previous: "Önceki",
+                                next: "Sonraki",
+                                first: "İlk",
+                                last: "Son"
+                            },
+                            zeroRecords: "eşleşen kişi bulunamadı",
+                            emptyTable: "kullanıcı bulunamadı",
+                        }
+                    })
+                    resolve();
+                });
             }
         })
     }
-    async function openUpdatePageAsync(event) {
+    async function openUpdatePageAsync() {
         //#region show user update page
         div.userDisplay.attr("hidden", "");
         div.userUpdate.removeAttr("hidden");
@@ -195,11 +195,7 @@ $(function () {
             btn.back);
     }
     async function addDefaultValuesToFormAsync() {
-        //let date = getStringDateTimeInDateTime(userInfosOfLastClickedRow[7]);
-
-
-
-
+        // normal inputs
         inpt.firstnameLastname.val(userInfosOfLastClickedRow[0]);
         inpt.phone.val(userInfosOfLastClickedRow[1]);
         inpt.email.val(userInfosOfLastClickedRow[2]);
@@ -207,19 +203,7 @@ $(function () {
         inpt.newPassportNo.val(userInfosOfLastClickedRow[4]);
         inpt.oldPassportNo.val(userInfosOfLastClickedRow[5]);
         inpt.rank.val(userInfosOfLastClickedRow[6]);
-        inpt.issueDate.val(
-            getDateTimeInString(
-                getStringDateTimeInDateTime(userInfosOfLastClickedRow[7]),
-                "yyyy-mm-ddTHH:MM"));
-        inpt.passportExpiration.val(
-            getDateTimeInString(
-                getStringDateTimeInDateTime(userInfosOfLastClickedRow[8]),
-                "yyyy-mm-ddTHH:MM"));
         inpt.nationality.val(userInfosOfLastClickedRow[9]);
-        inpt.birthDate.val(
-            getDateTimeInString(
-                getStringDateTimeInDateTime(userInfosOfLastClickedRow[10]),
-                "yyyy-mm-dd"));
         inpt.birthPlace.val(userInfosOfLastClickedRow[11]);
         inpt.gender.val(userInfosOfLastClickedRow[12]);
         inpt.yachtType.val(userInfosOfLastClickedRow[13]);
@@ -231,6 +215,23 @@ $(function () {
         else
             $("#rad_no").prop("checked", true);
         //#endregion
+
+        // date inputs
+        await addValueToDateInputAsync(
+            inpt.issueDate,
+            "datetime",
+            null,
+            userInfosOfLastClickedRow[7]);  // issue date
+        await addValueToDateInputAsync(
+            inpt.passportExpiration,
+            "datetime",
+            null,
+            userInfosOfLastClickedRow[8]);  // passport expiration
+        await addValueToDateInputAsync(
+            inpt.birthDate,
+            "date",
+            null,
+            userInfosOfLastClickedRow[10]);  // birth date
     }
     async function updateUserAsync() {
         let inputValues = {

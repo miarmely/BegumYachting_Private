@@ -1,19 +1,22 @@
 ﻿#img_begumLogo {
-    width: 185px;
-    height: 50px;
+    width: 210px;
+    height: 55px;
+    position: relative;
+    bottom: 7px;
+    right: 11px
 }
 
 .li_submenu li {
     background-color: #160146
 }
 
-.li_submenu li:hover{
-    font-weight: bold
-}
+    .li_submenu li:hover {
+        font-weight: bold
+    }
 
-.li_dropdown b{
+.li_dropdown b {
     float: right;
     position: relative;
-    top:7px;
+    top: 7px;
     right: 10px;
 }

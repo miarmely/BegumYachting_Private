@@ -1,6 +1,4 @@
-﻿import { getStringDateTimeInDateTime } from "./miar_module.js";
-
-//#region variables
+﻿//#region variables
 export let div_form;
 const div_form_id = "div_form";
 const div_form_css = {

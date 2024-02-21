@@ -287,6 +287,153 @@ export async function controlPaginationBackAndNextButtonsAsync(paginationInfosIn
 }
 //#endregion
 
+//#region datetime processes
+export function getDateTimeInString(dateTime, pattern = "dd/mm/yyyy_HH:MM") {
+    //#region set year
+    let date = new Date(dateTime);
+    let year = date.getFullYear();
+    //#endregion
+
+    //#region set month
+    let month = date.getMonth() + 1;
+
+    // add '0' to head
+    let monthInString = month < 10 ?
+        `0${month}`  // add 0
+        : month.toString();  // don't add
+    //#endregion
+
+    //#region set day
+    let day = date.getDate();
+
+    // add '0' to head
+    let dayInString = day < 10 ?
+        `0${day}`  // add 0
+        : day.toString(); // don't add
+    //#endregion
+
+    //#region set hours
+    let hours = (date.getHours() + 3) % 24;
+
+    // add '0' to head
+    let hoursInString = hours < 10 ?
+        `0${hours}`  // add 0
+        : hours.toString();  // don't add
+    //#endregion
+
+    //#region set minutes
+    let minutes = date.getMinutes();
+
+    // add '0' to head
+    let minutesInString = minutes < 10 ?
+        `0${minutes}`  // add 0
+        : minutes.toString();  // don't add
+    //#endregion
+
+    //#region populate pattern
+    pattern = pattern.replace("dd", dayInString);
+    pattern = pattern.replace("mm", monthInString);
+    pattern = pattern.replace("yyyy", year);
+    pattern = pattern.replace("HH", hoursInString);
+    pattern = pattern.replace("MM", minutesInString);
+    //#endregion
+
+    return pattern;
+}
+export async function convertUtcDateStrToLocalDateStrAsync(utcDateTimeInStr) {
+    //#region when datetime is invalid
+    if (utcDateTimeInStr == null
+        || utcDateTimeInStr == "")
+        return;
+    //#endregion
+
+    //#region convert utc date to local date
+    let utcDateTime = new Date(utcDateTimeInStr);
+    let localDateTime = new Date(Date.UTC(
+        utcDateTime.getFullYear(),
+        utcDateTime.getMonth(),
+        utcDateTime.getDate(),
+        utcDateTime.getHours(),
+        utcDateTime.getMinutes(),
+        utcDateTime.getSeconds()
+    ));
+    //#endregion
+
+    //#region set pattern of local date
+    let formatter = new Intl.DateTimeFormat(
+        window.navigator.language,
+        {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false,  // close am/pm
+        });
+
+    let formattedDate = formatter
+        .format(localDateTime)
+        .replace(", ", "__");
+    //#endregion
+
+    return formattedDate;
+}
+export async function getDateInfosInJsonAsync(dateTime) {
+    //#region set variables
+    let month = dateTime.getMonth() + 1;
+    let day = dateTime.getDate();
+    let hours = dateTime.getHours();
+    let minutes = dateTime.getMinutes();
+    let seconds = dateTime.getSeconds();
+    //#endregion
+    
+    return {
+        year: dateTime.getFullYear(),
+        month: month < 10 ? '0' + month : month,
+        day: day < 10 ? '0' + day : day,
+        hours: hours < 10 ? '0' + hours : hours,
+        minutes: minutes < 10 ? '0' + minutes : minutes,
+        seconds: seconds < 10 ? '0' + seconds : seconds,
+    };
+}
+export async function convertStrDateTimeToDateTimeAsync(dateTimeInStr) {
+    dateTimeInStr = dateTimeInStr.replace("__", ",");
+
+    return new Date(dateTimeInStr);
+}
+export async function addValueToDateInputAsync(input, inputType, dateTime = null, dateTimeInStr = null) {
+    // inputType? "datetime" | "date"
+
+    //#region when sended datetime is str (convert)
+    if (dateTimeInStr != null)
+        dateTime = await convertStrDateTimeToDateTimeAsync(dateTimeInStr);
+    //#endregion
+
+    //#region add value to date input
+    let dateInfos = await getDateInfosInJsonAsync(dateTime);
+    
+    switch (inputType) {
+        case "datetime":
+            input.val(
+                dateInfos.year + "-" +
+                dateInfos.month+ "-" +
+                dateInfos.day + "T" +
+                dateInfos.hours + ":" +
+                dateInfos.minutes);
+            break;
+
+        case "date":
+            input.val(
+                dateInfos.year + "-" +
+                dateInfos.month + "-" +
+                dateInfos.day);
+            break;
+    }   
+    //#endregion
+}
+//#endregion
+
 export async function populateElementByAjaxOrLocalAsync(
     keyNameInLocal,
     specialApiUrl,
@@ -558,99 +705,6 @@ export async function isUserRoleThisRoleAsync(userRole, targetRole) {
             return false;
     }
     //#endregion
-}
-export function getDateTimeInString(dateTime, pattern = "dd/mm/yyyy_HH:MM") {
-    //#region set year
-    let date = new Date(dateTime);
-    let year = date.getFullYear();
-    //#endregion
-
-    //#region set month
-    let month = date.getMonth() + 1;
-
-    // add '0' to head
-    let monthInString = month < 10 ?
-        `0${month}`  // add 0
-        : month.toString();  // don't add
-    //#endregion
-
-    //#region set day
-    let day = date.getDate();
-
-    // add '0' to head
-    let dayInString = day < 10 ?
-        `0${day}`  // add 0
-        : day.toString(); // don't add
-    //#endregion
-
-    //#region set hours
-    let hours = (date.getHours() + 3) % 24;
-
-    // add '0' to head
-    let hoursInString = hours < 10 ?
-        `0${hours}`  // add 0
-        : hours.toString();  // don't add
-    //#endregion
-
-    //#region set minutes
-    let minutes = date.getMinutes();
-
-    // add '0' to head
-    let minutesInString = minutes < 10 ?
-        `0${minutes}`  // add 0
-        : minutes.toString();  // don't add
-    //#endregion
-
-    //#region populate pattern
-    pattern = pattern.replace("dd", dayInString);
-    pattern = pattern.replace("mm", monthInString);
-    pattern = pattern.replace("yyyy", year);
-    pattern = pattern.replace("HH", hoursInString);
-    pattern = pattern.replace("MM", minutesInString);
-    //#endregion
-
-    return pattern;
-}
-export function getUtcDateTimeInString(utcDateTime) {
-    //#region when datetime is invalid
-    if (dateTime == null
-        || dateTime == "")
-        return;
-    //#endregion
-
-    //#region set formatter
-    let formatter = new Intl.DateTimeFormat(
-        window.navigator.language,
-        {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-            hour12: false,  // close am/pm
-        });
-
-    let localDateTime = new Date(Date.UTC(
-        utcDateTime.getFullYear(),
-        utcDateTime.getMonth() - 1,
-        utcDateTime.getDate(),
-        utcDateTime.getHours(),
-        utcDateTime.getMinutes()
-    ));
-   //#endregion
-
-    return formatter.format(localDateTime);
-}
-export function getStringDateTimeInDateTime(dateInString = "") {
-    // split date in string  (01.03.2002_05:00)
-    let day = dateInString.substr(0, 2);
-    let month = dateInString.substr(3, 2);
-    let year = dateInString.substr(6, 4);
-    let hours = dateInString.substr(11, 2);
-    let minutes = dateInString.substr(14, 2);
-
-    return new Date(year, month - 1, day, hours, minutes);
 }
 export function getHeaderFromLocalInJson(headerName) {
     return JSON.parse(
