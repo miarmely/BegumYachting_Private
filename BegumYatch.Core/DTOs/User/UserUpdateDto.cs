@@ -1,13 +1,20 @@
 ﻿using BegumYatch.Core.Enums;
-
+using Entities.Attributes;
 
 namespace BegumYatch.Core.DTOs.User
 {
     public record UserDtoForUpdate
     {
         public string? NameSurname { get; init; }
+
+        [MiarLength(10, 10, "Telefon", "Phone")]
+        [MiarPhone]
         public string? PhoneNumber { get; init; }
+
+        [MiarLength(1, 150, "Email", "Email")]
+        [MiarEmail]
         public string? Email { get; init; }
+
         public string? Flag { get; init; }
         public string? NewPassportNo { get; init; } // 7 haneli 
         public string? OldPassportNo { get; init; } // 9 haneli

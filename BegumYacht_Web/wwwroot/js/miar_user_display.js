@@ -1,12 +1,14 @@
-﻿import { getCellInfosOfClickedRowAsync } from "./miar_module.table.js";
+﻿import { isAllObjectValuesNullAsync, updateResultLabel } from "./miar_module.js"
 
 import {
-    addValueToDateInputAsync, convertStrDateToDateAsync,
-    convertStrUtcDateToStrLocalDateAsync,
-    isAllObjectValuesNullAsync,
-    isDatesEqualAsync,
-    updateResultLabel
-} from "./miar_module.js"
+    changeCellInfosOfRowAsync, getCellInfosOfClickedRowAsync
+} from "./miar_module.table.js";
+
+import {
+    addValueToDateInputAsync, convertLocalDateToUtcDateAsync, convertStrDateToDateAsync,
+    convertStrUtcDateToStrLocalDateAsync, isDatesEqualAsync,
+} from "./miar_module.date.js"
+
 
 import {
     checkInputsWhetherBlankAsync, click_inputAsync, click_showPasswordButtonAsync,
@@ -51,6 +53,7 @@ $(function () {
         panelTitle: $("#div_panelTitle")
     }
     const img_loading = $("#img_loading");
+    let tr_lastClicked;
     let userInfosOfLastClickedRow = [];
     //#endregion
 
@@ -115,7 +118,11 @@ $(function () {
 
     //#region display page
     tbl_user.children("tbody").on("click", "tr", async (event) => {
+        //#region set variables
+        tr_lastClicked = $(`tbody tr:nth-child(${event.currentTarget.rowIndex})`);
         userInfosOfLastClickedRow = await getCellInfosOfClickedRowAsync(event);
+        //#endregion
+
         await openUpdatePageAsync();
         await addDefaultValuesToFormAsync();
     })
@@ -264,10 +271,10 @@ $(function () {
             newPassportNo: inpt.newPassportNo.val(),
             oldPassportNo: inpt.oldPassportNo.val(),
             rank: inpt.rank.val(),
-            dateOfIssue: inpt.issueDate.val(),
-            passPortExpiry: inpt.passportExpiration.val(),
+            dateOfIssue: new Date(inpt.issueDate.val()),
+            passPortExpiry: new Date(inpt.passportExpiration.val()),
             nationality: inpt.nationality.val(),
-            birthDate: inpt.birthDate.val(),
+            birthDate: new Date(inpt.birthDate.val()),
             birthPlace: inpt.birthPlace.val(),
             gender: inpt.gender.val(),
             yachtType: slct.yachtType.val(),
@@ -288,25 +295,25 @@ $(function () {
                 await convertStrDateToDateAsync(userInfosOfLastClickedRow[7]),
                 { year: true, month: true, day: true, hours: true, minutes: true, second: false }) ?
                 null
-                : inputValues.dateOfIssue),
+                : await convertLocalDateToUtcDateAsync(inputValues.dateOfIssue)),
             passPortExpiry: (await isDatesEqualAsync(
                 inputValues.passPortExpiry,
                 await convertStrDateToDateAsync(userInfosOfLastClickedRow[8]),
                 { year: true, month: true, day: true, hours: true, minutes: true, second: false }) ?
                 null
-                : inputValues.passPortExpiry),
+                : await convertLocalDateToUtcDateAsync(inputValues.passPortExpiry)),
             nationality: inputValues.nationality == userInfosOfLastClickedRow[9] ? null : inputValues.nationality,
             dateOfBirth: (await isDatesEqualAsync(
                 inputValues.birthDate,
                 await convertStrDateToDateAsync(userInfosOfLastClickedRow[10]),
                 { year: true, month: true, day: true, hours: false, minutes: false, second: false }) ?
                 null
-                : inputValues.birthDate),
+                : await convertLocalDateToUtcDateAsync(inputValues.birthDate)),
             placeOfBirth: inputValues.birthPlace == userInfosOfLastClickedRow[11] ? null : inputValues.birthPlace,
             gender: inputValues.gender == userInfosOfLastClickedRow[12] ? null : inputValues.gender,
             yacthType: inputValues.yachtType == userInfosOfLastClickedRow[13] ? null : inputValues.yachtType,
             yacthName: inputValues.yachtName == userInfosOfLastClickedRow[14] ? null : inputValues.yachtName,
-            isPersonel: inputValues.isPersonel == userInfosOfLastClickedRow[15] ? null : inputValues.isPersonel == "true"? true : false,
+            isPersonel: inputValues.isPersonel == userInfosOfLastClickedRow[15] ? null : inputValues.isPersonel == "true" ? true : false,
             password: inputValues.password == "" ? null : inputValues.password
         }
         //#endregion
@@ -323,7 +330,7 @@ $(function () {
             return;
         }
         //#endregion
-    
+
         $.ajax({
             method: "POST",
             url: baseApiUrl + `/adminPanel/update?email=${userInfosOfLastClickedRow[2]}`,
@@ -335,19 +342,43 @@ $(function () {
                 img_loading.removeAttr("hidden"); // show
             },
             success: () => {
-                // write success message
-                updateResultLabel(
-                    p_resultLabel,
-                    "başarıyla güncellendi",
-                    resultLabel_successColor,
-                    "30px",
-                    img_loading);
+                new Promise(async resolve => {
+                    await changeCellInfosOfRowAsync(tr_lastClicked, [
+                        inputValues.nameSurname,
+                        inputValues.phoneNumber,
+                        inputValues.email,
+                        inputValues.flag,
+                        inputValues.newPassportNo,
+                        inputValues.oldPassportNo,
+                        inputValues.rank,
+                        inputValues.dateOfIssue,
+                        inputValues.passPortExpiry,
+                        inputValues.nationality,
+                        inputValues.birthDate,
+                        inputValues.birthPlace,
+                        inputValues.gender,
+                        inputValues.yachtType,
+                        inputValues.yachtName,
+                        inputValues.isPersonel
+                    ]);
+
+                    //#region write success messsage
+                    updateResultLabel(
+                        p_resultLabel,
+                        "başarıyla güncellendi",
+                        resultLabel_successColor,
+                        "30px",
+                        img_loading);
+
+                    resolve();
+                    //#endregion
+                })
             },
             error: (response) => {
                 // write error message
                 updateResultLabel(
                     p_resultLabel,
-                    response.responseText,
+                    JSON.parse(response.responseText).errorMessage,
                     resultLabel_errorColor,
                     "30px",
                     img_loading);

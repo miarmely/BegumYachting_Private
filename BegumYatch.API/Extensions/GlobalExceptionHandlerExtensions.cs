@@ -26,19 +26,21 @@ namespace BegumYatch.API.Extensions
 
                         #region set error details
                         var exceptionMsg = feature.Error.Message;
-                        object errorDetails;
+                        ErrorDto errorDto;
                         
                         try
                         {
                             #region when excepted error occured
-                            errorDetails = JsonSerializer
-                                .Deserialize<object>(exceptionMsg);
+                            errorDto = JsonSerializer
+                                .Deserialize<ErrorDto>(exceptionMsg);
+
+                            context.Response.StatusCode = errorDto.StatusCode;
                             #endregion
                         }
                         catch (Exception ex)
                         {
                             #region when unexcepted error occured
-                            errorDetails = new
+                            errorDto = new ErrorDto
                             {
                                 StatusCode = context.Response.StatusCode,
                                 ErrorCode = "ISE",
@@ -48,7 +50,7 @@ namespace BegumYatch.API.Extensions
                         }
                         #endregion
 
-                        await context.Response.WriteAsJsonAsync(errorDetails);
+                        await context.Response.WriteAsJsonAsync(errorDto);
                     }
                     #endregion  
                 });

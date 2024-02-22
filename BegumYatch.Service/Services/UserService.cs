@@ -11,8 +11,10 @@ using BegumYatch.Repository.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
@@ -36,7 +38,6 @@ namespace BegumYatch.Service.Services
             _emailService = emailService;
             _userManager = userManager;
             _mailOtpRepository = mailOtpRepository;
-
         }
 
         public async Task<List<ReturnResponseModel>> VerifyConfirmCode(VerifyConfirmCode verifyConfirmCode)
@@ -237,28 +238,45 @@ namespace BegumYatch.Service.Services
             if (userDto.PhoneNumber != null) user.PhoneNumber = userDto.PhoneNumber;
             if (userDto.Email != null) user.Email = userDto.Email;
             if (userDto.Flag != null) user.Flag = userDto.Flag;
-            if (userDto.NewPassportNo != null) 
+            if (userDto.NewPassportNo != null)
                 user.NewPassportNo = userDto.NewPassportNo;
-            if (userDto.OldPassportNo != null) 
+            if (userDto.OldPassportNo != null)
                 user.OldPassportNo = userDto.OldPassportNo;
             if (userDto.Rank != null) user.Rank = userDto.Rank;
             if (userDto.DateOfIssue != null) user.DateOfIssue = userDto.DateOfIssue;
-            if (userDto.PassPortExpiry != null) 
+            if (userDto.PassPortExpiry != null)
                 user.PassPortExpiry = userDto.PassPortExpiry;
             if (userDto.Nationality != null) user.Nationality = userDto.Nationality;
             if (userDto.DateOfBirth != null) user.DateOfBirth = userDto.DateOfBirth;
-            if (userDto.PlaceOfBirth != null) 
+            if (userDto.PlaceOfBirth != null)
                 user.PlaceOfBirth = userDto.PlaceOfBirth;
             if (userDto.Gender != null) user.Gender = userDto.Gender;
             if (userDto.YacthType != null) user.YacthType = userDto.YacthType;
             if (userDto.YacthName != null) user.YacthName = userDto.YacthName;
             if (userDto.IsPersonel != null) user.IsPersonel = userDto.IsPersonel;
+            if (userDto.Password != null) 
+                user.PasswordHash = await ComputeMd5Async(userDto.Password);
 
-            _userRepository.Update(user);
             await _unitOfWork.CommitAsync();
             #endregion
         }
 
+        private async Task<string> ComputeMd5Async(string value)
+        {
+            using (var md5 = MD5.Create())
+            {
+                #region hash the value
+                var hashedValueInBytes = md5.ComputeHash(Encoding
+                    .UTF8
+                    .GetBytes(value));
+
+                var hashedValueInBase64Str = Convert
+                    .ToBase64String(hashedValueInBytes);
+                #endregion
+
+                return hashedValueInBase64Str;
+            }
+        }
 
         // BELONG TO RUMEYSA (REMOVED SERVICES) (By MERT)
         //public async Task<int> UpdateCrewAndPassenger(

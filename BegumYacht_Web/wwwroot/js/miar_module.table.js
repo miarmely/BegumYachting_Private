@@ -11,4 +11,14 @@ export async function getCellInfosOfClickedRowAsync(event) {
 
     return cellInfos;
 }
+export async function changeCellInfosOfRowAsync(row, newCellInfos) {
+    let cellCount = row.prop("cells").length;
+
+    for (let index = 0; index < cellCount; index++) {
+        let td = row.children(`td:nth-child(${index + 1})`);
+
+        td.empty();
+        td.append(newCellInfos[index]);
+    }
+}
 //#endregion
