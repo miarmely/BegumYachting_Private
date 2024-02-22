@@ -41,6 +41,6 @@ namespace BegumYatch.API.Extensions
                         .AllowAnyMethod()
                         .AllowAnyHeader();
                 });
-            });  // mert
+            });  // by MERT
     }
 }

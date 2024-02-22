@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using BegumYatch.Core.DTOs.Error;
 using BegumYatch.Core.DTOs.Password;
 using BegumYatch.Core.DTOs.User;
 using BegumYatch.Core.DTOs.UserLogin;
 using BegumYatch.Core.DTOs.UserRegister;
+using BegumYatch.Core.Enums;
 using BegumYatch.Core.Models.User;
 using BegumYatch.Core.Repositories;
 using BegumYatch.Core.Services;
@@ -18,6 +20,7 @@ using Newtonsoft.Json.Linq;
 using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace BegumYatch.API.Controllers
 {
@@ -150,6 +153,7 @@ namespace BegumYatch.API.Controllers
         public async Task<IActionResult> GetAllUsers()
         {
             var response = await _userService.GetAllUsers<GetUsersDto>();
+            
             return Ok(response);
         }
 

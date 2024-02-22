@@ -440,7 +440,7 @@ export async function isDatesEqualAsync(pDate1, pDate2, check = {
     minutes: true,
     seconds: true
 }) {
-    // region compare dates
+    //#region compare dates
     let date1 = new Date(pDate1);
     let date2 = new Date(pDate2);
 
@@ -567,13 +567,12 @@ export async function setDisabledOfButtonsAsync(doDisabled, buttonIds, bgColor) 
     //#endregion
 }
 export async function isAllObjectValuesNullAsync(object) {
-    //#region compute total null value quantity
+    //#region compute total null value count
     let nullCounter = 0
 
     for (let key in object) {
         let value = object[key];
 
-        // when data is null
         if (value == null)
             nullCounter += 1;
     }

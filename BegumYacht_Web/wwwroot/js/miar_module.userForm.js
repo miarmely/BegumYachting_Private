@@ -55,7 +55,7 @@ export async function click_inputAsync(event, lbl_result) {
     //#endregion
 
     //#region reset "spn_help" of clicked input
-    let spn_help = input.siblings("span");
+    let spn_help = input.siblings("span[class= help-block]");
     spn_help.attr("hidden", "");
     spn_help.empty();
     //#endregion
@@ -168,12 +168,13 @@ export async function checkValueOfNumberInputAsync(inpt, minValue, maxValue) {
 export async function checkInputsWhetherBlankAsync(inputList) {
     //#region check inputs whether is blank 
     let isAnyInputBlank = false;
-
+   
     for (let index in inputList) {
         //#region when input is blank
         let input = inputList[index];
-
-        if (input.val() == '') {
+        
+        if (input.val() == ''
+            || input.val() == null) {
             await writeErrorToBelowOfInputAsync(
                 input,
                 langPack.errorMessages.blankInput);
@@ -194,7 +195,7 @@ export async function writeErrorToBelowOfInputAsync(input, error) {
     });
 
     // write error to "span_help"
-    let spn_help = input.siblings("span");
+    let spn_help = input.siblings("span[class= help-block]");
     spn_help.empty();
     spn_help.append(error);
 }
@@ -228,8 +229,11 @@ export async function resetFormAsync(lbl_result) {
     $("form")[0].reset();
     lbl_result.empty();
 
-    // remove error message and border color of inputs
-    $("form .help-block").empty(); // error message
-    $("form input").css("border-color", ""); // border color
+    // remove error message
+    $("form .help-block").empty();
+
+    // reset "red" border color of input or select
+    $("form input").css("border-color", "");
+    $("form select").css("border-color", "");
 }
 //#endregion

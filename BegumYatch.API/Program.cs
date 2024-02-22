@@ -103,9 +103,11 @@ builder.Services.ConfigureApplicationCookie(opt =>
         opt.ExpireTimeSpan = TimeSpan.FromDays(60);
         opt.SlidingExpiration = true;
     });
-builder.Services.ConfigureCors();  // mert
+builder.Services.ConfigureCors();  // by MERT
 
 var app = builder.Build();
+
+app.ConfigureGlobalExceptionHandler();  // by MERT
 
 using (var scope = app.Services.CreateScope())
 {
@@ -119,6 +121,7 @@ if (!app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 app.UseSwagger();
 app.UseSwaggerUI();
 
