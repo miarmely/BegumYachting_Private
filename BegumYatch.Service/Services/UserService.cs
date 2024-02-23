@@ -229,13 +229,14 @@ namespace BegumYatch.Service.Services
             #region control the conflict (throw)
             if (userDto.Email != null || userDto.PhoneNumber != null)
             {
-                // get users that have same email or phone
+                #region get users that have same email or phone
                 var conflictedUsers = _userRepository
                     .Where(u => u.Email.Equals(userDto.Email)
                         || u.PhoneNumber.Equals(userDto.PhoneNumber))
                     .ToList();
+                #endregion
 
-                // when conflict occured
+                #region when conflict occured
                 if (conflictedUsers.Count != 0)
                 {
                     #region when phone is conflicted (throw)
@@ -266,6 +267,7 @@ namespace BegumYatch.Service.Services
                         );
                     #endregion
                 }
+                #endregion
             }
             #endregion
 
@@ -281,8 +283,25 @@ namespace BegumYatch.Service.Services
 
             #region update user
             user.NameSurname = userDto.NameSurname ?? user.NameSurname;
-            user.PhoneNumber = userDto.PhoneNumber ?? user.PhoneNumber;
-            user.Email = userDto.Email ?? user.Email;
+            #region phone
+            if (userDto.PhoneNumber != null)
+            {
+                var tokenForChangePhone = await _userManager
+                    .GenerateChangePhoneNumberTokenAsync(user, userDto.PhoneNumber);
+
+                await _userManager.ChangePhoneNumberAsync(
+                    user,
+                    userDto.PhoneNumber,
+                    tokenForChangePhone);
+            }
+            #endregion
+            #region email
+            if (email != null)
+                await _userManager.ChangeEmailAsync(
+                    user,
+                    email,
+                    await _userManager.GenerateChangeEmailTokenAsync(user, email));
+            #endregion
             user.Flag = userDto.Flag ?? user.Flag;
             user.NewPassportNo = userDto.NewPassportNo ?? user.NewPassportNo;
             user.OldPassportNo = userDto.OldPassportNo ?? user.OldPassportNo;
@@ -298,7 +317,15 @@ namespace BegumYatch.Service.Services
             user.IsPersonel = userDto.IsPersonel ?? user.IsPersonel;
             #region password
             if (userDto.Password != null)
-                user.PasswordHash = await ComputeMd5Async(userDto.Password);
+                await _userManager.ResetPasswordAsync(
+                    user,
+                    await _userManager.GeneratePasswordResetTokenAsync(user),
+                    userDto.Password);
+            #endregion
+
+            #region reset email
+
+
             #endregion
 
             await _unitOfWork.CommitAsync();
@@ -322,7 +349,6 @@ namespace BegumYatch.Service.Services
             }
         }
         #endregion
-
 
 
         // BELONG TO RUMEYSA (REMOVED SERVICES) (By MERT)

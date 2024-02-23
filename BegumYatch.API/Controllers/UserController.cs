@@ -14,13 +14,9 @@ using BegumYatch.Service.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Server.IIS.Core;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Linq;
-using System.Globalization;
-using System.Linq;
 using System.Security.Claims;
-using System.Text.Json;
+
 
 namespace BegumYatch.API.Controllers
 {
@@ -90,7 +86,7 @@ namespace BegumYatch.API.Controllers
             {
                 var user = await _userManager.FindByEmailAsync(userLoginDto.Email);
                 var userrole = "AdvancedRole";
-                var result = await _signInManager.PasswordSignInAsync(userLoginDto.Email, userLoginDto.Password, false, true);
+                var result = await _signInManager.PasswordSignInAsync(userLoginDto.Email, userLoginDto.Password, false, false);
 
                 if (!result.Succeeded)
                     return Unauthorized(userLoginDto);
@@ -107,7 +103,6 @@ namespace BegumYatch.API.Controllers
                 //refresh the Login
                 await _signInManager.RefreshSignInAsync(user);
 
-
                 var userInfo = new
                 {
                     succeeded = result.Succeeded,
@@ -119,7 +114,6 @@ namespace BegumYatch.API.Controllers
 
                 return Ok(userInfo);
             }
-
         }
 
 
