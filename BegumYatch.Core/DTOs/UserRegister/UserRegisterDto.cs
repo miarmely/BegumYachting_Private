@@ -20,6 +20,5 @@ namespace BegumYatch.Core.DTOs.UserRegister
 
      //   [Required(ErrorMessage = "Lütfen Şifre Giriniz.")]
         public string Password { get; set; }
-
     }
 }

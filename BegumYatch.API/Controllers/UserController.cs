@@ -48,17 +48,26 @@ namespace BegumYatch.API.Controllers
 
         [HttpPost]
         [Route("UserRegister")]
-        public async Task<IActionResult> UserRegister([FromBody] UserRegisterDto userRegisterDto)
+        public async Task<IActionResult> UserRegister(
+            [FromBody] UserRegisterDto userRegisterDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             else
             {
-                var mapUser = _mapper.Map<AppUser>(userRegisterDto);
+                var mapUser = _mapper.Map<AppUser>(userRegisterDto);   
                 mapUser.UserName = userRegisterDto.Email/*.Split('@')[0]*/;
-                var result = await _userManager.CreateAsync(mapUser, userRegisterDto.Password);
+                mapUser.DateOfIssue = DateTime.MinValue; // temporary
+                mapUser.PassPortExpiry = DateTime.MinValue;  // temporary
+                mapUser.DateOfBirth = DateTime.MinValue;  // temporary
+
+                var result = await _userManager.CreateAsync(
+                    mapUser, 
+                    userRegisterDto.Password);
+
                 if (result.Succeeded)
                     return Ok(result);
+
                 else
                 {
                     foreach (var error in result.Errors)
@@ -106,7 +115,6 @@ namespace BegumYatch.API.Controllers
                     isNotAllowed = result.IsNotAllowed,
                     requiresTwoFactor = result.RequiresTwoFactor,
                     userId = user.Id,
-
                 };
 
                 return Ok(userInfo);
@@ -126,6 +134,7 @@ namespace BegumYatch.API.Controllers
             }
             return Ok(personelInfo);
         }
+
 
         [HttpPut]
         [Route("VerifyConfirmCode")]
@@ -261,6 +270,7 @@ namespace BegumYatch.API.Controllers
 
             }
         }
+
 
         #region writed by mert 
         [HttpGet("adminPanel/getAllUsers/paging")]

@@ -6,10 +6,10 @@ namespace Entities.Attributes
 {
 	public class MiarPhoneAttribute : ValidationAttribute
 	{
-		private readonly object _errorDetails = new
+		private readonly ErrorDto _errorDto = new ErrorDto
 		{
-			StatusCodes = 400,
-			ErrorCode = "FE-U-Ph",
+			StatusCode = 400,
+			ErrorCode = "FE-U-P",
 			ErrorDescription = "Format Error - User - Phone",
 			ErrorMessage = "\"Telefon\" geçerli değil"
 		};
@@ -30,7 +30,7 @@ namespace Entities.Attributes
 				.Substring(0, phoneInStr.Length / 2);
 
 			if (!int.TryParse(leftChunkOfString, out int _))
-				throw new MiarException(_errorDetails);
+				throw new MiarException(_errorDto);
 			#endregion
 
 			#region control right chunk of string (throw)
@@ -38,7 +38,7 @@ namespace Entities.Attributes
 				.Substring(phoneInStr.Length / 2);
 
 			if (!int.TryParse(rightChunkOfString, out int _))
-                throw new MiarException(_errorDetails);
+                throw new MiarException(_errorDto);
             #endregion
 
             return ValidationResult.Success;

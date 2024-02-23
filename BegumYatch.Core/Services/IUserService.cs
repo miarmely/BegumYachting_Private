@@ -14,6 +14,7 @@ namespace BegumYatch.Core.Services
         Task<String> VerifyOtp(String code, int UserId);
         Task<List<TDto>> GetAllUsers<TDto>();
         Task UpdateUserAsync(string email, UserDtoForUpdate userDto);
+        Task<string> ComputeMd5Async(string value);
       //  Task<IDataResult<UsersDto>> CreateUser(UserAddViewModel userAddViewModel);
         //bunun updateni eklemeyi unutma
     }

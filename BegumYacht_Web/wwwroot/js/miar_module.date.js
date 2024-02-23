@@ -60,21 +60,8 @@ export async function convertStrDateToDateAsync(dateInStr) {
 
     return new Date(dateInStr);
 }
-export async function convertLocalDateToUtcDateAsync(localDate) {
-    let dateInfos = await getDateInfosInJsonAsync(localDate);
-
-    return new Date(Date.UTC(
-        dateInfos.year,
-        dateInfos.month,
-        dateInfos.day,
-        dateInfos.hours,
-        dateInfos.minutes,
-        dateInfos.seconds
-    ));  // return utc date as number
-}
-export async function convertDateToStrDateAsync(dateTime) {
-    //#region set format to datetime
-    let formatter = new Intl.DateTimeFormat(window.navigator.language, {
+export async function convertLocalDateToUtcDateAsync(localDate = new Date()) {
+    let utcDateInStr = localDate.toLocaleString(window.navigator.language, {
         year: "numeric",
         month: "2-digit",
         day: "2-digit",
@@ -82,10 +69,36 @@ export async function convertDateToStrDateAsync(dateTime) {
         minute: "2-digit",
         second: "2-digit",
         hour12: false,
-    })
+        timeZone: "UTC",
+    });
+    
+    return new Date(utcDateInStr);
+}
+export async function convertUtcDateToLocalDateAsync(utcDate = new Date()) {
+    let dateInfos = await getDateInfosInJsonAsync(utcDate);
+    let localDateInNumber = Date.UTC(
+        dateInfos.year,
+        dateInfos.month,
+        dateInfos.day,
+        dateInfos.hours,
+        dateInfos.minutes,
+        dateInfos.seconds);
 
-    let dateInStr = formatter.format(dateTime);
-    dateInStr.replace(", ", "__");  // "12.03.2002, 13:00:00" ~~> "12.03.2002__13:00:00" 
+    return new Date(localDateInNumber);
+}
+export async function convertDateToStrDateAsync(dateTime) {
+    //#region get datetime in str
+    let dateInStr = dateTime.toLocaleString(window.navigator.language, {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+    });
+
+    dateInStr = dateInStr.replace(", ", "__");  // "12.03.2002, 13:00:00" ~~> "12.03.2002__13:00:00" 
     //#endregion
 
     return dateInStr;

@@ -6,7 +6,7 @@ namespace Entities.Attributes
 {
 	public class MiarEmailAttribute : ValidationAttribute
 	{
-		private readonly object _errorDetails = new
+		private readonly ErrorDto _errorDto = new ErrorDto
 		{
 			StatusCode = 400,
 			ErrorCode = "FE-U-E",
@@ -31,7 +31,7 @@ namespace Entities.Attributes
 			if (totalAtQuantity == 0  // when '@' not found 
 				|| totalAtQuantity > 1  // when total '@' quantity more than 1
 				|| atIndex == email.Length - 1) // when '@' in last index.
-				throw new MiarException(_errorDetails);
+				throw new MiarException(_errorDto);
 			#endregion
 
 			#region control email extension (throw)
@@ -40,7 +40,7 @@ namespace Entities.Attributes
 			var emailExtension = email.Substring(atIndex + 1); // ex => gmail.com
 
 			if (emailExtension.Length < 3)  // min valid extension: @a.b
-				throw new MiarException(_errorDetails);
+				throw new MiarException(_errorDto);
 			#endregion
 
 			#region control '.' (throw)
@@ -50,7 +50,7 @@ namespace Entities.Attributes
 			if (totalDotQuantity == 0 // when '.' not found
 				|| dotIndex == 0  // when no char between '@' and '.'
 				|| dotIndex == emailExtension.Length - 1)  // when '.' last Index
-				throw new MiarException(_errorDetails);
+				throw new MiarException(_errorDto);
 			#endregion
 
 			#endregion

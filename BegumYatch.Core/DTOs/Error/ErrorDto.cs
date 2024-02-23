@@ -6,6 +6,7 @@ namespace BegumYatch.Core.DTOs.Error
     {
         public int StatusCode { get; init; }
         public string ErrorCode { get; init; }
+        public string ErrorDescription { get; init; }
         public string ErrorMessage { get; init; }
     }
 
@@ -15,6 +16,7 @@ namespace BegumYatch.Core.DTOs.Error
         {
             StatusCode,
             ErrorCode,
+            ErrorDescription,
             ErrorMessage
         };
         public string toString() => 

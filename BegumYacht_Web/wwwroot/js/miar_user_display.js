@@ -5,10 +5,9 @@ import {
 } from "./miar_module.table.js";
 
 import {
-    addValueToDateInputAsync, convertLocalDateToUtcDateAsync, convertStrDateToDateAsync,
+    addValueToDateInputAsync, convertDateToStrDateAsync, convertStrDateToDateAsync,
     convertStrUtcDateToStrLocalDateAsync, isDatesEqualAsync,
 } from "./miar_module.date.js"
-
 
 import {
     checkInputsWhetherBlankAsync, click_inputAsync, click_showPasswordButtonAsync,
@@ -161,7 +160,7 @@ $(function () {
                             gender: userInfo.gender,
                             yacthType: userInfo.yacthType,
                             yacthName: userInfo.yacthName,
-                            isPersonel: userInfo.isPersonel,
+                            isPersonel: userInfo.isPersonel == null? null : userInfo.isPersonel.toString(),
                         })
                     }
                     //#endregion
@@ -231,7 +230,22 @@ $(function () {
         inpt.newPassportNo.val(userInfosOfLastClickedRow[4]);
         inpt.oldPassportNo.val(userInfosOfLastClickedRow[5]);
         inpt.rank.val(userInfosOfLastClickedRow[6]);
+        await addValueToDateInputAsync(
+            inpt.issueDate,
+            "datetime",
+            null,
+            userInfosOfLastClickedRow[7]);  // issue date
+        await addValueToDateInputAsync(
+            inpt.passportExpiration,
+            "datetime",
+            null,
+            userInfosOfLastClickedRow[8]);  // passport expiration
         inpt.nationality.val(userInfosOfLastClickedRow[9]);
+        await addValueToDateInputAsync(
+            inpt.birthDate,
+            "date",
+            null,
+            userInfosOfLastClickedRow[10]);  // birth date
         inpt.birthPlace.val(userInfosOfLastClickedRow[11]);
         inpt.gender.val(userInfosOfLastClickedRow[12]);
         slct.yachtType.val(userInfosOfLastClickedRow[13]);
@@ -243,23 +257,6 @@ $(function () {
         else
             $("#rad_no").prop("checked", true);
         //#endregion
-
-        // date inputs
-        await addValueToDateInputAsync(
-            inpt.issueDate,
-            "datetime",
-            null,
-            userInfosOfLastClickedRow[7]);  // issue date
-        await addValueToDateInputAsync(
-            inpt.passportExpiration,
-            "datetime",
-            null,
-            userInfosOfLastClickedRow[8]);  // passport expiration
-        await addValueToDateInputAsync(
-            inpt.birthDate,
-            "date",
-            null,
-            userInfosOfLastClickedRow[10]);  // birth date
     }
     async function updateUserAsync() {
         //#region set data
@@ -295,20 +292,20 @@ $(function () {
                 await convertStrDateToDateAsync(userInfosOfLastClickedRow[7]),
                 { year: true, month: true, day: true, hours: true, minutes: true, second: false }) ?
                 null
-                : await convertLocalDateToUtcDateAsync(inputValues.dateOfIssue)),
+                : inputValues.dateOfIssue),
             passPortExpiry: (await isDatesEqualAsync(
                 inputValues.passPortExpiry,
                 await convertStrDateToDateAsync(userInfosOfLastClickedRow[8]),
                 { year: true, month: true, day: true, hours: true, minutes: true, second: false }) ?
                 null
-                : await convertLocalDateToUtcDateAsync(inputValues.passPortExpiry)),
+                : inputValues.passPortExpiry),
             nationality: inputValues.nationality == userInfosOfLastClickedRow[9] ? null : inputValues.nationality,
             dateOfBirth: (await isDatesEqualAsync(
                 inputValues.birthDate,
                 await convertStrDateToDateAsync(userInfosOfLastClickedRow[10]),
                 { year: true, month: true, day: true, hours: false, minutes: false, second: false }) ?
                 null
-                : await convertLocalDateToUtcDateAsync(inputValues.birthDate)),
+                : inputValues.birthDate),
             placeOfBirth: inputValues.birthPlace == userInfosOfLastClickedRow[11] ? null : inputValues.birthPlace,
             gender: inputValues.gender == userInfosOfLastClickedRow[12] ? null : inputValues.gender,
             yacthType: inputValues.yachtType == userInfosOfLastClickedRow[13] ? null : inputValues.yachtType,
@@ -343,7 +340,8 @@ $(function () {
             },
             success: () => {
                 new Promise(async resolve => {
-                    await changeCellInfosOfRowAsync(tr_lastClicked, [
+                    //#region change cell infos
+                    let newCellInfos = [
                         inputValues.nameSurname,
                         inputValues.phoneNumber,
                         inputValues.email,
@@ -351,16 +349,20 @@ $(function () {
                         inputValues.newPassportNo,
                         inputValues.oldPassportNo,
                         inputValues.rank,
-                        inputValues.dateOfIssue,
-                        inputValues.passPortExpiry,
+                        await convertDateToStrDateAsync(inputValues.dateOfIssue),
+                        await convertDateToStrDateAsync(inputValues.passPortExpiry),
                         inputValues.nationality,
-                        inputValues.birthDate,
+                        await convertDateToStrDateAsync(inputValues.birthDate),
                         inputValues.birthPlace,
                         inputValues.gender,
                         inputValues.yachtType,
                         inputValues.yachtName,
                         inputValues.isPersonel
-                    ]);
+                    ];
+                    userInfosOfLastClickedRow = newCellInfos;
+
+                    await changeCellInfosOfRowAsync(tr_lastClicked, newCellInfos);
+                    //#endregion
 
                     //#region write success messsage
                     updateResultLabel(

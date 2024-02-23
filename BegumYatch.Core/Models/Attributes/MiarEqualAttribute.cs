@@ -42,14 +42,11 @@ namespace Entities.Attributes
                 #region throw error
                 var first2CharOfDisplayNameInEN = _displayNameInEN.Substring(0, 2);
 
-                throw new MiarException(new
-                {
-                    StatusCode = 400,
-                    ErrorCode = $"FE-NV-{first2CharOfDisplayNameInEN}",
-                    ErrorDescriptions = 
-                        $"Format Error - Not Valid - {_displayNameInEN}",
-                    ErrorMessage = errorMessage
-                });
+                throw new MiarException(
+                    400,
+                    $"FE-NV-{first2CharOfDisplayNameInEN}",
+                    $"Format Error - Not Valid - {_displayNameInEN}",
+                    errorMessage);
                 #endregion
             }
             #endregion

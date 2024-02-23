@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BegumYatch.Core.DTOs.Error;
 using BegumYatch.Core.DTOs.User;
 using BegumYatch.Core.DTOs.UserRegister;
 using BegumYatch.Core.Enums;
@@ -221,8 +222,53 @@ namespace BegumYatch.Service.Services
                 return null;
         }
 
+
+        #region By MERT
         public async Task UpdateUserAsync(string email, UserDtoForUpdate userDto)
         {
+            #region control the conflict (throw)
+            if (userDto.Email != null || userDto.PhoneNumber != null)
+            {
+                // get users that have same email or phone
+                var conflictedUsers = _userRepository
+                    .Where(u => u.Email.Equals(userDto.Email)
+                        || u.PhoneNumber.Equals(userDto.PhoneNumber))
+                    .ToList();
+
+                // when conflict occured
+                if (conflictedUsers.Count != 0)
+                {
+                    #region when phone is conflicted (throw)
+                    var conflictedUserByPhone = conflictedUsers
+                        .Where(u => u.PhoneNumber.Equals(userDto.PhoneNumber))
+                        .ToList();
+
+                    if (conflictedUserByPhone.Count != 0)
+                        throw new MiarException(
+                            409,
+                            "CE-U-P",
+                            "Conflict Error - User - Phone",
+                            "girilen telefon numarası zaten kayıtlı"
+                        );
+                    #endregion
+
+                    #region when email is conflicted (throw)
+                    var conflictedUserByEmail = conflictedUsers
+                        .Where(u => u.Email.Equals(userDto.Email))
+                        .ToList();
+
+                    if (conflictedUserByEmail.Count != 0)
+                        throw new MiarException(
+                            409,
+                            "CE-U-E",
+                            "Conflict Error - User - Email",
+                            "girilen email zaten kayıtlı"
+                        );
+                    #endregion
+                }
+            }
+            #endregion
+
             #region  get user by id (error)
             var user = _userRepository
                 .Where(x => x.Email == email)
@@ -234,34 +280,32 @@ namespace BegumYatch.Service.Services
             #endregion
 
             #region update user
-            if (userDto.NameSurname != null) user.NameSurname = userDto.NameSurname;
-            if (userDto.PhoneNumber != null) user.PhoneNumber = userDto.PhoneNumber;
-            if (userDto.Email != null) user.Email = userDto.Email;
-            if (userDto.Flag != null) user.Flag = userDto.Flag;
-            if (userDto.NewPassportNo != null)
-                user.NewPassportNo = userDto.NewPassportNo;
-            if (userDto.OldPassportNo != null)
-                user.OldPassportNo = userDto.OldPassportNo;
-            if (userDto.Rank != null) user.Rank = userDto.Rank;
-            if (userDto.DateOfIssue != null) user.DateOfIssue = userDto.DateOfIssue;
-            if (userDto.PassPortExpiry != null)
-                user.PassPortExpiry = userDto.PassPortExpiry;
-            if (userDto.Nationality != null) user.Nationality = userDto.Nationality;
-            if (userDto.DateOfBirth != null) user.DateOfBirth = userDto.DateOfBirth;
-            if (userDto.PlaceOfBirth != null)
-                user.PlaceOfBirth = userDto.PlaceOfBirth;
-            if (userDto.Gender != null) user.Gender = userDto.Gender;
-            if (userDto.YacthType != null) user.YacthType = userDto.YacthType;
-            if (userDto.YacthName != null) user.YacthName = userDto.YacthName;
-            if (userDto.IsPersonel != null) user.IsPersonel = userDto.IsPersonel;
-            if (userDto.Password != null) 
+            user.NameSurname = userDto.NameSurname ?? user.NameSurname;
+            user.PhoneNumber = userDto.PhoneNumber ?? user.PhoneNumber;
+            user.Email = userDto.Email ?? user.Email;
+            user.Flag = userDto.Flag ?? user.Flag;
+            user.NewPassportNo = userDto.NewPassportNo ?? user.NewPassportNo;
+            user.OldPassportNo = userDto.OldPassportNo ?? user.OldPassportNo;
+            user.Rank = userDto.Rank ?? user.Rank;
+            user.DateOfIssue = userDto.DateOfIssue ?? user.DateOfIssue;
+            user.PassPortExpiry = userDto.PassPortExpiry ?? user.PassPortExpiry;
+            user.Nationality = userDto.Nationality ?? user.Nationality;
+            user.DateOfBirth = userDto.DateOfBirth ?? user.DateOfBirth;
+            user.PlaceOfBirth = userDto.PlaceOfBirth ?? user.PlaceOfBirth;
+            user.Gender = userDto.Gender ?? user.Gender;
+            user.YacthType = userDto.YacthType ?? user.YacthType;
+            user.YacthName = userDto.YacthName ?? user.YacthName;
+            user.IsPersonel = userDto.IsPersonel ?? user.IsPersonel;
+            #region password
+            if (userDto.Password != null)
                 user.PasswordHash = await ComputeMd5Async(userDto.Password);
+            #endregion
 
             await _unitOfWork.CommitAsync();
             #endregion
         }
 
-        private async Task<string> ComputeMd5Async(string value)
+        public async Task<string> ComputeMd5Async(string value)
         {
             using (var md5 = MD5.Create())
             {
@@ -277,6 +321,9 @@ namespace BegumYatch.Service.Services
                 return hashedValueInBase64Str;
             }
         }
+        #endregion
+
+
 
         // BELONG TO RUMEYSA (REMOVED SERVICES) (By MERT)
         //public async Task<int> UpdateCrewAndPassenger(

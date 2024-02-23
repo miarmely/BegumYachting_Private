@@ -44,6 +44,7 @@ namespace BegumYatch.API.Extensions
                             {
                                 StatusCode = context.Response.StatusCode,
                                 ErrorCode = "ISE",
+                                ErrorDescription = "Internal Server Error",
                                 ErrorMessage = exceptionMsg
                             };
                             #endregion

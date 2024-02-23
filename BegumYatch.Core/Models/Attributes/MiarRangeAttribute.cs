@@ -37,25 +37,21 @@ namespace Entities.Attributes
 
 			if (_minValue != -1  // when min value control is wanted
 				&& (int)value < _minValue)
-				throw new MiarException(new
-				{
-					StatusCode = 400,
-					ErrorCode = $"FE-MinV-{first2CharOfDisplayNameInEN}",
-					ErrorDescription = $"Format Error - Minimum Value - {_displayNameInEN}",
-					ErrorMessage = $"\"{_displayNameInTR}\" en az '{_minValue}' değerini alabilir"
-				});
+				throw new MiarException(
+					400,
+					$"FE-MinV-{first2CharOfDisplayNameInEN}",
+					$"Format Error - Minimum Value - {_displayNameInEN}",
+					$"\"{_displayNameInTR}\" en az '{_minValue}' değerini alabilir");
 			#endregion
 
 			#region when max value exceeded (throw)
 			else if (_maxValue != -1  // when max value control is wanted
 				&& (int)value > _maxValue)
-                throw new MiarException(new
-                {
-                    StatusCode = 400,
-                    ErrorCode = $"FE-MaxV-{first2CharOfDisplayNameInEN}",
-                    ErrorDescription = $"Format Error - Maximum Value - {_displayNameInEN}",
-                    ErrorMessage = $"\"{_displayNameInTR}\" en fazla '{_maxValue}' değerini alabilir"
-                });
+                throw new MiarException(
+                    400,
+                    $"FE-MaxV-{first2CharOfDisplayNameInEN}",
+                    $"Format Error - Maximum Value - {_displayNameInEN}",
+                    $"\"{_displayNameInTR}\" en fazla '{_maxValue}' değerini alabilir");
 			#endregion
 
 			return null;
