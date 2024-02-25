@@ -271,7 +271,7 @@ namespace BegumYatch.Service.Services
             }
             #endregion
 
-            #region  get user by id (error)
+            #region  get user by id (throw)
             var user = await _userManager.FindByEmailAsync(email);
 
             // when user not found
@@ -336,23 +336,6 @@ namespace BegumYatch.Service.Services
             await _userManager.UpdateAsync(user);
             //await _unitOfWork.CommitAsync();
             #endregion
-        }
-
-        public async Task<string> ComputeMd5Async(string value)
-        {
-            using (var md5 = MD5.Create())
-            {
-                #region hash the value
-                var hashedValueInBytes = md5.ComputeHash(Encoding
-                    .UTF8
-                    .GetBytes(value));
-
-                var hashedValueInBase64Str = Convert
-                    .ToBase64String(hashedValueInBytes);
-                #endregion
-
-                return hashedValueInBase64Str;
-            }
         }
         #endregion
 

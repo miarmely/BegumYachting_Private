@@ -1,5 +1,6 @@
 ﻿using BegumYatch.Core.Enums;
 using Entities.Attributes;
+using MiarServices.Attributes;
 
 namespace BegumYatch.Core.DTOs.User
 {
@@ -28,6 +29,12 @@ namespace BegumYatch.Core.DTOs.User
         public YacthType? YacthType { get; init; }
         public string? YacthName { get; init; }
         public bool? IsPersonel { get; init; }
+
+        [MiarLength(6, 16, "Şifre", "Password")]
+        [MiarPassword(
+            true, true, true,
+            new char[] {'.', ',', '!', '?', '-', ':', ';'}, 
+            1, 1, 1, "Şifre", "Password")]
         public string? Password { get; init; }
     }
 }

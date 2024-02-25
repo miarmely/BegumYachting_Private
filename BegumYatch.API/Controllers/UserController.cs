@@ -86,9 +86,10 @@ namespace BegumYatch.API.Controllers
                 return BadRequest(ModelState);
             else
             {
-                // ignore lockout control
+                #region ignore lockout control (By MERT)
                 var user = await _userManager.FindByEmailAsync(userLoginDto.Email);
                 await _userManager.SetLockoutEnabledAsync(user, false);
+                #endregion
 
                 var userrole = "AdvancedRole";
                 var result = await _signInManager.PasswordSignInAsync(userLoginDto.Email, userLoginDto.Password, false, false);
