@@ -49,6 +49,7 @@ namespace BegumYatch.API.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
             else
             {
                 var mapUser = _mapper.Map<AppUser>(userRegisterDto);   
@@ -78,23 +79,29 @@ namespace BegumYatch.API.Controllers
 
         [HttpPost]
         [Route("UserLogin")]
-        public async Task<IActionResult> UserLogin([FromBody] UserLoginDto userLoginDto)
+        public async Task<IActionResult> UserLogin(
+            [FromBody] UserLoginDto userLoginDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             else
             {
+                // ignore lockout control
                 var user = await _userManager.FindByEmailAsync(userLoginDto.Email);
+                await _userManager.SetLockoutEnabledAsync(user, false);
+
                 var userrole = "AdvancedRole";
                 var result = await _signInManager.PasswordSignInAsync(userLoginDto.Email, userLoginDto.Password, false, false);
 
                 if (!result.Succeeded)
                     return Unauthorized(userLoginDto);
+
                 //create the current user claims principal
-                var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(user);
+                var claimsPrincipal = await _signInManager
+                    .CreateUserPrincipalAsync(user);
                 //get the current user's claims.
                 var claimresult = claimsPrincipal.Claims.ToList();
-                //it it doesn't contains the Role claims, add a role claims
+                //if it doesn't contains the Role claims, add a role claims
                 if (!claimresult.Any(c => c.Type == ClaimTypes.Role))
                 {
                     //add claims to current user. 

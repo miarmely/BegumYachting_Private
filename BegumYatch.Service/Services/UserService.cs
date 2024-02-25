@@ -272,9 +272,7 @@ namespace BegumYatch.Service.Services
             #endregion
 
             #region  get user by id (error)
-            var user = _userRepository
-                .Where(x => x.Email == email)
-                .FirstOrDefault();
+            var user = await _userManager.FindByEmailAsync(email);
 
             // when user not found
             if (user == null)
@@ -296,11 +294,24 @@ namespace BegumYatch.Service.Services
             }
             #endregion
             #region email
-            if (email != null)
+            if (userDto.Email != null)
+            {
+                #region update email
+                var tokenForChangeEmail = await _userManager
+                    .GenerateChangeEmailTokenAsync(user, userDto.Email);
+
                 await _userManager.ChangeEmailAsync(
                     user,
-                    email,
-                    await _userManager.GenerateChangeEmailTokenAsync(user, email));
+                    userDto.Email,
+                    tokenForChangeEmail);
+                #endregion
+
+                #region update fields related email
+                user.UserName = userDto.Email;
+                user.NormalizedEmail = userDto.Email.ToUpper();
+                user.NormalizedUserName = userDto.Email.ToUpper();
+                #endregion
+            }
             #endregion
             user.Flag = userDto.Flag ?? user.Flag;
             user.NewPassportNo = userDto.NewPassportNo ?? user.NewPassportNo;
@@ -322,13 +333,8 @@ namespace BegumYatch.Service.Services
                     await _userManager.GeneratePasswordResetTokenAsync(user),
                     userDto.Password);
             #endregion
-
-            #region reset email
-
-
-            #endregion
-
-            await _unitOfWork.CommitAsync();
+            await _userManager.UpdateAsync(user);
+            //await _unitOfWork.CommitAsync();
             #endregion
         }
 

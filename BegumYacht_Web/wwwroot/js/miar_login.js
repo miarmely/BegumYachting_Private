@@ -4,10 +4,6 @@ import { updateResultLabel } from "./miar_module.js"
 
 $(function () {
     //#region variables
-    const settings = {
-        "maxUnsuccessfulLoginCount": 3,
-        "lockoutTimeInMinute": 3,
-    }
     const btn = {
         "showPassword": $("#btn_show"),
         "login": $("#btn_login")
@@ -24,7 +20,6 @@ $(function () {
     const img_loading = $("#img_loading");
     const localKeys_username = "username";
     const chck_rememberMe = $("#chck_rememberMe");
-    let unsuccessfulLoginCount = 0;
     //#endregion
 
     //#region events
@@ -82,46 +77,28 @@ $(function () {
                     resolve(response.userId);
                 },
                 error: (response) => {
-                    //#region when unsuccessful login count is finished (error)
-                    unsuccessfulLoginCount++;
+                    //#region set error message by status code
+                    let errorMessage = "";
 
-                    if (unsuccessfulLoginCount == settings.maxUnsuccessfulLoginCount)
-                        updateResultLabel(
-                            p_resultLabel,
-                            "lütfen daha sonra tekrar deneyiniz",
-                            resultLabel.errorColor,
-                            resultLabel.defaultMarginT,
-                            img_loading);
-                    //#endregion
-
-                    //#region for other errors (error)
-                    else {
-                        //#region set error message by status code
-                        let errorMessage = "";
-
-                        switch (response.status) {
-                            case 400:  // for syntax error
-                                errorMessage = `email veya şifre yanlış`;
-                                break;
-
-                            case 401:  // for wrong username or password
-                                errorMessage = `email veya şifre yanlış`;
-                                break;
-
-                            default:  // for unexpected errors
-                                errorMessage = "bir hata oluştu, lütfen daha sonra tekrar deneyiniz";
-                                break;
-                        }
-                        //#endregion
-
-                        updateResultLabel(
-                            p_resultLabel,
-                            errorMessage,
-                            resultLabel.errorColor,
-                            "30px",
-                            img_loading);  // write error
+                    switch (response.status) {
+                        case 400:  // for syntax error
+                            errorMessage = `email veya şifre yanlış`;
+                            break;
+                        case 401:  // for wrong username or password
+                            errorMessage = `email veya şifre yanlış`;
+                            break;
+                        default:  // for unexpected errors
+                            errorMessage = "bir hata oluştu, lütfen daha sonra tekrar deneyiniz";
+                            break;
                     }
                     //#endregion
+
+                    updateResultLabel(
+                        p_resultLabel,
+                        errorMessage,
+                        resultLabel.errorColor,
+                        "30px",
+                        img_loading);  // write error
 
                     resolve(null);
                 }
