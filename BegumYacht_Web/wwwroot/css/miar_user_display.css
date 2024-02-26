@@ -1,8 +1,4 @@
 ﻿/* --------- DISPLAY PAGE --------- */
-#tbl_user {
-    width: 100%;
-}
-
 #div_userDisplay {
     margin: 30px 30px 15px 30px;
 }
@@ -20,6 +16,19 @@
                 color: white;
             }
 
+#div_tableMode{
+    color: black;
+    font-size: 15.5px;
+}
+
+#div_tableMode button{
+    background-color: red;
+    color: white;
+}
+
+#tbl_user {
+    width: 100%;
+}
 
 #tbl_user_wrapper {
     margin-bottom: 30px

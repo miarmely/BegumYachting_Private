@@ -337,6 +337,17 @@ namespace BegumYatch.Service.Services
             //await _unitOfWork.CommitAsync();
             #endregion
         }
+
+        public async Task DeleteUsersAsync(UserDtoForDelete userDto)
+        {
+            #region delete users by email
+            foreach (var email in userDto.Emails)
+            {
+                var user = await _userManager.FindByEmailAsync(email);
+                await _userManager.DeleteAsync(user);
+            }
+            #endregion
+        }
         #endregion
 
 

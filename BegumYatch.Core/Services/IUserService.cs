@@ -13,8 +13,10 @@ namespace BegumYatch.Core.Services
         Task<String> SendOtp(MailOtp model);
         Task<String> VerifyOtp(String code, int UserId);
         Task<List<TDto>> GetAllUsers<TDto>();
+
+        #region By MERT
         Task UpdateUserAsync(string email, UserDtoForUpdate userDto);
-      //  Task<IDataResult<UsersDto>> CreateUser(UserAddViewModel userAddViewModel);
-        //bunun updateni eklemeyi unutma
+        Task DeleteUsersAsync(UserDtoForDelete userDto);
+        #endregion
     }
 }

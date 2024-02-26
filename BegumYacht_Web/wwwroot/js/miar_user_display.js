@@ -19,14 +19,11 @@ $(function () {
     //#region variables
     const tbl_user = $("#tbl_user");
     const p_resultLabel = $("#p_resultLabel");
-    const slct = {
-        yachtType: $("#div_yachtType select")
-    }
     const btn = {
         showPassword: $("#btn_showPassword"),
         save: $("#btn_save"),
         back: $("#btn_back")
-    }
+    };
     const inpt = {
         firstnameLastname: $("#inpt_firstnameLastname"),
         phone: $("#inpt_phone"),
@@ -44,16 +41,25 @@ $(function () {
         yachtName: $("#inpt_yachtName"),
         password: $("#inpt_password"),
         isPersonal: $("#inpt_isPersonal")
-    }
+    };
     const div = {
         userDisplay: $("#div_userDisplay"),
         userUpdate: $("#div_userUpdate"),
+        panelTitle: $("#div_panelTitle"),
         backButton: $("#div_backButton"),
-        panelTitle: $("#div_panelTitle")
-    }
+    };
+    const slct = {
+        yachtType: $("#div_yachtType select"),
+    };
     const img_loading = $("#img_loading");
     let tr_lastClicked;
     let userInfosOfLastClickedRow = [];
+    let tableMode = "display";
+    let deleteMode = {
+        "bgColor": "rgb(255, 0, 0)",  // red
+        "color": "white"
+    }
+    let rowIndexsAndUserEmails = {};
     //#endregion
 
     //#region events
@@ -118,12 +124,106 @@ $(function () {
     //#region display page
     tbl_user.children("tbody").on("click", "tr", async (event) => {
         //#region set variables
-        tr_lastClicked = $(`tbody tr:nth-child(${event.currentTarget.rowIndex})`);
+        let rowIndex = event.currentTarget.rowIndex;
+        tr_lastClicked = $(`tbody tr:nth-child(${rowIndex})`);
+
         userInfosOfLastClickedRow = await getCellInfosOfClickedRowAsync(event);
         //#endregion
 
-        await openUpdatePageAsync();
-        await addDefaultValuesToFormAsync();
+        switch (tableMode) {
+            case "display":
+                await openUpdatePageAsync();
+                await addDefaultValuesToFormAsync();
+
+                break;
+            case "delete":
+                //#region when row is not selected before
+                let x = tr_lastClicked.css("background-color");
+                if (tr_lastClicked.css("background-color") != deleteMode.bgColor) {
+                    // change row colors
+                    tr_lastClicked.css({
+                        "background-color": deleteMode.bgColor,
+                        "color": deleteMode.color
+                    });
+
+                    // save user email
+                    rowIndexsAndUserEmails[rowIndex] = userInfosOfLastClickedRow[2];
+                }
+                //#endregion
+
+                //#region when row is selected before
+                else {
+                    // reset row colors
+                    tr_lastClicked.removeAttr("style");
+
+                    // reset row infos
+                    rowIndexsAndUserEmails[rowIndex] = null;
+                }
+                //#endregion
+
+                break;
+        }
+    })
+    spn_eventManager.on("click_tableModeSelect", () => {
+        //#region set variables
+        tableMode = $("#div_tableMode select").val();
+        let btn_apply = $("#div_tableMode button");
+        //#endregion
+
+        switch (tableMode) {
+            case "display":
+                // reset style of all rows
+                $("table tbody tr").removeAttr("style");
+
+                // hide apply button
+                btn_apply.attr("hidden", "");
+                rowIndexsAndUserEmails = {};
+                break;
+
+            case "delete":
+                // show apply button
+                btn_apply.removeAttr("hidden");
+                break;
+        }    
+    })
+    spn_eventManager.on("click_applyButton", () => {
+        //#region get emails to be delete
+        let emails = [];
+        let rowIndexs = [];
+
+        for (let rowIndex in rowIndexsAndUserEmails) {
+            let email = rowIndexsAndUserEmails[rowIndex];
+
+            if (email != null) {
+                emails.push(email);
+                rowIndexs.push(rowIndex);
+            }   
+        }
+        //#endregion
+
+        $.ajax({
+            method: "POST",
+            url: baseApiUrl + "/adminPanel/userDelete",
+            data: JSON.stringify({
+                "emails": emails
+            }),
+            contentType: "application/json",
+            dataType: "json",
+            success: () => {
+                alert("Success");
+
+                //#region remove deleted rows from table
+                for (let index in rowIndexs)
+                    $(`table tbody tr:nth-child(${rowIndexs[index]})`).attr("hidden", "");
+                //#endregion
+
+                //populateTableAsync();
+                tbl_user.load();
+            },
+            error: () => {
+                alert("ERROR");
+            }
+        })
     })
     //#endregion
 
@@ -160,7 +260,7 @@ $(function () {
                             gender: userInfo.gender,
                             yacthType: userInfo.yacthType,
                             yacthName: userInfo.yacthName,
-                            isPersonel: userInfo.isPersonel == null? null : userInfo.isPersonel.toString(),
+                            isPersonel: userInfo.isPersonel == null ? null : userInfo.isPersonel.toString(),
                         })
                     }
                     //#endregion
@@ -189,7 +289,7 @@ $(function () {
                         paging: true,
                         info: true,
                         language: {
-                            lengthMenu: "_MENU_ kullanıcı görüntüle",
+                            lengthMenu: "_MENU_ kullanıcı ",
                             search: "Ara",
                             info: "Sayfa: _PAGE_ / _PAGES_ ~ Toplam: _MAX_",
                             infoEmpty: "kullanıcı bulunamadı",
@@ -202,10 +302,13 @@ $(function () {
                             },
                             zeroRecords: "eşleşen kişi bulunamadı",
                             emptyTable: "kullanıcı bulunamadı",
+
                         }
-                    })
+                    });
+
+                    await addDropdownOfTableModeAsync();
                     resolve();
-                });
+                })
             }
         })
     }
@@ -330,7 +433,7 @@ $(function () {
 
         $.ajax({
             method: "POST",
-            url: baseApiUrl + `/adminPanel/update?email=${userInfosOfLastClickedRow[2]}`,
+            url: baseApiUrl + `/adminPanel/userUpdate?email=${userInfosOfLastClickedRow[2]}`,
             data: JSON.stringify(data),
             contentType: "application/json",
             dataType: "json",
@@ -385,6 +488,27 @@ $(function () {
                     "30px",
                     img_loading);
             },
+        })
+    }
+    async function addDropdownOfTableModeAsync() {
+        // add dropdown
+        let div_pageNumber = $(".dt-length");
+        div_pageNumber.css("float", "left");
+        div_pageNumber.parent("div").append(`
+            <div id="div_tableMode">
+                <select class="form-select dt-input">
+                    <option value="display">Görüntüle</option>
+                    <option value="delete">Sil</option>
+                </select>
+                <button type="button" class="btn-danger" hidden>Uygula</button>
+            </div>`)
+
+        // declare events
+        $("#div_tableMode select").change(() => {
+            spn_eventManager.trigger("click_tableModeSelect");
+        })
+        $("#div_tableMode button").click(() => {
+            spn_eventManager.trigger("click_applyButton");
         })
     }
     //#endregion

@@ -42,6 +42,11 @@ namespace MiarServices.Attributes
             object? value,
             ValidationContext validationContext)
         {
+            #region when value is null (return)
+            if (value == null)
+                return ValidationResult.Success;
+            #endregion
+
             #region scan the password
             var password = value.ToString();
             var counter = new Dictionary<string, int>
@@ -152,8 +157,8 @@ namespace MiarServices.Attributes
                     errorMessage);
             }
             #endregion
-        
+
             return ValidationResult.Success;
         }
-}
+    }
 }

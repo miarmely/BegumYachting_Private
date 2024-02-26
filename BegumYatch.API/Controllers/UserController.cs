@@ -173,7 +173,6 @@ namespace BegumYatch.API.Controllers
         [Route("UserDelete")]
         public async Task<IActionResult> UserDelete(int id)
         {
-
             var user = await _userService.Where(x => x.Id == id).FirstOrDefaultAsync();
             if (user == null)
                 return NotFound("Bu id'ye ait kullanıcı bulunamadı");
@@ -276,7 +275,6 @@ namespace BegumYatch.API.Controllers
 
         #region writed by mert 
         [HttpGet("adminPanel/getAllUsers/paging")]
-        // [Authorize(Policy = "Permissions.AllEntity.ReadCreateUpdate")]
         public async Task<IActionResult> GetAllUsers(
             [FromQuery(Name = "start")] int start = 1,
             [FromQuery(Name = "length")] int length = 10)
@@ -317,13 +315,22 @@ namespace BegumYatch.API.Controllers
         }
 
 
-        [HttpPost]
-        [Route("adminPanel/update")]
+        [HttpPost("adminPanel/userUpdate")]
         public async Task<IActionResult> UpdateUser(
             [FromQuery(Name = "email")] string email,
             [FromBody] UserDtoForUpdate userDto)
         {
             await _userService.UpdateUserAsync(email, userDto);
+
+            return NoContent();
+        }
+
+
+        [HttpPost("adminPanel/userDelete")]
+        public async Task<IActionResult> DeleteUsers(
+            [FromBody] UserDtoForDelete userDto)
+        {
+            await _userService.DeleteUsersAsync(userDto);
 
             return NoContent();
         }
