@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "SVGN/bm0vylFpulhByO7+QoC5HFCFLViD0QY+INEoijdOQYePqK+CmZpAX3seSGLRLMQ5pqunx2rxM3MZMINmA==",
+  "dgSpecHash": "wOYCHxS8rIp1MKno5FPDJdI92s+4AojL6j5DiLm1pk9wHCa5NvcbW7UTEGCvUffuiEeOa4CZManzPHqaQlXYGg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYatch.Repository\\BegumYatch.Repository.csproj",
+  "projectFilePath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\#__Private\\1__Copies\\2__BegumYacht\\BegumYatch.Repository\\BegumYatch.Repository.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Mac\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\Mac\\.nuget\\packages\\microsoft.aspnetcore.authentication\\2.2.0\\microsoft.aspnetcore.authentication.2.2.0.nupkg.sha512",

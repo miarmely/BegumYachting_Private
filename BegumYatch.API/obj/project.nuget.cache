@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "N/XCso9ke/BgHbX3pFSmeSUv1bp7VLbHOlh8YxEWC8/6d+Tz7pEkGoV6K9Og5mC1QmY38GbNmWMEXF5doiKYYg==",
+  "dgSpecHash": "4xDgYupsYFEwk1UiPiFV0UG2b+WdUim9KKdK0biQ8DLf8NSxMK0Bst4r1nsTLB4rrD3eojGHahYOZ4KtMS5pzw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYatch.API\\BegumYatch.API.csproj",
+  "projectFilePath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\#__Private\\1__Copies\\2__BegumYacht\\BegumYatch.API\\BegumYatch.API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Mac\\.nuget\\packages\\autofac\\6.4.0\\autofac.6.4.0.nupkg.sha512",
     "C:\\Users\\Mac\\.nuget\\packages\\autofac.extensions.dependencyinjection\\8.0.0\\autofac.extensions.dependencyinjection.8.0.0.nupkg.sha512",

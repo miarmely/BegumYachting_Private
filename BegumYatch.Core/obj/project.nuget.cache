@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "0LKe5nFweWEv6IvvsOlKVdPS85s+zcw+nvTEuWRzqQVsP5K31uL8Ypu81h45sEKqSd5sqREMsHenlMgOVOEGJg==",
+  "dgSpecHash": "zzrWkQUdAEoHq8c2LH8XuytL7T2DzhE6N3Cm8zMGJhTGHHVv8PE4DweLWBEn4ldbUNr+mLHT4ahxUg4ze2Uk+Q==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYatch.Core\\BegumYatch.Core.csproj",
+  "projectFilePath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\#__Private\\1__Copies\\2__BegumYacht\\BegumYatch.Core\\BegumYatch.Core.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Mac\\.nuget\\packages\\microsoft.aspnetcore.authentication\\2.2.0\\microsoft.aspnetcore.authentication.2.2.0.nupkg.sha512",
     "C:\\Users\\Mac\\.nuget\\packages\\microsoft.aspnetcore.authentication.abstractions\\2.2.0\\microsoft.aspnetcore.authentication.abstractions.2.2.0.nupkg.sha512",

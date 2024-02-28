@@ -1,4 +1,6 @@
-﻿import { isAllObjectValuesNullAsync, updateResultLabel } from "./miar_module.js"
+﻿import {
+    isAllObjectValuesNullAsync, isExistsOnArray, updateResultLabel
+} from "./miar_module.js"
 
 import {
     changeCellInfosOfRowAsync, getCellInfosOfClickedRowAsync
@@ -59,7 +61,7 @@ $(function () {
         "bgColor": "rgb(255, 0, 0)",  // red
         "color": "white"
     }
-    let rowIndexsAndUserEmails = {};
+    let rowIndexsAndUserEmails = {};  // for delete
     //#endregion
 
     //#region events
@@ -179,7 +181,6 @@ $(function () {
                 btn_apply.attr("hidden", "");
                 rowIndexsAndUserEmails = {};
                 break;
-
             case "delete":
                 // show apply button
                 btn_apply.removeAttr("hidden");
@@ -196,29 +197,34 @@ $(function () {
 
             if (email != null) {
                 emails.push(email);
-                rowIndexs.push(rowIndex);
+                rowIndexs.push(+rowIndex);
             }   
         }
         //#endregion
 
+        // delete selected users
         $.ajax({
             method: "POST",
             url: baseApiUrl + "/adminPanel/userDelete",
             data: JSON.stringify({
                 "emails": emails
             }),
-            contentType: "application/json",
+            contentType: "application/json", 
             dataType: "json",
             success: () => {
-                alert("Success");
+                //#region remove deleted users
+                let dataTable = tbl_user.DataTable();
 
-                //#region remove deleted rows from table
-                for (let index in rowIndexs)
-                    $(`table tbody tr:nth-child(${rowIndexs[index]})`).attr("hidden", "");
+                dataTable
+                    .rows((id, data) => isExistsOnArray(emails, data.email))
+                    .remove()
+                    .draw();
                 //#endregion
 
-                //populateTableAsync();
-                tbl_user.load();
+                //#region resets
+                rowIndexsAndUserEmails = {};
+                $("tbody tr").removeAttr("style");  // row colors
+                //#endregion
             },
             error: () => {
                 alert("ERROR");
@@ -230,7 +236,7 @@ $(function () {
     //#endregion
 
     //#region functions
-    async function populateTableAsync() {
+    async function populateTableAsync(addUserOnly=false) {
         $.ajax({
             method: "GET",
             url: baseApiUrl + "/getAllUsers",
@@ -306,7 +312,11 @@ $(function () {
                         }
                     });
 
-                    await addDropdownOfTableModeAsync();
+                    //#region add table mode dropdown if desired
+                    if (!addUserOnly)
+                        await addDropdownOfTableModeAsync();
+                    //#endregion
+
                     resolve();
                 })
             }

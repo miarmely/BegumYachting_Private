@@ -418,9 +418,11 @@ export async function isAllObjectValuesNullAsync(object) {
 }
 export async function autoObjectMapperAsync(targetObject, sourceObject, dontAddNullValues = false) {
     //#region update target object values with source object values
+    let keysOfTarget = Object.keys(targetObject);
+
     for (let sourceKey in sourceObject) {
-        //#region when source key exists in target object
-        if (targetObject[sourceKey] != undefined) {
+        //#region when source key is exists in target object
+        if (keysOfTarget.indexOf(sourceKey) != -1) {
             //#region when source object value is null (check null)
             if (dontAddNullValues && sourceObject[sourceKey] == null)
                 continue;
@@ -557,6 +559,9 @@ export async function isUserRoleThisRoleAsync(userRole, targetRole) {
             return false;
     }
     //#endregion
+}
+export function isExistsOnArray(array, value) {
+    return array.indexOf(value) != -1;
 }
 export function getHeaderFromLocalInJson(headerName) {
     return JSON.parse(

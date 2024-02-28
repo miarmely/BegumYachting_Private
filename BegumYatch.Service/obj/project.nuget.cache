@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "NgRTQEkarvW0+XYjaF1fzDDvFhv90GRSJu2IK74OJa2cTlx8krDZFN3dKBYb95ttpEWasjh0cDi0z4l9Ggrojw==",
+  "dgSpecHash": "Eh89Sy+wvX0emjFoyj3jjuG2Pw53NfXdx9rgOOBGu8Yl5e2hvstQ4Ir83wDb7j033NdyMwPeNK//nQGIYu0mFA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYatch.Service\\BegumYatch.Service.csproj",
+  "projectFilePath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\#__Private\\1__Copies\\2__BegumYacht\\BegumYatch.Service\\BegumYatch.Service.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Mac\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\Mac\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
