@@ -8,26 +8,6 @@ const div_row_class = "form-group";
 const langPack = {
     "errorMessages": {
         "blankInput": "bu alanı doldurmalısın",
-    },
-    "infoMessages": {
-        "div_firstName": ["bu alan doldurulacak"],
-        "div_lastName": ["bu alan doldurulacak"],
-        "div_phone": ["bu alan doldurulacak"],
-        "div_email": ["bu alan doldurulacak"],
-        "div_flag": ["bu alan doldurulacak"],
-        "div_newPassportNo": ["bu alan doldurulacak"],
-        "div_oldPassportNo": ["bu alan doldurulacak"],
-        "div_rank": ["bu alan doldurulacak"],
-        "div_issueDate": ["bu alan doldurulacak"],
-        "div_passportExpiration": ["bu alan doldurulacak"],
-        "div_nationality": ["bu alan doldurulacak"],
-        "div_birthDate": ["bu alan doldurulacak"],
-        "div_birthPlace": ["bu alan doldurulacak"],
-        "div_gender": ["bu alan doldurulacak"],
-        "div_yachtType": ["bu alan doldurulacak"],
-        "div_yachtName": ["bu alan doldurulacak"],
-        "div_isPersonal": ["bu alan doldurulacak"],
-        "div_password": ["bu alan doldurulacak"]
     }
 }
 //#endregion
@@ -121,16 +101,16 @@ export async function populateInputFormAsync(rowNo, html_label, html_input) {
         .append(html_input);
     //#endregion
 }
-export async function populateInfoMessagesAsync() {
-    //#region fill in info messages
-    let infoMessages = langPack.infoMessages;
+export async function populateInfoMessagesAsync(infoMessages) {
+    // infoMessages = {"div_firstName": ["message1", "message2"], ...}
 
+    //#region fill in info messages
     for (let div_id in infoMessages)
         for (let msgIndex in infoMessages[div_id]) {
             let message = infoMessages[div_id][msgIndex];
+            let ul_infoMessage = $("#" + div_id + " .div_infoMessage" + " ul");
 
-            $("#" + div_id + " .div_infoMessage" + " ul")
-                .append(`<li>* ${message}</li>`);
+            ul_infoMessage.append(`<li>* ${message}</li>`);
         }
     //#endregion
 }

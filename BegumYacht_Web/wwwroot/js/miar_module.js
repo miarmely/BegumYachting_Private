@@ -560,6 +560,16 @@ export async function isUserRoleThisRoleAsync(userRole, targetRole) {
     }
     //#endregion
 }
+export async function showOrHideLoadingImageAsync(mode, img_loading, lbl_result) {
+    switch (mode) {
+        case "show":
+            lbl_result.empty();
+            img_loading.removeAttr("hidden");
+            break;
+        case "hide":
+            img_loading.attr("hidden", "");
+    }
+}
 export function isExistsOnArray(array, value) {
     return array.indexOf(value) != -1;
 }

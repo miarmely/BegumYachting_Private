@@ -115,8 +115,11 @@ namespace BegumYatch.Service.Services
 
         public async Task<String> VerifyOtp(String code, int userId)
         {
-
-            var aaa = _mailOtpRepository.GetAll().Where(x => x.UserId == userId && x.Code == code).ToList().OrderByDescending(x => x.DateAdded);
+            var aaa = _mailOtpRepository
+                .GetAll()
+                .Where(x => x.UserId == userId && x.Code == code)
+                .ToList()
+                .OrderByDescending(x => x.DateAdded);
 
             if (aaa.Any())
                 return aaa.FirstOrDefault().Token;
@@ -224,52 +227,36 @@ namespace BegumYatch.Service.Services
 
 
         #region By MERT
+        public async Task CreateUserAsync(UserDtoForCreate userDto)
+        {
+            await ControlConflictForUserAsync(
+                userDto.Email, 
+                userDto.PhoneNumber);
+
+            #region create user
+            var user = _mapper.Map<AppUser>(userDto);
+            user.UserName = userDto.Email;
+            
+            var result = await _userManager.CreateAsync(
+                user, 
+                userDto.Password);
+            #endregion
+
+            #region when any error occured (error)
+            if (!result.Succeeded)
+                throw new MiarException(
+                    500,
+                    "ISE",
+                    "Internal Server Error",
+                    "kullanıcı eklenirken bir hata oluştu");
+            #endregion
+        }
+
         public async Task UpdateUserAsync(string email, UserDtoForUpdate userDto)
         {
-            #region control the conflict (throw)
-            if (userDto.Email != null || userDto.PhoneNumber != null)
-            {
-                #region get users that have same email or phone
-                var conflictedUsers = _userRepository
-                    .Where(u => u.Email.Equals(userDto.Email)
-                        || u.PhoneNumber.Equals(userDto.PhoneNumber))
-                    .ToList();
-                #endregion
-
-                #region when conflict occured
-                if (conflictedUsers.Count != 0)
-                {
-                    #region when phone is conflicted (throw)
-                    var conflictedUserByPhone = conflictedUsers
-                        .Where(u => u.PhoneNumber.Equals(userDto.PhoneNumber))
-                        .ToList();
-
-                    if (conflictedUserByPhone.Count != 0)
-                        throw new MiarException(
-                            409,
-                            "CE-U-P",
-                            "Conflict Error - User - Phone",
-                            "girilen telefon numarası zaten kayıtlı"
-                        );
-                    #endregion
-
-                    #region when email is conflicted (throw)
-                    var conflictedUserByEmail = conflictedUsers
-                        .Where(u => u.Email.Equals(userDto.Email))
-                        .ToList();
-
-                    if (conflictedUserByEmail.Count != 0)
-                        throw new MiarException(
-                            409,
-                            "CE-U-E",
-                            "Conflict Error - User - Email",
-                            "girilen email zaten kayıtlı"
-                        );
-                    #endregion
-                }
-                #endregion
-            }
-            #endregion
+            await ControlConflictForUserAsync(
+                userDto.Email, 
+                userDto.PhoneNumber);
 
             #region  get user by id (throw)
             var user = await _userManager.FindByEmailAsync(email);
@@ -345,6 +332,56 @@ namespace BegumYatch.Service.Services
             {
                 var user = await _userManager.FindByEmailAsync(email);
                 await _userManager.DeleteAsync(user);
+            }
+            #endregion
+        }
+
+        private async Task ControlConflictForUserAsync(
+            string? email = null,
+            string? phone = null)
+        {
+            #region control email or phone whether conflict (throw)
+            if (email != null || phone != null)
+            {
+                #region get users that have same email or phone
+                var conflictedUsers = _userRepository
+                    .Where(u => u.Email.Equals(email)
+                        || u.PhoneNumber.Equals(phone))
+                    .ToList();
+                #endregion
+
+                #region when conflict occured (throw)
+                if (conflictedUsers.Count != 0)
+                {
+                    #region when phone is conflicted (throw)
+                    var conflictedUserByPhone = conflictedUsers
+                        .Where(u => u.PhoneNumber.Equals(phone))
+                        .ToList();
+
+                    if (conflictedUserByPhone.Count != 0)
+                        throw new MiarException(
+                            409,
+                            "CE-U-P",
+                            "Conflict Error - User - Phone",
+                            "girilen telefon numarası zaten kayıtlı"
+                        );
+                    #endregion
+
+                    #region when email is conflicted (throw)
+                    var conflictedUserByEmail = conflictedUsers
+                        .Where(u => u.Email.Equals(email))
+                        .ToList();
+
+                    if (conflictedUserByEmail.Count != 0)
+                        throw new MiarException(
+                            409,
+                            "CE-U-E",
+                            "Conflict Error - User - Email",
+                            "girilen email zaten kayıtlı"
+                        );
+                    #endregion
+                }
+                #endregion
             }
             #endregion
         }

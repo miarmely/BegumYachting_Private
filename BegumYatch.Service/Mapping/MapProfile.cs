@@ -4,14 +4,12 @@ using BegumYatch.Core.DTOs.ConciergeServiceDemand;
 using BegumYatch.Core.DTOs.ExcursionDemand;
 using BegumYatch.Core.DTOs.FlowerOrder;
 using BegumYatch.Core.DTOs.FuelPurchaseDemand;
-using BegumYatch.Core.DTOs.MainPage;
 using BegumYatch.Core.DTOs.ProvisionOrder;
 using BegumYatch.Core.DTOs.Role;
 using BegumYatch.Core.DTOs.RoleCreate;
 using BegumYatch.Core.DTOs.SecurityServiceDemand;
 using BegumYatch.Core.DTOs.TechnicalAssitanceandSparePartOrder;
 using BegumYatch.Core.DTOs.User;
-using BegumYatch.Core.DTOs.UserLogin;
 using BegumYatch.Core.DTOs.UserRegister;
 using BegumYatch.Core.DTOs.VipDemand.BegumYatch.Core.DTOs.VipDemand;
 using BegumYatch.Core.Models.BerthRezervation;
@@ -20,12 +18,7 @@ using BegumYatch.Core.Models.Orders;
 using BegumYatch.Core.Models.Role;
 using BegumYatch.Core.Models.User;
 using BegumYatch.Core.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace BegumYatch.Service.Mapping
 {
@@ -76,6 +69,10 @@ namespace BegumYatch.Service.Mapping
             CreateMap<TechnicalAssitanceandSparePartOrder, GetTechnicalAssitanceandSparePartOrderByIdandUserIdDto>().ReverseMap();
 
             CreateMap<BerthRezervation, AddBerthRezervationDto>().ReverseMap();
+
+            #region By MERT
+            CreateMap<UserDtoForCreate, AppUser>().ReverseMap();
+            #endregion
         }
     }
 }

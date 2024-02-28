@@ -15,6 +15,7 @@ namespace BegumYatch.Core.Services
         Task<List<TDto>> GetAllUsers<TDto>();
 
         #region By MERT
+        Task CreateUserAsync(UserDtoForCreate userDto);
         Task UpdateUserAsync(string email, UserDtoForUpdate userDto);
         Task DeleteUsersAsync(UserDtoForDelete userDto);
         #endregion

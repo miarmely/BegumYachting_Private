@@ -139,7 +139,7 @@ namespace MiarServices.Attributes
             if (_validSpecialChars != null  // when special chars checking is desired
                 && counter["InvalidSpecialChar"] > 0)
             {
-                errorMessage += $"\"{_displayNameInTR}\"; sadece [{string.Join(' ', _validSpecialChars)}] özel karakterlerini içerebilir";
+                errorMessage += $"\"{_displayNameInTR}\"; ingilizce karakterlerden oluşmalıdır ve sadece [{string.Join(' ', _validSpecialChars)}] özel karakterlerini içerebilir";
             }
             #endregion
 
