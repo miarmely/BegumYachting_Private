@@ -84,13 +84,30 @@
 							</li>
 							
 							@*users*@
-							<li>
-								<a href="/user/display">
+							<li id="li_user_create" class="li_dropdown">
+								<a href="#">
 									<i class="fa fa-settings"></i>
 									<span>Kullanıcılar</span>
+									<b class="caret"></b>
 								</a>
 							</li>
-							
+							<li id="li_user_create_submenu" class="li_submenu" hidden>
+								<ul>
+									<li>
+										<a href="/user/create">
+											<i class="fa fa-settings"></i>
+											<span>Yeni Kullanıcı</span>
+										</a>
+									</li>
+									<li>
+										<a href="/user/display">
+											<i class="fa fa-settings"></i>
+											<span>Kayıtlı Kullanıcılar</span>
+										</a>
+									</li>
+								</ul>
+							</li>
+					
 							@*orders*@
 							<li id="li_orders" class="li_dropdown">
 								<a href="#">
@@ -188,6 +205,7 @@
 				</div>
 			</aside>
 			
+			@*main content*@
 			<section id="main-content">
 				<span id="spn_eventManager"></span>
 				

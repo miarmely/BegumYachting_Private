@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -8,6 +8,31 @@
 
   <ItemGroup>
     <Folder Include="Models\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\js\bootstrap.js" />
+    <None Include="wwwroot\js\bootstrap.min.js" />
+    <None Include="wwwroot\js\jquery.dcjqaccordion.2.7.js" />
+    <None Include="wwwroot\js\jquery.min.js" />
+    <None Include="wwwroot\js\jquery.nicescroll.js" />
+    <None Include="wwwroot\js\jquery.scrollTo.js" />
+    <None Include="wwwroot\js\jquery.slimscroll.js" />
+    <None Include="wwwroot\js\jquery2.0.3.min.js" />
+    <None Include="wwwroot\js\miar_homePage.js" />
+    <None Include="wwwroot\js\miar_login.js" />
+    <None Include="wwwroot\js\miar_mainLayout.js" />
+    <None Include="wwwroot\js\miar_module.date.js" />
+    <None Include="wwwroot\js\miar_module.js" />
+    <None Include="wwwroot\js\miar_module.login.js" />
+    <None Include="wwwroot\js\miar_module.sidebarMenu.js" />
+    <None Include="wwwroot\js\miar_module.table.js" />
+    <None Include="wwwroot\js\miar_module.userForm.js" />
+    <None Include="wwwroot\js\miar_register.js" />
+    <None Include="wwwroot\js\miar_user.js" />
+    <None Include="wwwroot\js\miar_user.display.js" />
+    <None Include="wwwroot\js\popper.js" />
+    <None Include="wwwroot\js\scripts.js" />
   </ItemGroup>
 
 </Project>

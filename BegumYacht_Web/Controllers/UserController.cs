@@ -5,7 +5,12 @@ namespace BegumYacht_Web.Controllers
 {
 	public class UserController : Controller
 	{
-		public IActionResult Display()
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        public IActionResult Display()
 		{
 			return View();
 		}

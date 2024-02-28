@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\#__Private\\1__Copies\\2__BegumYacht\\BegumYatch.Service\\BegumYatch.Service.csproj": {}
+    "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYatch.Service\\BegumYatch.Service.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\#__Private\\1__Copies\\2__BegumYacht\\BegumYatch.Core\\BegumYatch.Core.csproj": {
+    "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYatch.Core\\BegumYatch.Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\#__Private\\1__Copies\\2__BegumYacht\\BegumYatch.Core\\BegumYatch.Core.csproj",
+        "projectUniqueName": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYatch.Core\\BegumYatch.Core.csproj",
         "projectName": "BegumYatch.Core",
-        "projectPath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\#__Private\\1__Copies\\2__BegumYacht\\BegumYatch.Core\\BegumYatch.Core.csproj",
+        "projectPath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYatch.Core\\BegumYatch.Core.csproj",
         "packagesPath": "C:\\Users\\Mac\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\#__Private\\1__Copies\\2__BegumYacht\\BegumYatch.Core\\obj\\",
+        "outputPath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYatch.Core\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Mac\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -69,14 +69,14 @@
         }
       }
     },
-    "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\#__Private\\1__Copies\\2__BegumYacht\\BegumYatch.Repository\\BegumYatch.Repository.csproj": {
+    "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYatch.Repository\\BegumYatch.Repository.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\#__Private\\1__Copies\\2__BegumYacht\\BegumYatch.Repository\\BegumYatch.Repository.csproj",
+        "projectUniqueName": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYatch.Repository\\BegumYatch.Repository.csproj",
         "projectName": "BegumYatch.Repository",
-        "projectPath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\#__Private\\1__Copies\\2__BegumYacht\\BegumYatch.Repository\\BegumYatch.Repository.csproj",
+        "projectPath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYatch.Repository\\BegumYatch.Repository.csproj",
         "packagesPath": "C:\\Users\\Mac\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\#__Private\\1__Copies\\2__BegumYacht\\BegumYatch.Repository\\obj\\",
+        "outputPath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYatch.Repository\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Mac\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -93,8 +93,8 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\#__Private\\1__Copies\\2__BegumYacht\\BegumYatch.Core\\BegumYatch.Core.csproj": {
-                "projectPath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\#__Private\\1__Copies\\2__BegumYacht\\BegumYatch.Core\\BegumYatch.Core.csproj"
+              "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYatch.Core\\BegumYatch.Core.csproj": {
+                "projectPath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYatch.Core\\BegumYatch.Core.csproj"
               }
             }
           }
@@ -152,14 +152,14 @@
         }
       }
     },
-    "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\#__Private\\1__Copies\\2__BegumYacht\\BegumYatch.Service\\BegumYatch.Service.csproj": {
+    "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYatch.Service\\BegumYatch.Service.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\#__Private\\1__Copies\\2__BegumYacht\\BegumYatch.Service\\BegumYatch.Service.csproj",
+        "projectUniqueName": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYatch.Service\\BegumYatch.Service.csproj",
         "projectName": "BegumYatch.Service",
-        "projectPath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\#__Private\\1__Copies\\2__BegumYacht\\BegumYatch.Service\\BegumYatch.Service.csproj",
+        "projectPath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYatch.Service\\BegumYatch.Service.csproj",
         "packagesPath": "C:\\Users\\Mac\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\#__Private\\1__Copies\\2__BegumYacht\\BegumYatch.Service\\obj\\",
+        "outputPath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYatch.Service\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Mac\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -176,8 +176,8 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\#__Private\\1__Copies\\2__BegumYacht\\BegumYatch.Repository\\BegumYatch.Repository.csproj": {
-                "projectPath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\#__Private\\1__Copies\\2__BegumYacht\\BegumYatch.Repository\\BegumYatch.Repository.csproj"
+              "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYatch.Repository\\BegumYatch.Repository.csproj": {
+                "projectPath": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYatch.Repository\\BegumYatch.Repository.csproj"
               }
             }
           }
