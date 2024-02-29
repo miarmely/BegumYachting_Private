@@ -15,6 +15,7 @@ namespace BegumYatch.Core.DTOs.User
         
         [MiarLength(1, 150, "Email", "Email")]
         [MiarEnglishChars(new char[] { '.', '-', '_', '@'}, "Email", "Email")]
+        [MiarEmail]
         public string Email { get; init; }
 
         public string Flag { get; init; }
@@ -31,7 +32,9 @@ namespace BegumYatch.Core.DTOs.User
         public string YacthName { get; init; }
         public bool IsPersonel { get; init; }
 
-        [MiarEnglishChars(new char[] { '.', ',', '!', '?', '-', ':', ';' }, "Şifre", "Password")]
+        [MiarLength(6, 16, "Şifre", "Password")]
+        [MiarEnglishChars(
+            new char[] { '.', ',', '!', '?', '-', ':', ';' }, "Şifre", "Password")]
         [MiarPassword(true, true, true, null, 1, 1, 1, "Şifre", "Password")]
         public string Password { get; init; }
     }

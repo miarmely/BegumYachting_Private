@@ -293,8 +293,12 @@ namespace BegumYatch.API.Controllers
 
             // when user not found
             if (userInfos == null)
-                return NotFound("User Not Found.");
-                
+                throw new MiarException(
+                    404,
+                    "NF-U",
+                    "Not Found - User",
+                    "kullanıcı bulunamadı");
+            
             var userDto = _mapper.Map<GetUsersDto>(userInfos);
             #endregion
 

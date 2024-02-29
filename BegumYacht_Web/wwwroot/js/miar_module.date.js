@@ -72,7 +72,7 @@ export async function convertStrDateToDateAsync(dateInStr) {
 
     return new Date(dateInStr);
 }
-export async function convertLocalDateToUtcDateAsync(localDate = new Date()) {
+export async function convertLocalDateToUtcDateAsync(localDate) {
     let utcDateInStr = localDate.toLocaleString(window.navigator.language, {
         year: "numeric",
         month: "2-digit",
@@ -86,7 +86,7 @@ export async function convertLocalDateToUtcDateAsync(localDate = new Date()) {
     
     return new Date(utcDateInStr);
 }
-export async function convertUtcDateToLocalDateAsync(utcDate = new Date()) {
+export async function convertUtcDateToLocalDateAsync(utcDate) {
     let dateInfos = await getDateInfosInJsonAsync(utcDate);
     let localDateInNumber = Date.UTC(
         dateInfos.year,
@@ -98,17 +98,27 @@ export async function convertUtcDateToLocalDateAsync(utcDate = new Date()) {
 
     return new Date(localDateInNumber);
 }
-export async function convertDateToStrDateAsync(dateTime) {
-    //#region get datetime in str
-    let dateInStr = dateTime.toLocaleString(window.navigator.language, {
+export async function convertDateToStrDateAsync(
+    dateTime,
+    add = { hours: true, minutes: true, seconds: true }) {
+    //#region set date format options
+    let formatOptions = {
         year: "numeric",
         month: "2-digit",
         day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: false,
-    });
+    };
+    if (add.hours) {
+        formatOptions["hour"] = "2-digit";
+        formatOptions["hour12"] = false;
+    }
+    if (add.minutes) formatOptions["minute"] = "2-digit";
+    if (add.seconds) formatOptions["second"] = "2-digit";
+    //#endregion
+
+    //#region convert date to str date
+    let dateInStr = dateTime.toLocaleString(
+        window.navigator.language,
+        formatOptions);
 
     dateInStr = dateInStr.replace(", ", "__");  // "12.03.2002, 13:00:00" ~~> "12.03.2002__13:00:00" 
     //#endregion
