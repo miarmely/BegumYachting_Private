@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using BegumYatch.Core.DTOs.AdminPanel.Demands;
+using BegumYatch.Core.DTOs.Error;
 using BegumYatch.Core.DTOs.ExcursionDemand;
 using BegumYatch.Core.DTOs.FuelPurchaseDemand;
 using BegumYatch.Core.DTOs.MainPage;
@@ -10,6 +12,7 @@ using BegumYatch.Core.Repositories;
 using BegumYatch.Core.Services;
 using BegumYatch.Core.UnitOfWorks;
 using BegumYatch.Repository.Repositories;
+using Entities.Attributes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -24,7 +27,7 @@ namespace BegumYatch.Service.Services
     {
         private readonly IGenericRepository<FuelPurchaseDemand> _fuelPurchaseDemandRepository;
         private readonly IGenericRepository<CheckIn> _checkInRepository;
-        private readonly IGenericRepository<MailOtp>_mailOtpRepository;
+        private readonly IGenericRepository<MailOtp> _mailOtpRepository;
         private readonly IFileOperationService _fileOperationService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -39,7 +42,6 @@ namespace BegumYatch.Service.Services
 
         }
 
-
         public async Task<List<GetFuelPurchaseDemandByIdandUserIdDto>> GetDemands()
         {
             var activeDemands = await _fuelPurchaseDemandRepository.GetAll().Where(x => x.Status == true).ToListAsync();
@@ -52,7 +54,6 @@ namespace BegumYatch.Service.Services
                 throw new Exception("Talep bulunmamaktadır");
         }
 
-
         public async Task<String> AddDemands(CheckIn model)
         {
 
@@ -64,8 +65,6 @@ namespace BegumYatch.Service.Services
 
             return "Eklendi";
         }
-
-
 
         public async Task<CheckIn> GetAllInfo(int userId)
         {
@@ -80,17 +79,17 @@ namespace BegumYatch.Service.Services
 
         }
 
-
         public async Task AddFuelPurchaseDemand(AddFuelPurchaseDemandDto addFuelPurchaseDemandDto)
         {
-            
+
             var entity = _mapper.Map<FuelPurchaseDemand>(addFuelPurchaseDemandDto);
             await _fuelPurchaseDemandRepository.AddAsync(entity);
             await _unitOfWork.CommitAsync();
             //await _fileOperationService.UploadFile(Convert.ToInt16(DemandTypes.FuelPurchaseDemand), entity.Id, addFuelPurchaseDemandDto.notes);
         }
 
-        public async Task<List<GetAllFuelPurchaseDemandsDto>> GetAllFuelPurchaseDemands(int userId)
+        public async Task<List<GetAllFuelPurchaseDemandsDto>> GetAllFuelPurchaseDemands(
+            int userId)
         {
             var fuelPurchases = await _fuelPurchaseDemandRepository.GetAll()
                .Include(c => c.User)
@@ -115,5 +114,33 @@ namespace BegumYatch.Service.Services
             else
                 return null;
         }
+
+
+
+        #region By MERT
+        public async Task<List<DemandDtoForFuelPurchase>> GetAllFuelPurchaseDemandsAsync()
+        {
+            #region get all fuel purchase demands
+            var entity = await _fuelPurchaseDemandRepository
+               .GetAll()
+               .OrderByDescending(y => y.CreatedDate)
+               .ToListAsync();
+
+            var fuelPurchases = _mapper
+                .Map<List<DemandDtoForFuelPurchase>>(entity);
+            #endregion
+
+            #region when any demand not found  (throw)
+            if (fuelPurchases.Count() == 0)
+                throw new MiarException(
+                    404,
+                    "NF-D-FP",
+                    "Not Found - Demand - Fuel Purchase",
+                    "herhangi bir yakıt alım talebi bulunmamaktadır");
+            #endregion
+
+            return fuelPurchases;
+        }
+        #endregion
     }
 }

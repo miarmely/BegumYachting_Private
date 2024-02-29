@@ -1,4 +1,5 @@
-﻿using BegumYatch.Core.DTOs.FuelPurchaseDemand;
+﻿using BegumYatch.Core.DTOs.AdminPanel.Demands;
+using BegumYatch.Core.DTOs.FuelPurchaseDemand;
 using BegumYatch.Core.DTOs.MainPage;
 using BegumYatch.Core.Models.Demands;
 using System;
@@ -17,6 +18,10 @@ namespace BegumYatch.Core.Services
         Task<string> AddDemands(CheckIn model);
         Task<List<GetFuelPurchaseDemandByIdandUserIdDto>> GetDemands();
         Task<CheckIn> GetAllInfo(int userId);
-        
+
+
+        #region By MERT
+        Task<List<DemandDtoForFuelPurchase>> GetAllFuelPurchaseDemandsAsync();
+        #endregion
     }
 }

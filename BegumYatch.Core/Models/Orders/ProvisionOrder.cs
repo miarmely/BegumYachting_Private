@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BegumYatch.Core.Models.Orders
 {
-    public class ProvisionOrder:CommonEntity
+    public class ProvisionOrder : CommonEntity
     {
         public string? NameSurname { get; set; }
         public string? SupplyPort { get; set; }

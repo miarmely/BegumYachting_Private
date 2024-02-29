@@ -51,10 +51,12 @@ namespace BegumYatch.Service.Services
 
         public async Task<List<GetAllProvisionOrdersDto>> GetAllProvisionOrders(int userId)
         {
-            var provisionOrders = await _provisionOrderRepository.GetAll()
+            var provisionOrders = await _provisionOrderRepository
+                .GetAll()
                 .Include(c => c.User)
                 .Where(x => x.UserId == userId)
-                .OrderBy(x => x.Status).ThenBy(y => y.CreatedDate)
+                .OrderBy(x => x.Status)
+                .ThenBy(y => y.CreatedDate)
                 .ToListAsync();
 
             var provisionOrdersDto = _mapper.Map<List<GetAllProvisionOrdersDto>>(provisionOrders);

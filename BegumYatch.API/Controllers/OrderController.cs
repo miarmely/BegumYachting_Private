@@ -29,10 +29,6 @@ namespace BegumYatch.API.Controllers
             return Ok();
         }
 
-        
-
-        
-
         [HttpGet("GetAllFlowerOrders")]
         public async Task<IActionResult> GetAllFlowerOrders(int userId)
         {

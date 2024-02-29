@@ -109,8 +109,6 @@ namespace BegumYatch.API.Controllers
             return Ok();
         }
 
-
-
         [HttpPost("AddExcursionDemand")]
         public async Task<IActionResult> AddExcursionDemand([FromBody]AddExcursionDemandDto addExcursionDemandDto)
         {
@@ -164,7 +162,8 @@ namespace BegumYatch.API.Controllers
         [HttpGet("GetAllFuelPurchaseDemands")]
         public async Task<IActionResult> GetAllFuelPurchaseDemands(int userId)
         {
-            var fuelPurchases = await _fuelPurchaseDemandService.GetAllFuelPurchaseDemands(userId);
+            var fuelPurchases = await _fuelPurchaseDemandService
+                .GetAllFuelPurchaseDemands(userId);
             return Ok(fuelPurchases);
         }
 
@@ -204,5 +203,16 @@ namespace BegumYatch.API.Controllers
             return Ok(concierges);
         }
 
+
+        #region By MERT
+        [HttpGet("adminPanel/fuelPurchase/all")]
+        public async Task<IActionResult> GetAllFuelPurchaseDemands()
+        {
+            var fuelPurchaseDemands = await _fuelPurchaseDemandService
+                .GetAllFuelPurchaseDemandsAsync();
+
+            return Ok(fuelPurchaseDemands);
+        }
+        #endregion
     }
 }

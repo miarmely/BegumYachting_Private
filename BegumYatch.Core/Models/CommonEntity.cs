@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BegumYatch.Core.Models
 {
-    public class CommonEntity:BaseEntity
+    public class CommonEntity: BaseEntity
     {
         [NotMapped]
         public List<IFormFile> Notes { get; set; }

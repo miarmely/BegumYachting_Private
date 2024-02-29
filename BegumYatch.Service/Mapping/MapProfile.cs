@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BegumYatch.Core.DTOs.AdminPanel.Demands;
 using BegumYatch.Core.DTOs.BerthRezervation;
 using BegumYatch.Core.DTOs.ConciergeServiceDemand;
 using BegumYatch.Core.DTOs.ExcursionDemand;
@@ -72,6 +73,7 @@ namespace BegumYatch.Service.Mapping
 
             #region By MERT
             CreateMap<UserDtoForCreate, AppUser>().ReverseMap();
+            CreateMap<FuelPurchaseDemand, DemandDtoForFuelPurchase>().ReverseMap();
             #endregion
         }
     }

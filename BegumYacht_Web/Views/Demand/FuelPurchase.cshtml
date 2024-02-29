@@ -1,0 +1,182 @@
+﻿<link rel="stylesheet" href="~/css/miar_module.article.css"/>
+
+
+<div class="table-agile-info">
+    <div class="panel panel-default">
+        @*title*@
+        <div class="panel-heading">
+            <div id="div_backButton" style="float:right" hidden>
+                <button id="btn_back" type="button" class="btn">
+                    <img src="~/images/close.png" alt="close"/>
+                </button>
+            </div>
+            <div id="div_panelTitle">YAKIT ALIM TALEPLERİ</div>
+        </div>
+        @*/title*@
+        <div class="panel-body">
+            <div id="div_article_update" hidden>
+                <form>
+                    <div id="div_form" class="form-horizontal bucket-form" style="padding-top:20px">                    
+                        @{
+                            #region add inputs
+                            var inputInfos = new object[][]{
+                                new object[] {"input", "text", "firstnameLastname", "Ad Soyad", true},  // type for switch/case | type for input | id | label name | info message
+                                new object[] {"input", "text", "phone", "Telefon", true},
+                                new object[] {"input", "text", "email", "Email", true},
+                                new object[] {"input", "text", "flag" , "Bayrak", true},
+                                new object[] {"input", "text", "newPassportNo", "Yeni Pasaport No", true},
+                                new object[] {"input", "text", "oldPassportNo", "Eski Pasaport No", true},
+                                new object[] {"input", "text", "rank", "Rank", true},
+                                new object[] {"input", "datetime-local", "issueDate", "Pasaport Veriliş Tarihi", false},
+                                new object[] {"input", "datetime-local", "passportExpiration", "Pasaport Bitiş Tarihi", false},
+                                new object[] {"input", "text", "nationality", "Uyruk", true},
+                                new object[] {"input", "date", "birthDate", "Doğum Tarihi", false},
+                                new object[] {"input", "text", "birthPlace", "Doğum Yeri", true},
+                                new object[] {"input", "text", "gender", "Cinsiyet", true},
+                                new object[] {"select", "yachtType", "Yat Tipi", new string[] {"MotorYacht", "SailingYacht", "Catamaran"}, true},  // type for case | id | label name | options | info message
+                                new object[] {"input", "text", "yachtName", "Yat Adı", true}
+                            };
+
+                            foreach (var inputInfo in inputInfos)
+                            {
+                                switch (inputInfo[0])
+                                {
+                                    case "input":
+                                        <div id="div_@inputInfo[2]" class="form-group">
+                                            <label class="col-sm-3 control-label">@inputInfo[3]</label>
+                                            <div class="col-sm-6">
+                                                <input id="inpt_@inputInfo[2]" type="@inputInfo[1]" class="form-control" >
+                                                <span id="spn_help_inpt_@inputInfo[2]" class="help-block"></span>
+                                            </div>
+                                        
+                                            @if((bool)inputInfo[4])
+                                            {
+                                                // add info message if desired
+                                                 <div class="col-sm-3 div_infoMessage">
+                                                    <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+                                                    <ul role="menu" class="dropdown-menu"></ul>
+                                                </div>   
+                                            }
+                                        </div>
+                                        break;
+
+                                    case "select":
+                                        <div id="div_@inputInfo[1]" class="form-group">
+                                            <label class="col-sm-3 control-label">@inputInfo[2]</label>
+                                            <div class="col-sm-6">
+                                                <select id="slct_@inputInfo[1]" class="form-control" aria-label="">
+                                                    @{
+                                                        #region add options to select
+                                                        var options = (string[])inputInfo[3];
+
+                                                        foreach(var option in options)
+                                                        {
+                                                            <option value="@option">@option</option>
+                                                        }
+                                                        #endregion
+                                                    }
+                                                </select>
+                                                <span class="help-block"></span>
+                                            </div>
+                                            @if ((bool)inputInfo[4])
+                                            {
+                                                // add info message if desired
+                                                <div class="col-sm-3 div_infoMessage">
+                                                    <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+                                                    <ul role="menu" class="dropdown-menu"></ul>
+                                                </div>
+                                            }
+                                        </div>  
+                                        break;
+                                }
+                            }
+                            #endregion
+                        }
+
+                        @*is personal?*@
+                        <div id="div_isPersonal" class="form-group">
+                            <label class="col-sm-3 control-label">Personel Mi</label>
+                            <div class="col-sm-6">
+                                <div id="div_radio">
+                                    @*radio 1*@ 
+                                    <div class="form-check" style="float: left;  margin-right: 15px">
+                                        <input id="rad_yes" class="form-check-input" type="radio" name="isPersonal">
+                                        <label for="rad_yes" class="form-check-label">Evet</label>
+                                    </div>
+                                    @*radio 2*@ 
+                                    <div class="form-check">
+                                        <input id="rad_no" class="form-check-input" type="radio" name="isPersonal">
+                                        <label for="rad_no" class="form-check-label">Hayır</label>
+                                    </div>
+                                </div>
+                                <span id="spn_help_inpt_isPersonal" class="help-block"></span>
+                            </div>
+                        </div>
+                    
+                        @*save button*@
+                        <div id="div_saveButton" class="form-group">
+                            <div class="col-sm-6; text-center">
+                                <button id="btn_save" type="submit" class="btn btn-danger">Kaydet</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                @*result label*@
+                <div style="text-align:center">
+                    <p id="p_resultLabel"></p>
+                    <img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px" hidden/>
+                </div>
+            </div>
+            <div id="div_article_display">
+                @*menubar*@
+                <div class="row w3-res-tb"  style="padding-top:10px">
+                    <div class="col-sm-5 m-b-xs">
+				        <select id="slct_menubar" class="input-sm form-control w-sm inline v-middle" style="float:left">
+                            <option value="display">Görüntüle</option>
+                            <option value="delete">Sil</option>
+                        </select>
+                        <div id="div_menubar_button" hidden>
+                            <button id="btn_menubar_apply" class="btn btn-sm btn_menubar_apply ">Uygula</button>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                    </div>
+			        @*search bar*@
+			        @*<div class="col-sm-3">
+				        <div class="input-group">
+					        <input type="text" class="input-sm form-control" placeholder="Ara">
+					        <span class="input-group-btn">
+						        <button class="btn btn-sm btn-default" type="button">
+							        Ara
+						        </button>
+					        </span>
+				        </div>
+			        </div>*@
+			        @*/search bar*@
+		        </div>
+
+                @*machine articles*@
+                <div id="div_articles" class="div_articles">
+                </div>
+
+                @*entity count and pagination buttons*@
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-sm-5 text-left">
+                            <small id="small_entityQuantity" class="text-muted inline m-t-sm m-b-s"><b>0/0</b> Talep Görüntüleniyor</small>
+                        </div>
+                        <div class="col-sm-7 text-right text-center-xs">                
+                            <ul id="ul_pagination" class="pagination pagination-sm m-t-rowNone m-b-rowNone">
+                            </ul>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="module" src="~/js/miar_demand.js"></script>
+<script type="module" src="~/js/miar_demand.fuelPurchase.js"></script>
