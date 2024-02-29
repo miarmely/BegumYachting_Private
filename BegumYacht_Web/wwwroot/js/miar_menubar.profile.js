@@ -1,13 +1,10 @@
-﻿import { changeCellInfosOfRowAsync } from "./miar_module.table.js";
-
-import {
+﻿import {
     checkInputsWhetherBlankAsync, click_inputAsync, click_showPasswordButtonAsync,
     keyup_inputAsync, populateInfoMessagesAsync
 } from "./miar_module.userForm.js";
 
 import {
-    addValueToDateInputAsync, convertDateToStrDateAsync, isDatesEqualAsync,
-    convertStrDateToDateAsync
+    addValueToDateInputAsync, isDatesEqualAsync, convertStrDateToDateAsync
 } from "./miar_module.date.js";
 
 import {
