@@ -185,7 +185,7 @@ $(function () {
                 // show apply button
                 btn_apply.removeAttr("hidden");
                 break;
-        }    
+        }
     })
     spn_eventManager.on("click_applyButton", () => {
         //#region get emails to be delete
@@ -198,7 +198,7 @@ $(function () {
             if (email != null) {
                 emails.push(email);
                 rowIndexs.push(+rowIndex);
-            }   
+            }
         }
         //#endregion
 
@@ -209,7 +209,7 @@ $(function () {
             data: JSON.stringify({
                 "emails": emails
             }),
-            contentType: "application/json", 
+            contentType: "application/json",
             dataType: "json",
             success: () => {
                 //#region remove deleted users
@@ -236,7 +236,7 @@ $(function () {
     //#endregion
 
     //#region functions
-    async function populateTableAsync(addUserOnly=false) {
+    async function populateTableAsync(addUserOnly = false) {
         $.ajax({
             method: "GET",
             url: baseApiUrl + "/getAllUsers",
@@ -258,10 +258,16 @@ $(function () {
                             newPassportNo: userInfo.newPassportNo,
                             oldPassportNo: userInfo.oldPassportNo,
                             rank: userInfo.rank,
-                            dateOfIssue: await convertStrUtcDateToStrLocalDateAsync(userInfo.dateOfIssue),
-                            passPortExpiry: await convertStrUtcDateToStrLocalDateAsync(userInfo.passPortExpiry),
+                            dateOfIssue: await convertStrUtcDateToStrLocalDateAsync(
+                                userInfo.dateOfIssue,
+                                { hours: true, minutes: true, seconds: false }),
+                            passPortExpiry: await convertStrUtcDateToStrLocalDateAsync(
+                                userInfo.passPortExpiry,
+                                { hours: true, minutes: true, seconds: false }),
                             nationality: userInfo.nationality,
-                            dateOfBirth: await convertStrUtcDateToStrLocalDateAsync(userInfo.dateOfBirth),
+                            dateOfBirth: await convertStrUtcDateToStrLocalDateAsync(
+                                userInfo.dateOfBirth,
+                                { hours: false, minutes: false, seconds: false }),
                             placeOfBirth: userInfo.placeOfBirth,
                             gender: userInfo.gender,
                             yacthType: userInfo.yacthType,

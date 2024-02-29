@@ -1,4 +1,5 @@
 ﻿using BegumYatch.Core.Enums;
+using BegumYatch.Core.Models.Attributes;
 using Entities.Attributes;
 using MiarServices.Attributes;
 
@@ -13,6 +14,7 @@ namespace BegumYatch.Core.DTOs.User
         public string PhoneNumber { get; init; }
         
         [MiarLength(1, 150, "Email", "Email")]
+        [MiarEnglishChars(new char[] { '.', '-', '_', '@'}, "Email", "Email")]
         public string Email { get; init; }
 
         public string Flag { get; init; }
@@ -29,10 +31,8 @@ namespace BegumYatch.Core.DTOs.User
         public string YacthName { get; init; }
         public bool IsPersonel { get; init; }
 
-        [MiarPassword(
-            true,true, true,
-            new char[] { '.', ',', '!', '?', '-', ':', ';' },
-            1, 1, 1, "Şifre", "Password")]
+        [MiarEnglishChars(new char[] { '.', ',', '!', '?', '-', ':', ';' }, "Şifre", "Password")]
+        [MiarPassword(true, true, true, null, 1, 1, 1, "Şifre", "Password")]
         public string Password { get; init; }
     }
 }

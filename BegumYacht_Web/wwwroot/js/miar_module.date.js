@@ -16,7 +16,9 @@
         seconds: seconds < 10 ? '0' + seconds : seconds,
     };
 }
-export async function convertStrUtcDateToStrLocalDateAsync(utcDateTimeInStr) {
+export async function convertStrUtcDateToStrLocalDateAsync(
+    utcDateTimeInStr,
+    add = {hours: true, minutes: true, seconds: true}) {
     //#region when datetime is invalid
     if (utcDateTimeInStr == null
         || utcDateTimeInStr == "")
@@ -36,21 +38,31 @@ export async function convertStrUtcDateToStrLocalDateAsync(utcDateTimeInStr) {
     //#endregion
 
     //#region set pattern of local date
+
+    //#region set date format options
+    let formatOptions = {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+    };
+    if (add.hours) {
+        formatOptions["hour"] = "2-digit";
+        formatOptions["hour12"] = false;
+    }
+    if (add.minutes) formatOptions["minute"] = "2-digit";
+    if (add.seconds) formatOptions["second"] = "2-digit";
+    //#endregion
+
+    //#region set pattern
     let formatter = new Intl.DateTimeFormat(
         window.navigator.language,
-        {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-            hour12: false,  // close am/pm
-        });
+        formatOptions);
 
     let formattedDate = formatter
         .format(localDateTime)
         .replace(", ", "__");
+    //#endregion
+
     //#endregion
 
     return formattedDate;
