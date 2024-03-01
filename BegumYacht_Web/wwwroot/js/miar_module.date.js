@@ -90,7 +90,7 @@ export async function convertUtcDateToLocalDateAsync(utcDate) {
     let dateInfos = await getDateInfosInJsonAsync(utcDate);
     let localDateInNumber = Date.UTC(
         dateInfos.year,
-        dateInfos.month,
+        dateInfos.month - 1,
         dateInfos.day,
         dateInfos.hours,
         dateInfos.minutes,
@@ -173,4 +173,85 @@ export async function isDatesEqualAsync(date1, date2, check = {
     //#endregion
 
     return true;
+}
+export async function getPassedTimeInStringAsync(utcDateTimeInStr) {
+    //#region get dates in unix
+    let nowDate = new Date();
+    let nowDateInMs = nowDate.getTime();
+
+    let oldDateInLocal = await convertUtcDateToLocalDateAsync(
+        new Date(utcDateTimeInStr));
+    let oldDateInMs = oldDateInLocal.getTime();
+    //#endregion
+
+    //#region return passed time  
+
+    //#region set variables
+    let dateDifferenceInSn = (nowDateInMs - oldDateInMs) / 10 ** 3;
+    let totalSecondAtOneHour = 3600;
+    let totalSecondAtOneDay = totalSecondAtOneHour * 24;
+    let totalSecondAtOneMonth = totalSecondAtOneDay * 30;
+    let totalSecondAtOneYear = (totalSecondAtOneDay * 365) + (totalSecondAtOneHour * 6)  // one year == 365 day 6 hours
+    //#endregion
+
+    //#region write passed time as year
+    var languagePackage_message = {
+        "TR": {
+            "year": " yıl önce",
+            "month": " ay önce",
+            "day": " gün önce",
+            "hours": " saat önce",
+            "minutes": " dakika önce",
+            "seconds": " saniye önce"
+        },
+        "EN": {
+            "year": " year ago",
+            "month": " month ago",
+            "day": " day ago",
+            "hours": " hours ago",
+            "minutes": " minutes ago",
+            "seconds": " seconds ago"
+        }
+    };
+    let yearDifference = Math.floor(dateDifferenceInSn / totalSecondAtOneYear);
+
+    if (yearDifference > 0)
+        return yearDifference + languagePackage_message.TR.year;
+    //#endregion
+
+    //#region write passed time as month
+    let monthDifference = Math.floor(dateDifferenceInSn / totalSecondAtOneMonth);
+
+    if (monthDifference > 0)
+        return monthDifference + languagePackage_message.TR.month;
+    //#endregion
+
+    //#region write passed time as day
+    let dayDifference = Math.floor(dateDifferenceInSn / totalSecondAtOneDay);
+
+    if (dayDifference > 0)
+        return dayDifference + languagePackage_message.TR.day;
+    //#endregion
+
+    //#region write passed time as hours
+    let hoursDifference = Math.floor(dateDifferenceInSn / totalSecondAtOneHour);
+
+    if (hoursDifference > 0)
+        return hoursDifference + languagePackage_message.TR.hours;
+    //#endregion
+
+    //#region write passed time as minutes
+    let minutesDifference = Math.floor(dateDifferenceInSn / 60);
+
+    if (minutesDifference > 0)
+        return minutesDifference + languagePackage_message.TR.minutes;
+    //#endregion
+
+    //#region write passed time as second
+    let secondDifference = Math.floor(dateDifferenceInSn);
+
+    return secondDifference + languagePackage_message.TR.seconds;
+    //#endregion
+
+    //#endregion
 }

@@ -1,6 +1,7 @@
 ﻿//#region variables
 export let paginationInfosInJson;
 export let entityCountOnTable;
+export let isCriticalSection = {}  // {id: false, id: true, ...}
 //#endregion
 
 //#region functions
@@ -434,102 +435,6 @@ export async function autoObjectMapperAsync(targetObject, sourceObject, dontAddN
     }
     //#endregion
 }
-export async function getPassedTimeInStringAsync(utcDateTimeInStr) {
-    //#region convert old date in utc to local date
-    let oldDateInUtc = new Date(utcDateTimeInStr);
-    let oldYear = oldDateInUtc.getFullYear();
-    let oldMonth = oldDateInUtc.getMonth();
-    let oldDay = oldDateInUtc.getDate();
-    let oldHours = oldDateInUtc.getHours();
-    let oldMinutes = oldDateInUtc.getMinutes();
-    let oldSeconds = oldDateInUtc.getSeconds();
-
-    let oldDateInLocal = new Date(
-        oldYear,
-        oldMonth,
-        oldDay,
-        oldHours + 3,
-        oldMinutes,
-        oldSeconds);
-    //#endregion
-
-    //#region get dates in unix
-    let nowDate = new Date();
-    let nowDateInMs = nowDate.getTime();
-    let oldDateInMs = oldDateInLocal.getTime();
-    //#endregion
-
-    //#region return passed time  
-
-    //#region set variables
-    let totalSecondAtOneHour = 3600;
-    let totalSecondAtOneDay = totalSecondAtOneHour * 24;
-    let totalSecondAtOneMonth = totalSecondAtOneDay * 30;
-    let totalSecondAtOneYear = (totalSecondAtOneDay * 365) + (totalSecondAtOneHour * 6)  // one year == 365 day 6 hours
-    let dateDifferenceInSn = (nowDateInMs - oldDateInMs) / 10 ** 3;
-    //#endregion
-
-    //#region write passed time as year
-    var languagePackage_message = {
-        "TR": {
-            "year": " yıl önce",
-            "month": " ay önce",
-            "day": " gün önce",
-            "hours": " saat önce",
-            "minutes": " dakika önce",
-            "seconds": " saniye önce"
-        },
-        "EN": {
-            "year": " year ago",
-            "month": " month ago",
-            "day": " day ago",
-            "hours": " hours ago",
-            "minutes": " minutes ago",
-            "seconds": " seconds ago"
-        }
-    };
-    let yearDifference = Math.floor(dateDifferenceInSn / totalSecondAtOneYear);
-
-    if (yearDifference > 0)
-        return yearDifference + languagePackage_message[language]["year"];
-    //#endregion
-
-    //#region write passed time as month
-    let monthDifference = Math.floor(dateDifferenceInSn / totalSecondAtOneMonth);
-
-    if (monthDifference > 0)
-        return monthDifference + languagePackage_message[language]["month"];
-    //#endregion
-
-    //#region write passed time as day
-    let dayDifference = Math.floor(dateDifferenceInSn / totalSecondAtOneDay);
-
-    if (dayDifference > 0)
-        return dayDifference + languagePackage_message[language]["day"];
-    //#endregion
-
-    //#region write passed time as hours
-    let hoursDifference = Math.floor(dateDifferenceInSn / totalSecondAtOneHour);
-
-    if (hoursDifference > 0)
-        return hoursDifference + languagePackage_message[language]["hours"];
-    //#endregion
-
-    //#region write passed time as minutes
-    let minutesDifference = Math.floor(dateDifferenceInSn / 60);
-
-    if (minutesDifference > 0)
-        return minutesDifference + languagePackage_message[language]["minutes"];
-    //#endregion
-
-    //#region write passed time as second
-    let secondDifference = Math.floor(dateDifferenceInSn);
-
-    return secondDifference + languagePackage_message[language]["seconds"];
-    //#endregion
-
-    //#endregion
-}
 export async function getKeysOfBlankValuesAsync(data) {
     //#region check whether blank that values of data 
     let keysWithBlankValue = [];
@@ -568,6 +473,49 @@ export async function showOrHideLoadingImageAsync(mode, img_loading, lbl_result)
             break;
         case "hide":
             img_loading.attr("hidden", "");
+    }
+}
+export async function shiftTheChildDivToBottomOfParentDivAsync(div_parent, div_child_Id) {
+    //#region set variables
+    let div_parent_whiteSpaceQuantity = div_parent.prop("offsetHeight");
+    let infosOfChildrenDivs = div_parent.children();
+    //#endregion
+
+    //#region compute white space quantity of div_info (DYNAMICALLY)
+    for (let index = 0; index < infosOfChildrenDivs.length; index++) {
+        let infosOfChildrenDiv = infosOfChildrenDivs[index];
+        div_parent_whiteSpaceQuantity -= infosOfChildrenDiv.offsetHeight;
+        let x = 0;
+    }
+    //#endregion
+
+    //#region shift the bottom desired div
+    div_parent
+        .children("#" + div_child_Id)
+        .css("margin-top", div_parent_whiteSpaceQuantity);
+    //#endregion
+}
+export async function addCriticalSectionAsync(
+    criticalSectionId,
+    func_toBeRunInCriticalAsync,
+    timeout = null) {
+    if (!isCriticalSection[criticalSectionId]) {
+        isCriticalSection[criticalSectionId] = true;
+
+        //#region when time is not desired
+        if (timeout == null) {
+            await func_toBeRunInCriticalAsync();
+            isCriticalSection[criticalSectionId] = false;  // reset
+        }
+        //#endregion
+
+        //#region when time is desired
+        else
+            setTimeout(async () => {
+                await func_toBeRunInCriticalAsync();
+                isCriticalSection[criticalSectionId] = false;  // reset
+            }, timeout);
+        //#endregion
     }
 }
 export function isExistsOnArray(array, value) {

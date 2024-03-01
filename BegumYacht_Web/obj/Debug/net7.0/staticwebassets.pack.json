@@ -49,6 +49,14 @@
       "PackagePath": "staticwebassets\\css\\login.css"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\css\\miar_demand.css",
+      "PackagePath": "staticwebassets\\css\\miar_demand.css"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\css\\miar_demand.fuelPurchase.css",
+      "PackagePath": "staticwebassets\\css\\miar_demand.fuelPurchase.css"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\css\\miar_login.css",
       "PackagePath": "staticwebassets\\css\\miar_login.css"
     },
@@ -121,6 +129,10 @@
       "PackagePath": "staticwebassets\\images\\begumLogo3.png"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\images\\catamaranYacht.png",
+      "PackagePath": "staticwebassets\\images\\catamaranYacht.png"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\images\\close.png",
       "PackagePath": "staticwebassets\\images\\close.png"
     },
@@ -145,12 +157,20 @@
       "PackagePath": "staticwebassets\\images\\logout.png"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\images\\motorYacht.png",
+      "PackagePath": "staticwebassets\\images\\motorYacht.png"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\images\\newNotification.png",
       "PackagePath": "staticwebassets\\images\\newNotification.png"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\images\\notification.png",
       "PackagePath": "staticwebassets\\images\\notification.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\images\\sailingYacht.png",
+      "PackagePath": "staticwebassets\\images\\sailingYacht.png"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\images\\show.png",

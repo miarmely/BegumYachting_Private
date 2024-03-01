@@ -8,11 +8,14 @@ using BegumYatch.Core.Enums;
 using BegumYatch.Core.Models.Demands;
 using BegumYatch.Core.Models.FileOperations;
 using BegumYatch.Core.Models.User;
+using BegumYatch.Core.QueryParameters;
 using BegumYatch.Core.Repositories;
 using BegumYatch.Core.Services;
 using BegumYatch.Core.UnitOfWorks;
 using BegumYatch.Repository.Repositories;
+using BegumYatch.Service.Helper;
 using Entities.Attributes;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -23,7 +26,8 @@ using System.Threading.Tasks;
 
 namespace BegumYatch.Service.Services
 {
-    public class FuelPurchaseDemandService : Service<FuelPurchaseDemand>, IFuelPurchaseDemandService
+    public class FuelPurchaseDemandService 
+        : Service<FuelPurchaseDemand>, IFuelPurchaseDemandService
     {
         private readonly IGenericRepository<FuelPurchaseDemand> _fuelPurchaseDemandRepository;
         private readonly IGenericRepository<CheckIn> _checkInRepository;
@@ -116,22 +120,28 @@ namespace BegumYatch.Service.Services
         }
 
 
-
         #region By MERT
-        public async Task<List<DemandDtoForFuelPurchase>> GetAllFuelPurchaseDemandsAsync()
+        public async Task<PagingList<DemandDtoForFuelPurchase>> GetAllFuelPurchaseDemandsAsync(
+            PagingParameter pagingParam,
+            HttpContext context)
         {
-            #region get all fuel purchase demands
+            #region get all demands
             var entity = await _fuelPurchaseDemandRepository
                .GetAll()
+               .Include(d => d.User)
                .OrderByDescending(y => y.CreatedDate)
                .ToListAsync();
 
-            var fuelPurchases = _mapper
-                .Map<List<DemandDtoForFuelPurchase>>(entity);
+            var paginedEntity = entity
+                .Skip((pagingParam.PageNumber - 1) * pagingParam.PageSize)
+                .Take(pagingParam.PageSize);
+
+            var demands = _mapper
+                .Map<List<DemandDtoForFuelPurchase>>(paginedEntity);
             #endregion
 
             #region when any demand not found  (throw)
-            if (fuelPurchases.Count() == 0)
+            if (demands.Count == 0)
                 throw new MiarException(
                     404,
                     "NF-D-FP",
@@ -139,7 +149,18 @@ namespace BegumYatch.Service.Services
                     "herhangi bir yakıt alım talebi bulunmamaktadır");
             #endregion
 
-            return fuelPurchases;
+            #region add pagination infos to header
+            var demandsInPagingList = await PagingList<DemandDtoForFuelPurchase>
+                .ToPagingListAsync(
+                    demands,
+                    entity.Count,
+                    pagingParam.PageNumber,
+                    pagingParam.PageSize,
+                    "Demand-FuelPurchase",
+                    context);
+            #endregion
+
+            return demandsInPagingList;
         }
         #endregion
     }

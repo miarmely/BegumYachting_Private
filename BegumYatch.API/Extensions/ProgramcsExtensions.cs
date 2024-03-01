@@ -39,7 +39,10 @@ namespace BegumYatch.API.Extensions
                             "http://localhost:3408",
                             "https://localhost:3408")
                         .AllowAnyMethod()
-                        .AllowAnyHeader();
+                        .AllowAnyHeader()
+                        .WithExposedHeaders(
+                            "Demand-FuelPurchase"
+                        );
                 });
             });  // by MERT
     }

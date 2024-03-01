@@ -6,15 +6,13 @@ export const div_article_button_id = "div_article_button";
 export const art_baseId = "art_";
 export const path_playImage = "images/play.png";
 export const btn_pdf_id = "btn_pdf";
-export const headerOfPageHeight = 80;
 export const article_class = "article";
 export let articleBuffer = {
-    "div_articles": "",  // should be set
-    "path_articleVideos": "",
-    "totalArticleCount": 0,  // should be set
-    "articleCountOnOneRow": 0,
-    "articleType": "",  // should be set 
-    "articleStyle": {  // should be set
+    div_articles: "",  // should be set
+    path_articleVideos: "",
+    totalArticleCount: 0,  // should be set
+    articleType: "",  // should be set 
+    articleStyle: {  // should be set
         "width": 0,
         "height": 0,
         "marginT": 0,
@@ -29,8 +27,10 @@ export let articleBuffer = {
         "borderColor": "",
         "boxShadow": "",
         "bgColorForDelete": ""
-    }  // firstly articleType should be set
+    },  // firstly articleType should be set
+    heightOfPageMenubar: 0
 }
+let articleCountOnOneRow = 0;
 let articleInfos_lastUploadedPlayImage = {};
 let articleInfos_lastUploadedVideo = {
     "article": null
@@ -66,8 +66,6 @@ export let style_div_img_height_IT;
 export let style_div_img_marginB_IT;
 export let style_div_info_width_IT;
 export let style_div_info_height_IT;
-export let style_img_width_IT;
-export let style_img_height_IT;
 
 // when article type is "text" (T)
 export let style_div_info_width_T;
@@ -157,7 +155,7 @@ export async function mouseout_articleVideoDivAsync(event, article) {
     //#endregion
 
     //#region when mouse isn't over on header AND is over article video 
-    if (event.clientY > headerOfPageHeight) {
+    if (event.clientY > heightOfPageMenubar) {
         //#region when mouse is over article video (return)
         let currentMouseX = event.pageX;
         let currentMouseY = event.pageY;
@@ -182,11 +180,13 @@ export async function ended_articleVideoAsync() {
 //#endregion
 
 //#region functions
+
+//#region partner
 export async function setArticleBufferAsync(buffer = {
-    "div_articles": "",
-    "totalArticleCount": 0,
-    "articleType": "",
-    "articleStyle": {
+    div_articles: "",
+    totalArticleCount: 0,
+    articleType: "",
+    articleStyle: {
         "width": 0,
         "height": 0,
         "marginT": 0,
@@ -201,7 +201,8 @@ export async function setArticleBufferAsync(buffer = {
         "borderColor": "",
         "boxShadow": "",
         "bgColorForDelete": ""
-    }  // firstly articleType should be set
+    },  // firstly articleType should be set
+    heightOfPageMenubar: 0
 }) {
     //#region initialize buffer
     for (let key in buffer) {
@@ -358,6 +359,21 @@ export async function controlArticleWidthAsync() {
     }
     //#endregion
 }
+export async function alignArticlesAsAutoAsync() {
+    //#region realign articles to center
+    if (!isCriticalSection) {
+        isCriticalSection = true;
+
+        // aling articles
+        setTimeout(async () => {
+            await alignArticlesToCenterAsync();
+            await setHeightOfArticlesDivAsync();
+
+            isCriticalSection = false;
+        }, 500);
+    }
+    //#endregion
+}  // with critical section
 export async function alignArticlesToCenterAsync(widthUnit = "px") {
     //#region set variables
     let article_style = articleBuffer.articleStyle;
@@ -368,8 +384,8 @@ export async function alignArticlesToCenterAsync(widthUnit = "px") {
     //#endregion
 
     //#region set padding left and right of article
-    articleBuffer.articleCountOnOneRow = await getArticleCountOnOneRowAsync(widthUnit);
-    let whiteSpaceWidth = div_articles_width - (article_netCurrentWidth * articleBuffer.articleCountOnOneRow);
+    articleCountOnOneRow = await getArticleCountOnOneRowAsync(widthUnit);
+    let whiteSpaceWidth = div_articles_width - (article_netCurrentWidth * articleCountOnOneRow);
 
     articleBuffer.div_articles.css(
         "padding-left",
@@ -379,33 +395,19 @@ export async function alignArticlesToCenterAsync(widthUnit = "px") {
 export async function setHeightOfArticlesDivAsync() {
     //#region set height of articles <div>
     let netArticleHeight = articleBuffer.articleStyle.height + articleBuffer.articleStyle.marginT + articleBuffer.articleStyle.marginB;
-    let totalRowCount = (articleBuffer.totalArticleCount % articleBuffer.articleCountOnOneRow == 0 ?
-        Math.floor(articleBuffer.totalArticleCount / articleBuffer.articleCountOnOneRow)  // when article count of all rows is equal
-        : Math.floor(articleBuffer.totalArticleCount / articleBuffer.articleCountOnOneRow) + 1)  // when article count of last row is different
+    let totalRowCount = (articleBuffer.totalArticleCount % articleCountOnOneRow == 0 ?
+        Math.floor(articleBuffer.totalArticleCount / articleCountOnOneRow)  // when article count of all rows is equal
+        : Math.floor(articleBuffer.totalArticleCount / articleCountOnOneRow) + 1)  // when article count of last row is different
 
     articleBuffer.div_articles.css(
         "height",
         netArticleHeight * totalRowCount);
     //#endregion
 }
-export async function removeLastUploadedArticleVideoAsync() {
-    //#region remove last uploaded article video if exists
-    let article = articleInfos_lastUploadedVideo["article"];
-
-    if (article != null  // when at least one video has been opened previously
-        && isVideoExists(article))
-        removeArticleVideo(article);
-    //#endregion
-}
 export async function isSidebarOpenAsync() {
-    //#region when sidebar is closed
     let closedSidebarClass = "nav-collapse hide-left-bar";
 
-    if ($("#sidebar").attr("class") == closedSidebarClass)
-        return false;
-    //#endregion
-
-    return true;
+    return $("#sidebar").attr("class") != closedSidebarClass;
 }
 export async function addMsgWithImgToDivArticlesAsync(imagePath, imageAlt, message) {
     //#region add message with image to div_articles
@@ -429,21 +431,6 @@ export async function addMsgWithImgToDivArticlesAsync(imagePath, imageAlt, messa
     })
     //#endregion
 }
-export async function alignArticlesAsAutoAsync() {
-    //#region realign articles to center
-    if (!isCriticalSection) {
-        isCriticalSection = true;
-
-        // aling articles
-        setTimeout(async () => {
-            await alignArticlesToCenterAsync();
-            await setHeightOfArticlesDivAsync();
-
-            isCriticalSection = false;
-        }, 500);
-    }
-    //#endregion
-}
 export async function getArticleCountOnOneRowAsync(widthUnit = "px") {
     //#region set variables
     let article_style = articleBuffer.articleStyle;
@@ -459,7 +446,7 @@ export async function getValidArticleWidthAsync(
     style_article = { "width": 0, "marginR": 0, "marginL": 0 },
     div_articles
 ) {
-    //#region when article net width is bigger than div_articles (OVERFLOW)
+    //#region when article net width is bigger than div_articles (WHEN OVERFLOW)
     let div_articles_width = div_articles.prop("clientWidth");
     let article_expectedMaxWidth = div_articles_width - style_article.marginR - style_article.marginL;
 
@@ -473,6 +460,11 @@ export async function getArticleWidthAsync(
     articleStyle = { "articleCountOnOneRow": 0, "marginR": 0, "marginL": 0 },
     div_articles
 ) {
+    // if you determined the article count on row use this method. 
+    // This method sets article widths dynamically.
+    // example: you determineted article count on row as 5 
+    // so it sets article widths by your screen width dynamically
+
     //#region when device is mobile (set article width as one article)
     let div_articles_width = div_articles.prop("clientWidth");
     const mobileDeviceTypes = [
@@ -499,66 +491,9 @@ export async function getArticleWidthAsync(
     //#region when device is PC (set article width by desired article count)
     let totalMarginAmount = articleStyle.articleCountOnOneRow * (articleStyle.marginR + articleStyle.marginL);
     let whiteSpaceAmount = div_articles_width - totalMarginAmount;
-    
+
     return Math.floor(whiteSpaceAmount / articleStyle.articleCountOnOneRow);
     //#endregion
-}
-export function showPlayImage(article) {
-    //#region hide video
-    article.find("video")
-        .attr("hidden", "");
-    //#endregion
-
-    //#region load play image
-    let img_play = article.find("img");
-    img_play.attr({
-        "src": "/" + path_playImage,
-        "alt": "play"
-    });
-    //#endregion
-
-    //#region add play image styles
-    img_play.css({
-        "width": style_img_play_width_VT,
-        "height": style_img_play_height_VT,
-        "margin-top": style_img_play_marginT_VT,
-        "margin-bottom": style_img_play_marginB_VT,
-        "margin-right": style_img_play_marginR_VT,
-        "margin-left": style_img_play_marginL_VT
-    });
-    //#endregion
-
-    img_play.removeAttr("hidden"); // show play <img>
-}
-export function hidePlayImage(article) {
-    // remove attributes of play image
-    let img_play = article.find("img");
-    img_play.removeAttr("src alt style");
-
-    // hide play image
-    img_play.attr("hidden", "");
-
-    // show video poster
-    article
-        .find("video")
-        .removeAttr("hidden");
-}
-export function isVideoExists(article) {
-    let src = article
-        .find("video")
-        .attr("controls");
-
-    return src != null;
-}
-export function removeArticleVideo(article) {
-    //#region remove attributes article video
-    let video = article
-        .find("video");
-
-    video.removeAttr("src controls autoplay");
-    //#endregion
-
-    video.load();
 }
 async function updateArticleAndArticleElementsStylesAsync() {
     //#region update styles
@@ -568,7 +503,7 @@ async function updateArticleAndArticleElementsStylesAsync() {
         article.css("width", articleBuffer.articleStyle.width);
         //#endregion
 
-        addStyleToArticleElements(article,);
+        addStyleToArticleElements(article);
     }
     //#endregion
 }
@@ -612,8 +547,6 @@ function setStylesOfArticleElements() {
             style_div_info_width_IT = article_netWidth;
             style_div_info_height_IT = article_netHeight - style_div_img_height_IT - style_div_img_marginB_IT;
 
-            style_img_width_IT = style_div_img_width_IT;
-            style_img_height_IT = style_div_img_height_IT;
             break;
         case "text":
             style_div_info_width_T = article_netWidth;
@@ -719,4 +652,85 @@ function addStyleToArticleElements(article) {
     }
     //#endregion
 }
+//#endregion
+
+//#region for image and text
+export async function alignImageToVerticalCenterAsync(articleId) {
+    let img = $("#" + articleId + " #" + div_article_image_id + " img");
+    let img_height = img.prop("offsetHeight");
+    let whiteSpaceQuantity = style_div_img_height_IT - img_height;
+
+    img.css("margin-top", whiteSpaceQuantity / 2);
+}
+//#endregion
+
+//#region for video and text
+export async function removeLastUploadedArticleVideoAsync() {
+    //#region remove last uploaded article video if exists
+    let article = articleInfos_lastUploadedVideo["article"];
+
+    if (article != null  // when at least one video has been opened previously
+        && isVideoExists(article))
+        removeArticleVideo(article);
+    //#endregion
+}
+export function showPlayImage(article) {
+    //#region hide video
+    article.find("video")
+        .attr("hidden", "");
+    //#endregion
+
+    //#region load play image
+    let img_play = article.find("img");
+    img_play.attr({
+        "src": "/" + path_playImage,
+        "alt": "play"
+    });
+    //#endregion
+
+    //#region add play image styles
+    img_play.css({
+        "width": style_img_play_width_VT,
+        "height": style_img_play_height_VT,
+        "margin-top": style_img_play_marginT_VT,
+        "margin-bottom": style_img_play_marginB_VT,
+        "margin-right": style_img_play_marginR_VT,
+        "margin-left": style_img_play_marginL_VT
+    });
+    //#endregion
+
+    img_play.removeAttr("hidden"); // show play <img>
+}
+export function hidePlayImage(article) {
+    // remove attributes of play image
+    let img_play = article.find("img");
+    img_play.removeAttr("src alt style");
+
+    // hide play image
+    img_play.attr("hidden", "");
+
+    // show video poster
+    article
+        .find("video")
+        .removeAttr("hidden");
+}
+export function isVideoExists(article) {
+    let src = article
+        .find("video")
+        .attr("controls");
+
+    return src != null;
+}
+export function removeArticleVideo(article) {
+    //#region remove attributes article video
+    let video = article
+        .find("video");
+
+    video.removeAttr("src controls autoplay");
+    //#endregion
+
+    video.load();
+}
+//#endregion
+
 //#endregion

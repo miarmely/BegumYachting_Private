@@ -2,6 +2,9 @@
 using BegumYatch.Core.DTOs.FuelPurchaseDemand;
 using BegumYatch.Core.DTOs.MainPage;
 using BegumYatch.Core.Models.Demands;
+using BegumYatch.Core.QueryParameters;
+using BegumYatch.Core.UnitOfWorks;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +24,9 @@ namespace BegumYatch.Core.Services
 
 
         #region By MERT
-        Task<List<DemandDtoForFuelPurchase>> GetAllFuelPurchaseDemandsAsync();
+        Task<PagingList<DemandDtoForFuelPurchase>> GetAllFuelPurchaseDemandsAsync(
+            PagingParameter pagingParam,
+            HttpContext context);
         #endregion
     }
 }

@@ -1,4 +1,6 @@
-﻿using BegumYatch.Core.Models.User;
+﻿using BegumYatch.Core.Enums;
+using BegumYatch.Core.Models.User;
+using System.Security.Permissions;
 
 namespace BegumYatch.Core.DTOs.AdminPanel.Demands
 {
@@ -6,6 +8,10 @@ namespace BegumYatch.Core.DTOs.AdminPanel.Demands
     {
         public int Id { get; init; }  // demand id
         public int UserId { get; init; }
+        public string NameSurname { get; init; }
+        public string YachtName { get; init; }
+        public YacthType YachtType { get; init; }
+        public string Flag { get; init; }
         public string? RequestedFuel { get; init; } //Talep edilen yakıt tipi
         public bool? IsDutyPaid { get; init; } //gümrüklümü gümrüksüz mü
         public float? Mgo { get; init; } //yakıt litresi

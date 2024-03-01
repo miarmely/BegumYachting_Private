@@ -8,6 +8,7 @@ using BegumYatch.Core.DTOs.TechnicalAssitanceandSparePartOrder;
 using BegumYatch.Core.DTOs.VipDemand.BegumYatch.Core.DTOs.VipDemand;
 using BegumYatch.Core.Enums;
 using BegumYatch.Core.Models.Demands;
+using BegumYatch.Core.QueryParameters;
 using BegumYatch.Core.Services;
 using BegumYatch.Service.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -205,11 +206,14 @@ namespace BegumYatch.API.Controllers
 
 
         #region By MERT
-        [HttpGet("adminPanel/fuelPurchase/all")]
-        public async Task<IActionResult> GetAllFuelPurchaseDemands()
+        [HttpGet("adminPanel/fuelPurchaseDemand/all")]
+        public async Task<IActionResult> GetAllFuelPurchaseDemands(
+            [FromQuery] PagingParameter pagingParam)
         {
             var fuelPurchaseDemands = await _fuelPurchaseDemandService
-                .GetAllFuelPurchaseDemandsAsync();
+                .GetAllFuelPurchaseDemandsAsync(
+                    pagingParam,
+                    HttpContext);
 
             return Ok(fuelPurchaseDemands);
         }
