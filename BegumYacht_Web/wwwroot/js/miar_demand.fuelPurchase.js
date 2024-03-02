@@ -117,7 +117,6 @@ $(function () {
             },
             heightOfPageMenubar: 80
         });  // i have to define article buffer before setting the page size.
-
         pagination.pageSize = await getPageSizeAsync();
         //#endregion
 
@@ -131,7 +130,7 @@ $(function () {
                 addMsgWithImgToDivArticlesAsync(
                     path.laodingImage,
                     "Yükleniyor",
-                    "Yükleniyor");
+                    "Yükleniyor...");
             },
             success: (demands, status, xhr) => {
                 new Promise(async () => {
@@ -198,7 +197,7 @@ $(function () {
             error: () => {
                 addMsgWithImgToDivArticlesAsync(
                     "images/question.png",
-                    "Talep Bulunamadı Resmi",
+                    "Talep Bulunamadı",
                     "Herhangi Bir Talep Bulunamadı"
                 );
             }

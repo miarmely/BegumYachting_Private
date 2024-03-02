@@ -18,38 +18,54 @@
         </div>
         @*/title*@
         <div class="panel-body">
-            <div id="div_userUpdate" hidden>
+            <div id="div_userUpdate">
                 <form>
                     <div id="div_form" class="form-horizontal bucket-form" style="padding-top:20px">                    
+                        @*display sender infos*@
+                        <div class="form-group text-center">
+                            <div class="col-sm-3"></div>
+                            <div id="div_senderInfos" class="col-sm-6">
+                                <img src="~/images/user.png"/>
+                                <h4>Gönderenin Bilgilerini Görüntüle</h4>
+                            </div>
+                            <div class="col-sm-3"></div>
+                        </div>
+                        
                         @{
                             #region add inputs
                             var inputInfos = new object[][]{
-                                new object[] {"input", "text", "firstnameLastname", "Ad Soyad", true},  // type for case | type for input | id | label name | info message
-                                new object[] {"input", "text", "phone", "Telefon", true},
-                                new object[] {"input", "text", "email", "Email", true},
-                                new object[] {"input", "text", "flag" , "Bayrak", true},
-                                new object[] {"input", "text", "newPassportNo", "Yeni Pasaport No", true},
-                                new object[] {"input", "text", "oldPassportNo", "Eski Pasaport No", true},
-                                new object[] {"input", "text", "rank", "Rank", true},
-                                new object[] {"input", "datetime-local", "issueDate", "Pasaport Veriliş Tarihi", false},
-                                new object[] {"input", "datetime-local", "passportExpiration", "Pasaport Bitiş Tarihi", false},
-                                new object[] {"input", "text", "nationality", "Uyruk", true},
-                                new object[] {"input", "date", "birthDate", "Doğum Tarihi", false},
-                                new object[] {"input", "text", "birthPlace", "Doğum Yeri", true},
-                                new object[] {"input", "text", "gender", "Cinsiyet", true},
-                                new object[] {"select", "yachtType", "Yat Tipi", new string[] {"MotorYacht", "SailingYacht", "Catamaran"}, true},  // type for case | id | label name | options | info message
-                                new object[] {"input", "text", "yachtName", "Yat Adı", true}
+                                new object[] {"input", "text", "nameSurname", "Ad Soyad", false, "hidden", "readonly"},  // type for switch/case | type for input | id | label name | info message | hidden/disabled/readonly for div[class= form-group] |  hidden/disabled/readonly for input
+                                new object[] {"input", "text", "phone", "Telefon", false, "hidden", "readonly"},
+                                new object[] {"input", "text", "email", "email", false, "hidden", "readonly"},
+                                new object[] {"input", "text", "newPassportNo", "Yeni Pasaport No", false, "hidden", "readonly"},
+                                new object[] {"input", "text", "oldPassportNo", "Eski Pasapart No", false, "hidden", "readonly"},
+                                new object[] {"input", "text", "rank", "Rank", false, "hidden", "readonly"},
+                                new object[] {"input", "text", "nationality", "Uyruk", false, "hidden", "readonly"},
+                                new object[] {"input", "text", "gender", "Cinsiyet", false, "hidden", "readonly"},
+                                new object[] {"input", "text", "yachtName", "Yat Adı", false, "", "readonly"},
+                                new object[] {"input", "text", "yachtType", "Yat Tipi", false, "", "readonly"},
+                                new object[] {"input", "text", "flag", "Bayrak", false, "", "readonly"},
+                                new object[] {"input", "text", "isDutyPaid", "Gümrüklü Mü", false, "", "readonly"},
+                                new object[] {"input", "text", "mgo", "MGO", false, "", "readonly"},  // marine gas oil
+                                new object[] {"input", "text", "ago", "AGO", false, "", "readonly"},  // automotive gas oil
+                                new object[] {"input", "text", "fuelType", "Yakıt Tipi", false, "", "readonly"},
+                                new object[] {"input", "text", "requestedFuel" , "İstenen Yakıt Miktarı", false, "", "readonly"},
+                                new object[] {"input", "text", "fuelSupplyPort", "Yakıt Alım Yeri", false, "", "readonly"},
+                                new object[] {"input", "text", "fuelSupplyDate", "Yakıt Alım Tarihi", false, "", "readonly"},
+                                new object[] {"input", "text", "creationDate", "Talep Tarihi", false, "", "readonly"},
+                                new object[] {"textarea", "notes", "Notlar", false, "", "readonly"},  // type for case | id | label name | info message
                             };
+                            //new object[] {"select", "yachtType", "Yat Tipi", new string[] {"MotorYacht", "SailingYacht", "Catamaran"}, false},  // type for case | id | label name | options | info message
 
                             foreach (var inputInfo in inputInfos)
                             {
                                 switch (inputInfo[0])
                                 {
                                     case "input":
-                                        <div id="div_@inputInfo[2]" class="form-group">
+                                        <div id="div_@inputInfo[2]" class="form-group" @inputInfo[5]>
                                             <label class="col-sm-3 control-label">@inputInfo[3]</label>
                                             <div class="col-sm-6">
-                                                <input id="inpt_@inputInfo[2]" type="@inputInfo[1]" class="form-control" >
+                                                <input id="inpt_@inputInfo[2]" type="@inputInfo[1]" class="form-control" @inputInfo[6]>
                                                 <span id="spn_help_inpt_@inputInfo[2]" class="help-block"></span>
                                             </div>
                                         
@@ -64,77 +80,34 @@
                                         </div>
                                         break;
 
-                                    case "select":
+                                    case "textarea":
                                         <div id="div_@inputInfo[1]" class="form-group">
                                             <label class="col-sm-3 control-label">@inputInfo[2]</label>
                                             <div class="col-sm-6">
-                                                <select id="slct_@inputInfo[1]" class="form-control" aria-label="">
-                                                    @{
-                                                        #region add options to select
-                                                        var options = (string[])inputInfo[3];
-
-                                                        foreach(var option in options)
-                                                        {
-                                                            <option value="@option">@option</option>
-                                                        }
-                                                        #endregion
-                                                    }
-                                                </select>
-                                                <span class="help-block"></span>
+                                                <textarea id="inpt_@inputInfo[1]" class="form-control" @inputInfo[5]></textarea>
+                                                <span id="spn_help_inpt_@inputInfo[1]" class="help-block"></span>
                                             </div>
-                                            @if ((bool)inputInfo[4])
+                                        
+                                            @if((bool)inputInfo[3])
                                             {
                                                 // add info message if desired
-                                                <div class="col-sm-3 div_infoMessage">
+                                                 <div class="col-sm-3 div_infoMessage">
                                                     <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
                                                     <ul role="menu" class="dropdown-menu"></ul>
-                                                </div>
+                                                </div>   
                                             }
-                                        </div>  
+                                        </div>
                                         break;
                                 }
                             }
                             #endregion
                         }
 
-                        @*is personal?*@
-                        <div id="div_isPersonal" class="form-group">
-                            <label class="col-sm-3 control-label">Personel Mi</label>
-                            <div class="col-sm-6">
-                                <div id="div_radio">
-                                    @*radio 1*@ 
-                                    <div class="form-check" style="float: left;  margin-right: 15px">
-                                        <input id="rad_yes" class="form-check-input" type="radio" name="isPersonal">
-                                        <label for="rad_yes" class="form-check-label">Evet</label>
-                                    </div>
-                                    @*radio 2*@ 
-                                    <div class="form-check">
-                                        <input id="rad_no" class="form-check-input" type="radio" name="isPersonal">
-                                        <label for="rad_no" class="form-check-label">Hayır</label>
-                                    </div>
-                                </div>
-                                <span id="spn_help_inpt_isPersonal" class="help-block"></span>
-                            </div>
-                        </div>
-
-                        @*new password*@
-                        <div id="div_password" class="form-group">
-                            <label class="col-sm-3 control-label">Yeni Şifre</label>
-                            <div class="col-sm-6">
-                                <input id="inpt_password" type="password" class="form-control" />
-                                <span id="spn_help_inpt_password" class="help-block"></span>
-                            </div>
-                            <div class="col-sm-3 div_infoMessage">
-                                <button id="btn_showPassword" type="button"></button>
-                                <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
-                                <ul role="menu" class="dropdown-menu"></ul>
-                            </div>
-                        </div>
-                    
-                        @*save button*@
-                        <div id="div_saveButton" class="form-group">
+                        @*accept and reject buttons*@
+                        <div id="div_buttons" class="form-group">
                             <div class="col-sm-6; text-center">
-                                <button id="btn_save" type="submit" class="btn btn-danger">Kaydet</button>
+                                <button id="btn_accept" type="button" class="btn btn-danger">Onayla</button>
+                                <button id="btn_reject" type="button" class="btn btn-danger">Reddet</button>
                             </div>
                         </div>
                     </div>
@@ -146,7 +119,7 @@
                     <img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px" hidden/>
                 </div>
             </div>
-            <div id="div_article_display">
+            <div id="div_article_display" hidden>
                 @*menubar*@
                 <div class="row w3-res-tb"  style="padding-top:10px">
                     <div class="col-sm-5 m-b-xs">

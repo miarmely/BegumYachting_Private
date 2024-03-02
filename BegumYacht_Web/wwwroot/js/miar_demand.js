@@ -3,6 +3,58 @@
     getArticleCountOnOneRowAsync
 } from "./miar_module.article.js";
 
+//#region variables
+const divIdsOfSenderInfos = [
+    "div_nameSurname",
+    "div_phone",
+    "div_email",
+    "div_newPassportNo",
+    "div_oldPassportNo",
+    "div_rank",
+    "div_nationality",
+    "div_gender"
+];
+let isSenderInfosDisplaying = false;
+let isSenderInfosLoadedToInputs = false;
+//#endregion
+
+//#region events
+export async function click_senderInfosDivAsync(userId) {
+    ////////////////////////// BUILDING.... //////////////////////////
+
+    $.ajax({
+
+    });
+
+    //////////////////////////////////////////////////////////////////
+
+    //#region show/hide inputs belong to senderer infos
+
+    //#region when sender infos is not displaying
+    if (!isSenderInfosDisplaying) {
+        // show inputs
+        for (let index in divIdsOfSenderInfos)
+            $("#" + divIdsOfSenderInfos[index]).removeAttr("hidden");
+
+        isSenderInfosDisplaying = true;
+        isSenderInfosLoadedToInputs = true;
+    }
+    //#endregion
+
+    //#region when sender infos is displaying
+    else {
+        // hide inputs
+        for (let index in divIdsOfSenderInfos)
+            $("#" + divIdsOfSenderInfos[index]).attr("hidden", "");
+
+        isSenderInfosDisplaying = false;
+    }
+    //#endregion
+
+    //#endregion
+}
+
+//#endregion
 
 //#region functions
 export async function updateEntityQuantityAsync(lbl_entityQuantity, newQuantity) {
