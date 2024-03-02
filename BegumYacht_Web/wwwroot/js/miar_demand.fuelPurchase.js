@@ -1,15 +1,21 @@
 ﻿import { getPassedTimeInStringAsync } from "./miar_module.date.js";
-import { addCriticalSectionAsync, addPaginationButtonsAsync, shiftTheChildDivToBottomOfParentDivAsync } from "./miar_module.js";
+
+import {
+    addCriticalSectionAsync, shiftTheChildDivToBottomOfParentDivAsync
+} from "./miar_module.js";
 
 import {
     addImageToArticleAsync, getPageSizeAsync, updateEntityQuantityAsync
 } from "./miar_demand.js";
 
 import {
-    addArticlesAsync, alignArticlesAsAutoAsync, alignArticlesToCenterAsync, art_baseId, controlArticleWidthAsync, div_article_info_id, getValidArticleWidthAsync, isSidebarOpenAsync, setArticleBufferAsync, setHeightOfArticlesDivAsync
+    addArticlesAsync, alignArticlesToCenterAsync, art_baseId, controlArticleWidthAsync,
+    div_article_info_id, getValidArticleWidthAsync, setArticleBufferAsync,
+    setHeightOfArticlesDivAsync
 } from "./miar_module.article.js";
 
-
+import { change_inpt_paginationCurrentAsync, click_ul_paginationAsync, controlPaginationBackAndNextButtonsAsync, inpt_paginationCurrent_id, keyup_ul_paginationAsync, pagingBuffer
+} from "./miar_module.pagination.js";
 
 
 $(function () {
@@ -23,7 +29,6 @@ $(function () {
     }
     const pagination = {
         pageSize: 0,  // it will be initialize
-        pageNumber: 1,
         buttonQuantity: 5,
         infosInHeader: {}  // it will be initialize
     };
@@ -63,11 +68,26 @@ $(function () {
                 500);
         //#endregion
     })
+    ul_pagination.click(async (event) => {
+        await click_ul_paginationAsync(
+            event,
+            pagination.infosInHeader,
+            populateArticlesAsync);
+    })
+    ul_pagination.keyup(async (event) => {
+        await keyup_ul_paginationAsync(
+            event,
+            pagination.infosInHeader,
+            populateArticlesAsync);
+    })
+    $("#" + inpt_paginationCurrent_id).on("input", async () => {
+        await change_inpt_paginationCurrentAsync();
+    })
     //#endregion
 
     //#region functions
     async function populateArticlesAsync() {
-        //#region set page size
+        //#region set articleBuffer and page size
         await setArticleBufferAsync({
             div_articles: div.articles,
             articleType: "imageAndText",
@@ -92,7 +112,8 @@ $(function () {
                 "bgColorForDelete": "red"
             },
             heightOfPageMenubar: 80
-        });
+        });  // i have to define article buffer before setting the page size.
+
         pagination.pageSize = await getPageSizeAsync();
         //#endregion
 
@@ -100,8 +121,13 @@ $(function () {
             method: "GET",
             url: (baseApiUrl + "/adminPanel/fuelPurchaseDemand/all?" +
                 `pageSize=${pagination.pageSize}` +
-                `&pageNumber=${pagination.pageNumber}`),
+                `&pageNumber=${pagingBuffer.pageNumber}`),
             dataType: "json",
+            beforeSend: () => {
+                // reset div_articles
+                div.articles.empty();
+                div.articles.removeAttr("style");
+            },
             success: (demands, status, xhr) => {
                 new Promise(async () => {
                     await setArticleBufferAsync({
@@ -158,10 +184,11 @@ $(function () {
                         lbl.entityQuantity,
                         pagination.infosInHeader.CurrentPageCount + "/" + pagination.pageSize
                     );
-                    await addPaginationButtonsAsync(
-                        pagination.infosInHeader,
-                        pagination.buttonQuantity,
-                        ul_pagination);
+                    //await addPaginationButtonsAsync(
+                        //pagination.infosInHeader,
+                        //pagination.buttonQuantity,
+                        //ul_pagination);
+                    await controlPaginationBackAndNextButtonsAsync(pagination.infosInHeader);
                 })
             }
         })

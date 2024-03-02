@@ -1,4 +1,9 @@
-﻿#div_passedTime{
+﻿/*///////////// DISPLAY PAGE /////////////*/
+#div_passedTime {
     color: red;
+    font-weight: bold;
+}
+
+.article h2, h3, h4 {
     font-weight: bold;
 }

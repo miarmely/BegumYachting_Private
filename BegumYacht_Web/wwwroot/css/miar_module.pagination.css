@@ -1,0 +1,28 @@
+﻿.paginationButtons {
+    width: 35px;
+    height: 29px
+}
+
+#a_paginationCurrent {
+    width: 45px;
+    padding: 0px;
+    margin-right: 2px;
+}
+
+    #a_paginationCurrent input {
+        width: 45px;
+        height: 27.5px;
+        border-color: white
+    }
+
+#a_separator {
+    width: 20px;
+    padding-right: 5px;
+    padding-left: 5px;
+    font-weight: bolder;
+    text-align: center;
+}
+
+    #a_separator:hover {
+        cursor: pointer;
+    }

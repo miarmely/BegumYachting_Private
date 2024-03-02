@@ -1,6 +1,7 @@
 ﻿<link rel="stylesheet" href="~/css/miar_module.article.css"/>
 <link rel="stylesheet" href="~/css/miar_demand.css" />
 <link rel="stylesheet" href="~/css/miar_demand.fuelPurchase.css" />
+<link rel="stylesheet" href="~/css/miar_module.pagination.css" />
 
 
 <div class="table-agile-info">
@@ -170,6 +171,27 @@
                         </div>
                         <div class="col-sm-7 text-right text-center-xs">                
                             <ul id="ul_pagination" class="pagination pagination-sm m-t-rowNone m-b-rowNone">
+                                <li>
+                                    <a id="a_paginationBack" class="paginationButtons" href="#" hidden>
+                                        <i class="fa fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a id="a_paginationCurrent" class="paginationButtons" href="#">
+                                        <input type="number" value="1"/>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a id="a_separator" class="paginationButtons" href="#" disabled>/</a>
+                                </li>
+                                <li>
+                                    <a id="a_paginationLast" class="paginationButtons" href="#" disabled>12</a>
+                                </li>
+                                <li>
+                                    <a id="a_paginationNext" class="paginationButtons" href="#" hidden>
+                                        <i class="fa fa-chevron-right"></i>
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </div>

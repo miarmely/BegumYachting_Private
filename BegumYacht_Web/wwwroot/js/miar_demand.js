@@ -1,4 +1,7 @@
-﻿import { alignImageToVerticalCenterAsync, div_article_image_id, getArticleCountOnOneRowAsync } from "./miar_module.article.js";
+﻿import {
+    alignImageToVerticalCenterAsync, div_article_image_id,
+    getArticleCountOnOneRowAsync
+} from "./miar_module.article.js";
 
 
 //#region functions
