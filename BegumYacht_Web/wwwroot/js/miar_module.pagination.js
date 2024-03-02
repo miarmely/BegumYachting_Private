@@ -1,4 +1,4 @@
-﻿//#region
+﻿//#region variables
 export const a_paginationBack_id = "a_paginationBack";
 export const a_paginationCurrent_id = "a_paginationCurrent";
 export const a_separator_id = "a_separator";
@@ -159,6 +159,10 @@ export async function controlPaginationBackAndNextButtonsAsync(paginationInfosIn
             $("#" + a_paginationNext_id).removeAttr("hidden");
         //#endregion
     }
+}
+export async function addValueToPaginationLastButtonAsync(value) {
+    $("#" + a_paginationLast_id).empty();
+    $("#" + a_paginationLast_id).append(value);
 }
 async function updatePageNumberWhenSeparatorClickedAsync(paginationInfos) {
     //#region set page number

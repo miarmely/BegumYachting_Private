@@ -1,6 +1,7 @@
 ﻿.paginationButtons {
     width: 35px;
-    height: 29px
+    height: 29px;
+    text-align: center;
 }
 
 #a_paginationCurrent {
@@ -12,7 +13,8 @@
     #a_paginationCurrent input {
         width: 45px;
         height: 27.5px;
-        border-color: white
+        border-color: white;
+        text-align: center;
     }
 
 #a_separator {
@@ -20,9 +22,26 @@
     padding-right: 5px;
     padding-left: 5px;
     font-weight: bolder;
-    text-align: center;
 }
 
     #a_separator:hover {
         cursor: pointer;
+    }
+
+#a_infoMessage {
+    padding: 0 10px 0 0;
+    width: 40px;
+    background-color: transparent;
+}
+
+    #a_infoMessage input {
+        width: 30px;
+        height: 27.5px;
+        background-image: url("../images/info.png");
+        background-color: transparent;
+        background-size: cover;
+        border-width: 0px;
+        border-color: transparent;
+        position: relative;
+        bottom: 1.1px;
     }

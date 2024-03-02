@@ -14,7 +14,7 @@ import {
     setHeightOfArticlesDivAsync
 } from "./miar_module.article.js";
 
-import { change_inpt_paginationCurrentAsync, click_ul_paginationAsync, controlPaginationBackAndNextButtonsAsync, inpt_paginationCurrent_id, keyup_ul_paginationAsync, pagingBuffer
+import { addValueToPaginationLastButtonAsync, a_paginationLast_id, change_inpt_paginationCurrentAsync, click_ul_paginationAsync, controlPaginationBackAndNextButtonsAsync, inpt_paginationCurrent_id, keyup_ul_paginationAsync, pagingBuffer
 } from "./miar_module.pagination.js";
 
 
@@ -184,10 +184,8 @@ $(function () {
                         lbl.entityQuantity,
                         pagination.infosInHeader.CurrentPageCount + "/" + pagination.pageSize
                     );
-                    //await addPaginationButtonsAsync(
-                        //pagination.infosInHeader,
-                        //pagination.buttonQuantity,
-                        //ul_pagination);
+                    await addValueToPaginationLastButtonAsync(
+                        pagination.infosInHeader.TotalPage);
                     await controlPaginationBackAndNextButtonsAsync(pagination.infosInHeader);
                 })
             }

@@ -1,4 +1,5 @@
-﻿.div_infoMessage > button[class= dropdown-toggle] {
+﻿.div_infoMessage > button[class= dropdown-toggle]
+{
     width: 20px;
     height: 20px;
     position: relative;

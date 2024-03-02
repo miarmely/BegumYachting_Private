@@ -2,6 +2,7 @@
 <link rel="stylesheet" href="~/css/miar_demand.css" />
 <link rel="stylesheet" href="~/css/miar_demand.fuelPurchase.css" />
 <link rel="stylesheet" href="~/css/miar_module.pagination.css" />
+<link rel="stylesheet" href="~/css/miar_module.userForm.css" />
 
 
 <div class="table-agile-info">
@@ -166,11 +167,25 @@
                 @*entity count and pagination buttons*@
                 <footer class="panel-footer">
                     <div class="row">
+                        @*entity quantity*@
                         <div class="col-sm-5 text-left">
                             <small id="small_entityQuantity" class="text-muted inline m-t-sm m-b-s"><b>0/0</b> Talep Görüntüleniyor</small>
                         </div>
+                        
+                        @*pagination buttons*@
                         <div class="col-sm-7 text-right text-center-xs">                
                             <ul id="ul_pagination" class="pagination pagination-sm m-t-rowNone m-b-rowNone">
+                                @*info message*@
+                                <li>
+                                    <a id="a_infoMessage" class="paginationButtons" href="#" style="border-width:0px">
+                                        <div class="div_infoMessage">
+                                            <input type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"/>
+                                            <ul role="menu" class="dropdown-menu">
+                                                <li>* Girilen sayfa numarasını açmak için "Enter" tuşuna veya "/" sembolüne tıklanmalıdır.</li>
+                                            </ul>
+                                        </div>          
+                                    </a>
+                                </li>
                                 <li>
                                     <a id="a_paginationBack" class="paginationButtons" href="#" hidden>
                                         <i class="fa fa-chevron-left"></i>
@@ -178,21 +193,21 @@
                                 </li>
                                 <li>
                                     <a id="a_paginationCurrent" class="paginationButtons" href="#">
-                                        <input type="number" value="1"/>
+                                        <input type="number" min="1" value="1"/>
                                     </a>
                                 </li>
                                 <li>
                                     <a id="a_separator" class="paginationButtons" href="#" disabled>/</a>
                                 </li>
                                 <li>
-                                    <a id="a_paginationLast" class="paginationButtons" href="#" disabled>12</a>
+                                    <a id="a_paginationLast" class="paginationButtons" href="#" disabled></a>
                                 </li>
                                 <li>
                                     <a id="a_paginationNext" class="paginationButtons" href="#" hidden>
                                         <i class="fa fa-chevron-right"></i>
                                     </a>
                                 </li>
-                            </ul>
+                            </ul>    
                         </div>
                     </div>
                 </footer>
