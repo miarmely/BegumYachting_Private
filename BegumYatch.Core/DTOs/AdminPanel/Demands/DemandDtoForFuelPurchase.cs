@@ -1,6 +1,5 @@
 ﻿using BegumYatch.Core.Enums;
-using BegumYatch.Core.Models.User;
-using System.Security.Permissions;
+
 
 namespace BegumYatch.Core.DTOs.AdminPanel.Demands
 {

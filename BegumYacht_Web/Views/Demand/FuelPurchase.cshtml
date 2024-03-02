@@ -18,13 +18,13 @@
         </div>
         @*/title*@
         <div class="panel-body">
-            <div id="div_article_update" hidden>
+            <div id="div_userUpdate" hidden>
                 <form>
                     <div id="div_form" class="form-horizontal bucket-form" style="padding-top:20px">                    
                         @{
                             #region add inputs
                             var inputInfos = new object[][]{
-                                new object[] {"input", "text", "firstnameLastname", "Ad Soyad", true},  // type for switch/case | type for input | id | label name | info message
+                                new object[] {"input", "text", "firstnameLastname", "Ad Soyad", true},  // type for case | type for input | id | label name | info message
                                 new object[] {"input", "text", "phone", "Telefon", true},
                                 new object[] {"input", "text", "email", "Email", true},
                                 new object[] {"input", "text", "flag" , "Bayrak", true},
@@ -114,6 +114,20 @@
                                     </div>
                                 </div>
                                 <span id="spn_help_inpt_isPersonal" class="help-block"></span>
+                            </div>
+                        </div>
+
+                        @*new password*@
+                        <div id="div_password" class="form-group">
+                            <label class="col-sm-3 control-label">Yeni Şifre</label>
+                            <div class="col-sm-6">
+                                <input id="inpt_password" type="password" class="form-control" />
+                                <span id="spn_help_inpt_password" class="help-block"></span>
+                            </div>
+                            <div class="col-sm-3 div_infoMessage">
+                                <button id="btn_showPassword" type="button"></button>
+                                <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+                                <ul role="menu" class="dropdown-menu"></ul>
                             </div>
                         </div>
                     
@@ -217,5 +231,4 @@
 </div>
 
 
-<script type="module" src="~/js/miar_demand.js"></script>
 <script type="module" src="~/js/miar_demand.fuelPurchase.js"></script>

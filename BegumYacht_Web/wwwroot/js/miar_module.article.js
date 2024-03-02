@@ -410,25 +410,29 @@ export async function isSidebarOpenAsync() {
     return $("#sidebar").attr("class") != closedSidebarClass;
 }
 export async function addMsgWithImgToDivArticlesAsync(imagePath, imageAlt, message) {
-    //#region add message with image to div_articles
+    //#region reset div articles
     let div_articles = articleBuffer.div_articles;
 
+    div_articles.empty();
+    div_articles.removeAttr("style");
+    //#endregion
+
+    //#region add message with image to div_articles
     div_articles.append(`
         <div class="div_articles_message">
-            <img src="${imagePath}"  alt="${imageAlt}"/>
+            <img src="/${imagePath}"  alt="${imageAlt}"/>
             <h3>${message}</h3>  
         </div>`);
     //#endregion
 
-    //#region add style to div_articles_message
+    //#region align "div_articles_message" to vertical center
     let div_articles_message = div_articles.children(".div_articles_message");
     let div_articles_message_height = div_articles_message.prop("offsetHeight");
     let div_articles_height = div_articles.prop("offsetHeight");
 
-    div_articles_message.css({
-        "padding-top": (div_articles_height - div_articles_message_height) / 2,
-        "padding-bottom": (div_articles_height - div_articles_message_height) / 2
-    })
+    div_articles_message.css(
+        "padding-top",
+        (div_articles_height - div_articles_message_height) / 2);
     //#endregion
 }
 export async function getArticleCountOnOneRowAsync(widthUnit = "px") {

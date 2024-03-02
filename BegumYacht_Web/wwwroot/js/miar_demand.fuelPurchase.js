@@ -5,16 +5,17 @@ import {
 } from "./miar_module.js";
 
 import {
-    addImageToArticleAsync, getPageSizeAsync, updateEntityQuantityAsync
+    addImageToArticleAsync, getPageSizeAsync, resetDivArticlesAsync, updateEntityQuantityAsync
 } from "./miar_demand.js";
 
 import {
-    addArticlesAsync, alignArticlesToCenterAsync, art_baseId, controlArticleWidthAsync,
+    addArticlesAsync, addMsgWithImgToDivArticlesAsync, alignArticlesToCenterAsync, art_baseId, controlArticleWidthAsync,
     div_article_info_id, getValidArticleWidthAsync, setArticleBufferAsync,
     setHeightOfArticlesDivAsync
 } from "./miar_module.article.js";
 
-import { addValueToPaginationLastButtonAsync, a_paginationLast_id, change_inpt_paginationCurrentAsync, click_ul_paginationAsync, controlPaginationBackAndNextButtonsAsync, inpt_paginationCurrent_id, keyup_ul_paginationAsync, pagingBuffer
+import {
+    addValueToPaginationLastButtonAsync, a_paginationLast_id, change_inpt_paginationCurrentAsync, click_ul_paginationAsync, controlPaginationBackAndNextButtonsAsync, inpt_paginationCurrent_id, keyup_ul_paginationAsync, pagingBuffer
 } from "./miar_module.pagination.js";
 
 
@@ -41,6 +42,9 @@ $(function () {
     const criticalSectionIds = {
         sidebarMenuButton: "sidebarMenuButton",
         window: "window"
+    }
+    const path = {
+        "laodingImage": "images/loading.gif"
     }
     //#endregion
 
@@ -124,12 +128,14 @@ $(function () {
                 `&pageNumber=${pagingBuffer.pageNumber}`),
             dataType: "json",
             beforeSend: () => {
-                // reset div_articles
-                div.articles.empty();
-                div.articles.removeAttr("style");
+                addMsgWithImgToDivArticlesAsync(
+                    path.laodingImage,
+                    "Yükleniyor",
+                    "Yükleniyor");
             },
             success: (demands, status, xhr) => {
                 new Promise(async () => {
+                    await resetDivArticlesAsync(div.articles); // remove loading img
                     await setArticleBufferAsync({
                         "totalArticleCount": demands.length
                     });
@@ -188,6 +194,13 @@ $(function () {
                         pagination.infosInHeader.TotalPage);
                     await controlPaginationBackAndNextButtonsAsync(pagination.infosInHeader);
                 })
+            },
+            error: () => {
+                addMsgWithImgToDivArticlesAsync(
+                    "images/question.png",
+                    "Talep Bulunamadı Resmi",
+                    "Herhangi Bir Talep Bulunamadı"
+                );
             }
         })
     }

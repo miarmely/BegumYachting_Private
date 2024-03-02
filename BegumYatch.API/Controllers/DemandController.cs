@@ -1,4 +1,5 @@
 ﻿using BegumYatch.Core.DTOs.ConciergeServiceDemand;
+using BegumYatch.Core.DTOs.Error;
 using BegumYatch.Core.DTOs.ExcursionDemand;
 using BegumYatch.Core.DTOs.FuelPurchaseDemand;
 using BegumYatch.Core.DTOs.MainPage;

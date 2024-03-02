@@ -53,4 +53,8 @@ export async function addImageToArticleAsync(articleId, yachtType) {
 
     await alignImageToVerticalCenterAsync(articleId);
 }
+export async function resetDivArticlesAsync(div_articles) {
+    div_articles.empty();
+    div_articles.removeAttr("style");
+}
 //#endregion
