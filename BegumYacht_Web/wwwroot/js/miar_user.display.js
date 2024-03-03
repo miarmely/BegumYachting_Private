@@ -111,7 +111,6 @@ $(function () {
     btn.back.click(async () => {
         await resetFormAsync(p_resultLabel);
         await showOrHideBackButtonAsync(
-            "hide",
             div.backButton,
             div.panelTitle,
             btn.back);
@@ -335,7 +334,6 @@ $(function () {
         //#endregion
 
         await showOrHideBackButtonAsync(
-            "show",
             div.backButton,
             div.panelTitle,
             btn.back);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -21,5 +22,11 @@ namespace BegumYatch.Core.Repositories
         void Remove(T entity);
         void RemoveRange(IEnumerable<T> entities);
 
+        #region By MERT
+        Task<List<TEntity>> FromSqlRawAsync<TEntity>(
+            string sql,
+            params object[] parameters) 
+            where TEntity : class;
+        #endregion
     }
 }

@@ -101,8 +101,8 @@ export async function populateInputFormAsync(rowNo, html_label, html_input) {
         .append(html_input);
     //#endregion
 }
-export async function populateInfoMessagesAsync(infoMessages) {
-    // infoMessages = {"div_firstName": ["message1", "message2"], ...}
+export async function populateInfoMessagesAsync(
+    infoMessages = { divId: ["message1", "message2"] }) {
 
     //#region fill in info messages
     for (let div_id in infoMessages)
@@ -180,29 +180,29 @@ export async function writeErrorToBelowOfInputAsync(input, error) {
     spn_help.append(error);
 }
 export async function showOrHideBackButtonAsync(
-    mode,
     div_backButton,
     div_panelTitle,
     btn_back
 ) {
-    switch (mode) {
-        case "show":
-            // show back button
-            div_backButton.removeAttr("hidden");
+    //#region hide back button
+    if (div_backButton.attr("hidden") == null) {
+        div_backButton.attr("hidden", "");
 
-            // shift the panel title to right
-            div_panelTitle.css(
-                "padding-left",
-                btn_back.css("width"));
-            break;
-        case "hide":
-            // hide back button
-            div_backButton.attr("hidden", "");
-
-            // shift the panel title to left
-            div_panelTitle.css("padding-left", "");
-            break;
+        // shift the panel title to left again
+        div_panelTitle.css("padding-left", "");
     }
+    //#endregion
+
+    //#region show back button
+    else {
+        div_backButton.removeAttr("hidden");
+
+        // shift the panel title to right
+        div_panelTitle.css(
+            "padding-left",
+            btn_back.css("width"));
+    }
+    //#endregion
 }
 export async function resetFormAsync(lbl_result) {
     // reset inputs and result label

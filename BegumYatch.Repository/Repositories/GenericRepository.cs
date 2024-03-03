@@ -1,5 +1,6 @@
 ﻿using BegumYatch.Core.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,5 +77,17 @@ namespace BegumYatch.Repository.Repositories
         {
             return _dbSet.Where(expression);
         }
+
+
+        #region By MERT
+        public async Task<List<TEntity>> FromSqlRawAsync<TEntity>(
+            string sql, 
+            params object[] parameters) 
+            where TEntity : class => 
+                await _context
+                    .Set<TEntity>()
+                    .FromSqlRaw(sql, parameters)
+                    .ToListAsync();        
+        #endregion
     }
 }

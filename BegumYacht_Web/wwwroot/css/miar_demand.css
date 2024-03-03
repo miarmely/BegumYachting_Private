@@ -1,10 +1,10 @@
 ﻿/*///////////// DISPLAY PAGE /////////////*/
-#div_passedTime {
-    color: red;
+.article h2, h3, h4 {
     font-weight: bold;
 }
 
-.article h2, h3, h4 {
+#div_passedTime {
+    color: red;
     font-weight: bold;
 }
 
@@ -17,10 +17,11 @@
 #btn_reject {
 }
 
-#div_userUpdate textarea {
-    min-height: 200px
+#txt_notes {
+    min-height: 200px;
+    max-height: 500px;
+    resize: vertical;
 }
-
 
 #div_senderInfos {
     cursor: pointer;
@@ -30,7 +31,7 @@
     box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
     padding-top: 5px;
     padding-bottom: 10px;
-    margin-bottom: 30px;
+    margin-bottom: 5px;
 }
 
     #div_senderInfos:hover {
@@ -46,3 +47,7 @@
         margin-top: 10px;
         font-size: 16px
     }
+
+#div_yachtName{
+    margin-top: 40px
+}

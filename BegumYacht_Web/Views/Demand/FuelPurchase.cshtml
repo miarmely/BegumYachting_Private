@@ -14,21 +14,25 @@
                     <img src="~/images/close.png" alt="close"/>
                 </button>
             </div>
-            <div id="div_panelTitle">YAKIT ALIM TALEPLERİ</div>
+            <div id="div_panelTitle">YAKIT ALIM TALEBİ</div>
         </div>
         @*/title*@
         <div class="panel-body">
-            <div id="div_userUpdate">
+            <div id="div_article_update" hidden>
                 <form>
                     <div id="div_form" class="form-horizontal bucket-form" style="padding-top:20px">                    
                         @*display sender infos*@
-                        <div class="form-group text-center">
+                        <div id="div_senderInfos_base" class="form-group text-center">
                             <div class="col-sm-3"></div>
                             <div id="div_senderInfos" class="col-sm-6">
-                                <img src="~/images/user.png"/>
+                                <img src="~/images/captain2.png"/>
                                 <h4>Gönderenin Bilgilerini Görüntüle</h4>
                             </div>
                             <div class="col-sm-3"></div>
+                            <div class="col-sm-3 text-left div_infoMessage">
+                                <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+                                <ul role="menu" class="dropdown-menu"></ul>
+                            </div>   
                         </div>
                         
                         @{
@@ -36,7 +40,7 @@
                             var inputInfos = new object[][]{
                                 new object[] {"input", "text", "nameSurname", "Ad Soyad", false, "hidden", "readonly"},  // type for switch/case | type for input | id | label name | info message | hidden/disabled/readonly for div[class= form-group] |  hidden/disabled/readonly for input
                                 new object[] {"input", "text", "phone", "Telefon", false, "hidden", "readonly"},
-                                new object[] {"input", "text", "email", "email", false, "hidden", "readonly"},
+                                new object[] {"input", "text", "email", "Email", false, "hidden", "readonly"},
                                 new object[] {"input", "text", "newPassportNo", "Yeni Pasaport No", false, "hidden", "readonly"},
                                 new object[] {"input", "text", "oldPassportNo", "Eski Pasapart No", false, "hidden", "readonly"},
                                 new object[] {"input", "text", "rank", "Rank", false, "hidden", "readonly"},
@@ -49,11 +53,11 @@
                                 new object[] {"input", "text", "mgo", "MGO", false, "", "readonly"},  // marine gas oil
                                 new object[] {"input", "text", "ago", "AGO", false, "", "readonly"},  // automotive gas oil
                                 new object[] {"input", "text", "fuelType", "Yakıt Tipi", false, "", "readonly"},
-                                new object[] {"input", "text", "requestedFuel" , "İstenen Yakıt Miktarı", false, "", "readonly"},
-                                new object[] {"input", "text", "fuelSupplyPort", "Yakıt Alım Yeri", false, "", "readonly"},
-                                new object[] {"input", "text", "fuelSupplyDate", "Yakıt Alım Tarihi", false, "", "readonly"},
+                                new object[] {"input", "text", "requestedFuel" , "İstenen Yakıt Miktarı (L)", false, "", "readonly"},
+                                new object[] {"input", "text", "fuelSupplyPort", "Yakıt İkmal Yeri", false, "", "readonly"},
+                                new object[] {"input", "text", "fuelSupplyDate", "Yakıt İkmal Tarihi", false, "", "readonly"},
                                 new object[] {"input", "text", "creationDate", "Talep Tarihi", false, "", "readonly"},
-                                new object[] {"textarea", "notes", "Notlar", false, "", "readonly"},  // type for case | id | label name | info message
+                                new object[] {"textarea", "notes", "Notlar", true, "", "readonly"},  // type for case | id | label name | info message
                             };
                             //new object[] {"select", "yachtType", "Yat Tipi", new string[] {"MotorYacht", "SailingYacht", "Catamaran"}, false},  // type for case | id | label name | options | info message
 
@@ -84,8 +88,8 @@
                                         <div id="div_@inputInfo[1]" class="form-group">
                                             <label class="col-sm-3 control-label">@inputInfo[2]</label>
                                             <div class="col-sm-6">
-                                                <textarea id="inpt_@inputInfo[1]" class="form-control" @inputInfo[5]></textarea>
-                                                <span id="spn_help_inpt_@inputInfo[1]" class="help-block"></span>
+                                                <textarea id="txt_@inputInfo[1]" class="form-control" @inputInfo[5]></textarea>
+                                                <span id="spn_help_txt_@inputInfo[1]" class="help-block"></span>
                                             </div>
                                         
                                             @if((bool)inputInfo[3])
@@ -119,7 +123,7 @@
                     <img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px" hidden/>
                 </div>
             </div>
-            <div id="div_article_display" hidden>
+            <div id="div_article_display">
                 @*menubar*@
                 <div class="row w3-res-tb"  style="padding-top:10px">
                     <div class="col-sm-5 m-b-xs">

@@ -209,7 +209,7 @@ namespace BegumYatch.API.Controllers
         #region By MERT
         [HttpGet("adminPanel/fuelPurchaseDemand/all")]
         public async Task<IActionResult> GetAllFuelPurchaseDemands(
-            [FromQuery] PagingParameter pagingParam)
+            [FromQuery] PagingParams pagingParam)
         {
             var fuelPurchaseDemands = await _fuelPurchaseDemandService
                 .GetAllFuelPurchaseDemandsAsync(
@@ -218,6 +218,18 @@ namespace BegumYatch.API.Controllers
 
             return Ok(fuelPurchaseDemands);
         }
+
+
+        [HttpGet("adminPanel/fuelPurchaseDemand/answered")]
+        public async Task<IActionResult> GetAnsweredFuelPurchaseDemands(
+            [FromQuery] DemandParamsForAnsweredFuelPurchase demandParams)
+        {
+            var demands = await _fuelPurchaseDemandService
+                .GetAnsweredFuelPurchasedDemandsAsync(demandParams, HttpContext);
+
+            return Ok(demands);
+        }
+
         #endregion
     }
 }

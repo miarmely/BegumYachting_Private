@@ -1,6 +1,7 @@
 ﻿using BegumYatch.Core.Models;
 using BegumYatch.Core.Models.BerthRezervation;
 using BegumYatch.Core.Models.Demands;
+using BegumYatch.Core.Models.Demands.AdminPanel;
 using BegumYatch.Core.Models.FileOperations;
 using BegumYatch.Core.Models.Orders;
 using BegumYatch.Core.Models.Role;
@@ -35,6 +36,8 @@ namespace BegumYatch.Repository
         public DbSet<CheckIn> CheckIn { get; set; }
         public DbSet<VipServiceDemand> VipDemand { get; set; }
         public DbSet<MailOtp> MailOtp { get; set; }
+        public DbSet<AnsweredFuelPurchaseDemand> AnsweredFuelPurchaseDemands 
+            { get; set; }
 
 
         public override int SaveChanges()
@@ -62,6 +65,7 @@ namespace BegumYatch.Repository
             }
             return base.SaveChanges();
         }
+
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             HandleUserDelete();

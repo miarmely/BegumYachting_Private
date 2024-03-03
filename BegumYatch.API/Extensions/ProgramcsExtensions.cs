@@ -3,6 +3,7 @@ using BegumYatch.Core.Models.User;
 using BegumYatch.Repository;
 using Microsoft.AspNetCore.Identity;
 
+
 namespace BegumYatch.API.Extensions
 {
     public static class ProgramcsExtensions
@@ -30,6 +31,7 @@ namespace BegumYatch.API.Extensions
               .AddEntityFrameworkStores<AppDbContext>();
         }
 
+        #region By MERT
         public static void ConfigureCors(this IServiceCollection services) =>
             services.AddCors(setup =>
             {
@@ -44,6 +46,7 @@ namespace BegumYatch.API.Extensions
                             "Demand-FuelPurchase"
                         );
                 });
-            });  // by MERT
+            });
+        #endregion
     }
 }

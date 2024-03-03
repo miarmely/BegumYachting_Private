@@ -6,6 +6,7 @@ using BegumYatch.Core.DTOs.FuelPurchaseDemand;
 using BegumYatch.Core.DTOs.MainPage;
 using BegumYatch.Core.Enums;
 using BegumYatch.Core.Models.Demands;
+using BegumYatch.Core.Models.Demands.AdminPanel;
 using BegumYatch.Core.Models.FileOperations;
 using BegumYatch.Core.Models.User;
 using BegumYatch.Core.QueryParameters;
@@ -17,16 +18,18 @@ using BegumYatch.Service.Helper;
 using Entities.Attributes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BegumYatch.Service.Services
 {
-    public class FuelPurchaseDemandService 
+    public class FuelPurchaseDemandService
         : Service<FuelPurchaseDemand>, IFuelPurchaseDemandService
     {
         private readonly IGenericRepository<FuelPurchaseDemand> _fuelPurchaseDemandRepository;
@@ -122,7 +125,7 @@ namespace BegumYatch.Service.Services
 
         #region By MERT
         public async Task<PagingList<DemandDtoForFuelPurchase>> GetAllFuelPurchaseDemandsAsync(
-            PagingParameter pagingParam,
+            PagingParams pagingParam,
             HttpContext context)
         {
             #region get all demands
@@ -161,6 +164,53 @@ namespace BegumYatch.Service.Services
             #endregion
 
             return demandsInPagingList;
+        }
+
+        public async Task<PagingList<AnsweredFuelPurchaseDemand>> GetAnsweredFuelPurchasedDemandsAsync(
+            DemandParamsForAnsweredFuelPurchase demandParams,
+            HttpContext context)
+        {
+            #region set sql command
+            var totalCount = new SqlParameter("@TotalCount", SqlDbType.Int)
+            {
+                Direction = ParameterDirection.Output
+            };
+            var sql = "EXEC Demand_FuelPurchase_GetAnsweredDemands " +
+                "@AcceptedOrRejected = {0}, " +
+                "@PageSize = {1}, " +
+                "@PageNumber = {2}, " +
+                "@TotalCount = {3} OUT";
+            #endregion
+
+            #region get accepted/rejected demands (THROW)
+            var demands = await _fuelPurchaseDemandRepository
+                .FromSqlRawAsync<AnsweredFuelPurchaseDemand>(
+                    sql,
+                    demandParams.AcceptedOrRejected,
+                    demandParams.PageSize,
+                    demandParams.PageNumber,
+                    totalCount);
+
+            if (demands.Count == 0)
+                throw new MiarException(
+                    404,
+                    "NF-D-FP",
+                    "Not Found - Demand - Fuel Purchase",
+                    "cevaplanmış talep bulunamadı");
+            #endregion
+
+            #region save paging infos to header
+            var demandPagingList = await PagingList<AnsweredFuelPurchaseDemand>
+                .ToPagingListAsync(
+                    demands,
+                    (int)totalCount.Value,
+                    demandParams.PageNumber,
+                    demandParams.PageSize,
+                    "Demand_AnsweredFuelPurchase",
+                    context);
+            #endregion
+
+            return demandPagingList;
         }
         #endregion
     }

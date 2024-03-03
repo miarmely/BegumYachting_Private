@@ -74,14 +74,19 @@ namespace BegumYatch.Service.Mapping
 
             #region By MERT
             CreateMap<UserDtoForCreate, AppUser>().ReverseMap();
-            
             CreateMap<FuelPurchaseDemand, DemandDtoForFuelPurchase>()
                 .ForMember(
                     target => target.YachtType,
-                    options => options.MapFrom(source => source.User.YacthType))
+                    opt => opt.MapFrom(source => source.User.YacthType))
                 .ForMember(
                     target => target.YachtName,
-                    options => options.MapFrom(source => source.User.YacthName))
+                    opt => opt.MapFrom(source => source.User.YacthName))
+                .ForMember(
+                    target => target.Flag,
+                    opt => opt.MapFrom(src => src.User.Flag))
+                .ForMember(
+                    target => target.NameSurname,
+                    opt => opt.MapFrom(src => src.User.NameSurname))
                 .ReverseMap();
             #endregion
         }

@@ -141,6 +141,14 @@
       "PackagePath": "staticwebassets\\images\\begumLogo3.png"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\images\\captain1.png",
+      "PackagePath": "staticwebassets\\images\\captain1.png"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\images\\captain2.png",
+      "PackagePath": "staticwebassets\\images\\captain2.png"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\images\\catamaranYacht.png",
       "PackagePath": "staticwebassets\\images\\catamaranYacht.png"
     },
