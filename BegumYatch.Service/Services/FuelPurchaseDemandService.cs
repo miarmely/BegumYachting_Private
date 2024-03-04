@@ -166,7 +166,7 @@ namespace BegumYatch.Service.Services
             return demandsInPagingList;
         }
 
-        public async Task<PagingList<AnsweredFuelPurchaseDemand>> GetAnsweredFuelPurchasedDemandsAsync(
+        public async Task<PagingList<AnsweredUnansweredFuelPurchaseDemand>> GetFuelPurchaseDemandsByFilterAsync(
             DemandParamsForAnsweredFuelPurchase demandParams,
             HttpContext context)
         {
@@ -176,7 +176,7 @@ namespace BegumYatch.Service.Services
                 Direction = ParameterDirection.Output
             };
             var sql = "EXEC Demand_FuelPurchase_GetAnsweredDemands " +
-                "@AcceptedOrRejected = {0}, " +
+                "@StatusId = {0}, " +
                 "@PageSize = {1}, " +
                 "@PageNumber = {2}, " +
                 "@TotalCount = {3} OUT";
@@ -184,9 +184,9 @@ namespace BegumYatch.Service.Services
 
             #region get accepted/rejected demands (THROW)
             var demands = await _fuelPurchaseDemandRepository
-                .FromSqlRawAsync<AnsweredFuelPurchaseDemand>(
+                .FromSqlRawAsync<AnsweredUnansweredFuelPurchaseDemand>(
                     sql,
-                    demandParams.AcceptedOrRejected,
+                    demandParams.DemandStatus,
                     demandParams.PageSize,
                     demandParams.PageNumber,
                     totalCount);
@@ -200,13 +200,13 @@ namespace BegumYatch.Service.Services
             #endregion
 
             #region save paging infos to header
-            var demandPagingList = await PagingList<AnsweredFuelPurchaseDemand>
+            var demandPagingList = await PagingList<AnsweredUnansweredFuelPurchaseDemand>
                 .ToPagingListAsync(
                     demands,
                     (int)totalCount.Value,
                     demandParams.PageNumber,
                     demandParams.PageSize,
-                    "Demand_AnsweredFuelPurchase",
+                    "Demand_FuelPurchase",
                     context);
             #endregion
 

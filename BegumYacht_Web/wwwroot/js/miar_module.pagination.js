@@ -1,4 +1,6 @@
-﻿//#region variables
+﻿import { autoObjectMapperAsync } from "./miar_module.js";
+
+//#region variables
 export const a_paginationBack_id = "a_paginationBack";
 export const a_paginationCurrent_id = "a_paginationCurrent";
 export const a_separator_id = "a_separator";
@@ -6,16 +8,14 @@ export const a_paginationLast_id = "a_paginationLast";
 export const a_paginationNext_id = "a_paginationNext";
 export const inpt_paginationCurrent_id = a_paginationCurrent_id + " input";
 export let pagingBuffer = {
+    pageSize: 0,
     pageNumber: 1,
+    infosInHeader: {}
 };
 //#endregion
 
 //#region events
-export async function click_ul_paginationAsync(
-    event,
-    paginationInfos,
-    func_populateTableAsync
-) {
+export async function click_ul_paginationAsync(event, func_populateArticleAsync) {
     //#region reset "red" bg-color of "paginationCurrent" input
     event.preventDefault();
 
@@ -35,14 +35,14 @@ export async function click_ul_paginationAsync(
             break;
         case a_separator_id:
             //#region when page number updating is unsuccessful
-            if (!await updatePageNumberWhenSeparatorClickedAsync(paginationInfos))
+            if (!await updatePageNumberWhenSeparatorBtnIsClickedAsync())
                 return;
             //#endregion
 
             break;
         case a_paginationLast_id:
-            // update input
-            pagingBuffer.pageNumber = paginationInfos.TotalPage;
+            // update input 
+            pagingBuffer.pageNumber = pagingBuffer.infosInHeader.TotalPage;
             inpt_paginationCurrent.val(pagingBuffer.pageNumber);
 
             break;
@@ -75,16 +75,13 @@ export async function click_ul_paginationAsync(
     }
     //#endregion
 
-    await func_populateTableAsync();
+    await func_populateArticleAsync();
 }
-export async function keyup_ul_paginationAsync(
-    event,
-    paginationInfos,
-    func_populateArticleAsync) {
+export async function keyup_ul_paginationAsync(event, func_populateArticleAsync) {
     switch (event.key) {
         case "Enter":  // when entered key is "Enter"
             //#region when page number updating is successful
-            if(await updatePageNumberWhenSeparatorClickedAsync(paginationInfos))
+            if(await updatePageNumberWhenSeparatorBtnIsClickedAsync())
                 await func_populateArticleAsync();
             //#endregion
 
@@ -98,6 +95,13 @@ export async function change_inpt_paginationCurrentAsync() {
 //#endregion
 
 //#region functions
+export async function setPagingBufferAsync(newBuffer = {
+    pageSize: 0,
+    pageNumber: 0,
+    infosInHeader: {}
+}) {
+    await autoObjectMapperAsync(pagingBuffer, newBuffer, true);
+}
 export async function addPaginationButtonsAsync(
     paginationInfosInJson,
     paginationButtonQuantity,
@@ -135,7 +139,7 @@ export async function addPaginationButtonsAsync(
 		    </a>
 	    </li>`);
     //#endregion
-}
+}  // deprecated
 export async function controlPaginationBackAndNextButtonsAsync(paginationInfosInJson) {
     // when total page count more than 1
     if (paginationInfosInJson.TotalPage > 1) {
@@ -164,7 +168,7 @@ export async function addValueToPaginationLastButtonAsync(value) {
     $("#" + a_paginationLast_id).empty();
     $("#" + a_paginationLast_id).append(value);
 }
-async function updatePageNumberWhenSeparatorClickedAsync(paginationInfos) {
+async function updatePageNumberWhenSeparatorBtnIsClickedAsync() {
     //#region set page number
 
     //#region when entered page number bigger than total page count
@@ -173,7 +177,7 @@ async function updatePageNumberWhenSeparatorClickedAsync(paginationInfos) {
 
     if (inpt_paginationCurrent_value == ""
         || inpt_paginationCurrent_value < 1
-        || inpt_paginationCurrent_value > paginationInfos.TotalPage
+        || inpt_paginationCurrent_value > pagingBuffer.infosInHeader.TotalPage
     ) {
         inpt_paginationCurrent.css("background-color", "red");
         return false;

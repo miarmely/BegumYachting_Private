@@ -223,6 +223,54 @@ async function removeFileStatusLabelAsync(fileStatusLabel) {
 }
 //#endregion
 
+//#region trends
+export function updateResultLabel(
+    resultLabel,
+    message,
+    color,
+    marginT = "0px",
+    img_loading = null) {
+    //#region resets
+    // reset result label
+    resultLabel.empty();
+
+    // hide loading gif
+    if (img_loading != null)
+        img_loading.attr("hidden", "");
+    //#endregion
+
+    //#region change style
+    resultLabel.attr("style",
+        `color:	${color}; 
+		margin-top: ${marginT};
+		text-align: center`);
+    //#endregion
+
+    //#region write error to resultLabel
+    resultLabel.removeAttr("hidden");  // show resultLabel
+    resultLabel.append(message);
+    //#endregion
+}
+export async function autoObjectMapperAsync(targetObject, sourceObject, dontAddNullValues = false) {
+    //#region update target object values with source object values
+    let keysOfTarget = Object.keys(targetObject);
+
+    for (let sourceKey in sourceObject) {
+        //#region when source key is exists in target object
+        if (keysOfTarget.indexOf(sourceKey) != -1) {
+            //#region when source object value is null (check null)
+            if (dontAddNullValues && sourceObject[sourceKey] == null)
+                continue;
+            //#endregion
+
+            targetObject[sourceKey] = sourceObject[sourceKey];
+        }
+        //#endregion
+    }
+    //#endregion
+}
+//#endregion
+
 export async function populateElementByAjaxOrLocalAsync(
     keyNameInLocal,
     specialApiUrl,
@@ -352,24 +400,6 @@ export async function isAllObjectValuesNullAsync(object) {
 
     return false;
 }
-export async function autoObjectMapperAsync(targetObject, sourceObject, dontAddNullValues = false) {
-    //#region update target object values with source object values
-    let keysOfTarget = Object.keys(targetObject);
-
-    for (let sourceKey in sourceObject) {
-        //#region when source key is exists in target object
-        if (keysOfTarget.indexOf(sourceKey) != -1) {
-            //#region when source object value is null (check null)
-            if (dontAddNullValues && sourceObject[sourceKey] == null)
-                continue;
-            //#endregion
-
-            targetObject[sourceKey] = sourceObject[sourceKey];
-        }
-        //#endregion
-    }
-    //#endregion
-}
 export async function getKeysOfBlankValuesAsync(data) {
     //#region check whether blank that values of data 
     let keysWithBlankValue = [];
@@ -463,35 +493,9 @@ export function getHeaderFromLocalInJson(headerName) {
 export function getTokenInSession() {
     return sessionStorage.getItem("token");
 }
-export function updateResultLabel(
-    resultLabel,
-    message,
-    color,
-    marginT = "0px",
-    img_loading = null) {
-    //#region resets
-    // reset result label
-    resultLabel.empty();
-
-    // hide loading gif
-    if (img_loading != null)
-        img_loading.attr("hidden", "");
-    //#endregion
-
-    //#region change style
-    resultLabel.attr("style",
-        `color:	${color}; 
-		margin-top: ${marginT};
-		text-align: center`);
-    //#endregion
-
-    //#region write error to resultLabel
-    resultLabel.removeAttr("hidden");  // show resultLabel
-    resultLabel.append(message);
-    //#endregion
-}
 export function updateElementText(element, text) {
     element.empty();
     element.text(text);
 }
+
 //#endregion

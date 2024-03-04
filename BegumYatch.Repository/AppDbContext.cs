@@ -36,7 +36,7 @@ namespace BegumYatch.Repository
         public DbSet<CheckIn> CheckIn { get; set; }
         public DbSet<VipServiceDemand> VipDemand { get; set; }
         public DbSet<MailOtp> MailOtp { get; set; }
-        public DbSet<AnsweredFuelPurchaseDemand> AnsweredFuelPurchaseDemands 
+        public DbSet<AnsweredUnansweredFuelPurchaseDemand> AnsweredFuelPurchaseDemands 
             { get; set; }
 
 

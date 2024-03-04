@@ -220,12 +220,12 @@ namespace BegumYatch.API.Controllers
         }
 
 
-        [HttpGet("adminPanel/fuelPurchaseDemand/answered")]
-        public async Task<IActionResult> GetAnsweredFuelPurchaseDemands(
+        [HttpGet("adminPanel/fuelPurchaseDemand/filter")]
+        public async Task<IActionResult> GetFuelPurchaseDemandsByFilter(
             [FromQuery] DemandParamsForAnsweredFuelPurchase demandParams)
         {
             var demands = await _fuelPurchaseDemandService
-                .GetAnsweredFuelPurchasedDemandsAsync(demandParams, HttpContext);
+                .GetFuelPurchaseDemandsByFilterAsync(demandParams, HttpContext);
 
             return Ok(demands);
         }

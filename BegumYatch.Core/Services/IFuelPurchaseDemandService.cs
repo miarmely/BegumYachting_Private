@@ -29,7 +29,7 @@ namespace BegumYatch.Core.Services
             PagingParams pagingParam,
             HttpContext context);
 
-        Task<PagingList<AnsweredFuelPurchaseDemand>> GetAnsweredFuelPurchasedDemandsAsync(
+        Task<PagingList<AnsweredUnansweredFuelPurchaseDemand>> GetFuelPurchaseDemandsByFilterAsync(
             DemandParamsForAnsweredFuelPurchase demandParams,
             HttpContext context);
         #endregion

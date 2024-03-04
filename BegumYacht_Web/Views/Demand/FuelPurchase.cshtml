@@ -124,13 +124,23 @@
                 </div>
             </div>
             <div id="div_article_display">
-                @*menubar*@
+                @*article menubar*@
                 <div class="row w3-res-tb"  style="padding-top:10px">
                     <div class="col-sm-5 m-b-xs">
-				        <select id="slct_menubar" class="input-sm form-control w-sm inline v-middle" style="float:left">
+				        @*main menu*@
+                        <select id="slct_article_menu" class="input-sm form-control w-sm inline v-middle" style="float:left">
                             <option value="display">Görüntüle</option>
-                            <option value="delete">Sil</option>
+                            @*<option value="delete">Sil</option>*@
                         </select>
+
+                        @*submenu of display option*@
+                        <select id="slct_article_submenu_display" class="input-sm form-control w-sm inline v-middle" hidden>
+                            <option value="Unanswered" checked>Cevaplanmamış</option>
+                            <option value="Accepted">Kabul Edilen</option>
+                            <option value="Rejected">Reddedilen</option>
+                        </select>
+
+                        @*apply button*@
                         <div id="div_menubar_button" hidden>
                             <button id="btn_menubar_apply" class="btn btn-sm btn_menubar_apply ">Uygula</button>
                         </div>

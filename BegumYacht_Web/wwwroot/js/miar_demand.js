@@ -2,9 +2,12 @@
 import { resetFormAsync, showOrHideBackButtonAsync } from "./miar_module.userForm.js";
 
 import {
-    alignArticlesToCenterAsync, alignImageToVerticalCenterAsync, controlArticleWidthAsync,
-    div_article_image_id, getArticleCountOnOneRowAsync, setHeightOfArticlesDivAsync
+    addMsgWithImgToDivArticlesAsync, alignArticlesToCenterAsync, alignImageToVerticalCenterAsync,
+    controlArticleWidthAsync, div_article_image_id, getArticleCountOnOneRowAsync,
+    setHeightOfArticlesDivAsync, articleBuffer, setArticleBufferAsync, getValidArticleWidthAsync, addArticlesAsync
 } from "./miar_module.article.js";
+
+import { addValueToPaginationLastButtonAsync, controlPaginationBackAndNextButtonsAsync, pagingBuffer, setPagingBufferAsync } from "./miar_module.pagination.js";
 
 
 //#region variables
@@ -22,6 +25,10 @@ const elementNamesAndPropertyNames = {
 const css_inputsOfSenderInfos = {
     "border-color": "#4136f1",
     "border-width": "1.5px"
+}
+const path = {
+    loadingImage: "./images/loading.gif",
+    questionImage: "./images/question.png"
 }
 let isSenderInfosDisplaying = false;
 let isSenderInfosLoadedBefore = false;
@@ -123,18 +130,132 @@ export async function click_articleAsync(
 
     await showOrHideBackButtonAsync(div_backButton, div_panelTitle, btn_back);
 }
+export async function change_articleMenuSelectAsync() {}
+export async function change_articleSubMenuSelectAsync(slct_article_submenu) {
+
+    //$.ajax({
+    //    method: "GET",
+    //    url: (baseApiUrl + "/adminPanel/fuelPurchaseDemand/filter` +
+    //        `?demandStatus=${slct_article_submenu.val()}`
+    //        `&pageSize=${pagingBuffer.pageSize}` +
+    //        `&pageNumber=${pagingBuffer.pageNumber}`),
+    //    contentType = "application/json",
+    //    dataType = "json",
+    //    beforeSend: () => {
+    //        addMsgWithImgToDivArticlesAsync(
+    //            path.loadingImage,
+    //            "Yükleniyor",
+    //            "Yükleniyor...");
+    //    },
+    //    success: (demands) => {
+    //        new Promise(async () => {
+    //            await resetDivArticlesAsync();
+    //            alert("successful");
+    //        })
+    //    },
+    //    error: (response) => {
+    //        addMsgWithImgToDivArticlesAsync(
+    //            path.questionImage,
+    //            "Form Bulunamadı",
+    //            "Form Bulunamadı...");
+    //    }
+    //})
+}
 //#endregion
 
 //#region functions
+export async function beforePopulateAsync(div_articles) {
+    await setArticleBufferAsync({
+        div_articles: div_articles,
+        articleType: "imageAndText",
+        articleStyle: {
+            "width": await getValidArticleWidthAsync({
+                width: 300,
+                marginL: 20,
+                marginR: 20
+            }, div_articles),
+            "height": 550,
+            "marginT": 10,
+            "marginB": 10,
+            "marginR": 20,
+            "marginL": 20,
+            "paddingT": 10,
+            "paddingB": 10,
+            "paddingR": 10,
+            "paddingL": 10,
+            "border": 1,
+            "borderColor": "blue",
+            "boxShadow": "5px 5px 10px rgba(0, 0, 0, 0.3)",
+            "bgColorForDelete": "red"
+        },
+        heightOfPageMenubar: 80
+    });  // i have to define article buffer before setting the page size.
+    await setPageSizeAsync();
+}
+export async function populateArticlesAsync(
+    specialUrl,
+    headerKey,
+    lbl_entityQuantity,
+    func_populateInsideOfArticleAsync = (demands) => { },
+    func_declareEventsAsync = () => { }
+) {
+    await new Promise((resolve) => {
+        $.ajax({
+            method: "GET",
+            url: baseApiUrl + specialUrl,
+            dataType: "json",
+            beforeSend: () => {
+                addMsgWithImgToDivArticlesAsync(
+                    path.loadingImage,
+                    "Yükleniyor",
+                    "Yükleniyor...");
+            },
+            success: (demands, status, xhr) => {
+                new Promise(async () => {
+                    await resetDivArticlesAsync(); // remove loading img
+                    await setArticleBufferAsync({
+                        "totalArticleCount": demands.length
+                    });
+                    await addArticlesAsync(true);
+                    await func_populateInsideOfArticleAsync(demands);
+                    await setPagingBufferAsync({
+                        infosInHeader: JSON.parse(
+                            xhr.getResponseHeader(headerKey))
+                    });  // save pagination infos
+                    await updateEntityQuantityAsync(
+                        lbl_entityQuantity,
+                        pagingBuffer.infosInHeader.CurrentPageCount + "/" + pagingBuffer.pageSize
+                    );
+                    await addValueToPaginationLastButtonAsync(
+                        pagingBuffer.infosInHeader.TotalPage);
+                    await controlPaginationBackAndNextButtonsAsync(pagingBuffer.infosInHeader);
+                    await func_declareEventsAsync();
+                })
+            },
+            error: () => {
+                addMsgWithImgToDivArticlesAsync(
+                    path.questionImage,
+                    "Talep Bulunamadı",
+                    "Talep Bulunamadı"
+                );
+            },
+            complete: () => {
+                resolve();
+            }
+        })
+    });  // populate article
+}
 export async function updateEntityQuantityAsync(lbl_entityQuantity, newQuantity) {
     let b_entityQuantity = lbl_entityQuantity.children("b");
 
     b_entityQuantity.empty();
     b_entityQuantity.append(newQuantity);
 }
-export async function getPageSizeAsync() {
-    let articleCountOnOneRow = await getArticleCountOnOneRowAsync("px");
+export async function setPageSizeAsync() {
+    // firstly you have to define "articleBuffer" if is not initialized
 
+    //#region set page size
+    let articleCountOnOneRow = await getArticleCountOnOneRowAsync("px");
     let pageSize = (articleCountOnOneRow == 1 ?
         10
         : articleCountOnOneRow == 2 ?
@@ -142,8 +263,11 @@ export async function getPageSizeAsync() {
             : articleCountOnOneRow == 3 ?
                 5 * 3
                 : 4 * articleCountOnOneRow);  // 5 -> 15;  6 -> 18;  7 -> 21...
+    //#endregion
 
-    return pageSize;
+    await setPagingBufferAsync({
+        pageSize: pageSize
+    });
 }
 export async function addImageToArticleAsync(articleId, yachtType) {
     //#region set image path by yacht type
@@ -174,9 +298,9 @@ export async function addImageToArticleAsync(articleId, yachtType) {
 
     await alignImageToVerticalCenterAsync(articleId);
 }
-export async function resetDivArticlesAsync(div_articles) {
-    div_articles.empty();
-    div_articles.removeAttr("style");
+export async function resetDivArticlesAsync() {
+    articleBuffer.div_articles.empty();
+    articleBuffer.div_articles.removeAttr("style");
 }
 async function showInputsOfSenderInfosAsync() {
     // show inputs

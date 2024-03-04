@@ -1,7 +1,9 @@
-﻿namespace BegumYatch.Core.QueryParameters
+﻿using BegumYatch.Core.Enums.AdminPanel;
+
+namespace BegumYatch.Core.QueryParameters
 {
     public record DemandParamsForAnsweredFuelPurchase : PagingParams
     {
-        public bool AcceptedOrRejected { get; init; }
+        public DemandStatus DemandStatus { get; init; }
     }
 }
