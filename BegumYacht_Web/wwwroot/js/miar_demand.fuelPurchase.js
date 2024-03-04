@@ -3,21 +3,19 @@ import { convertStrUtcDateToStrLocalDateAsync, getPassedTimeInStringAsync } from
 import { addCriticalSectionAsync, shiftTheChildDivToBottomOfParentDivAsync } from "./miar_module.js"
 
 import {
-    addImageToArticleAsync,
-    beforePopulateAsync,
-    change_articleSubMenuSelectAsync, click_articleAsync, click_backButtonAsync,
-    click_senderInfosDivAsync, populateArticlesAsync, resize_windowAsync, setPageSizeAsync,
+    addImageToArticleAsync, beforePopulateAsync, click_articleAsync, click_backButtonAsync,
+    click_senderInfosDivAsync, getDefaultValueIfValueNull, populateArticlesAsync,
+    populateFormAsync, resize_windowAsync,
 } from "./miar_demand.js"
 
 import {
-    alignArticlesToCenterAsync, art_baseId, controlArticleWidthAsync,
-    div_article_info_id, getValidArticleWidthAsync, setArticleBufferAsync, setHeightOfArticlesDivAsync
+    alignArticlesToCenterAsync, art_baseId, controlArticleWidthAsync, div_article_info_id,
+    setHeightOfArticlesDivAsync
 } from "./miar_module.article.js"
 
 import {
     change_inpt_paginationCurrentAsync, click_ul_paginationAsync, keyup_ul_paginationAsync,
-    inpt_paginationCurrent_id,
-    pagingBuffer
+    inpt_paginationCurrent_id, pagingBuffer
 } from "./miar_module.pagination.js"
 
 
@@ -40,7 +38,10 @@ $(function () {
         sidebarMenuButton: $("#div_sidebarMenuButton"),
         senderInfos: $("#div_senderInfos"),
         backButton: $("#div_backButton"),
-        panelTitle: $("#div_panelTitle")
+        panelTitle: $("#div_panelTitle"),
+        senderInfos_inputs: $("#div_senderInfos_inputs"),
+        answererInfos_inputs: $("#div_answererInfos_inputs"),
+        demand_inputs: $("#div_demand_inputs"),
     };
     const btn = {
         back: $("#btn_back")
@@ -144,8 +145,8 @@ $(function () {
     //#endregion
 
     //#region update page
-    div.senderInfos.click(async () => {
-        await click_senderInfosDivAsync();
+    $(".div_infos").click(async () => {
+        await click_senderInfosDivAsync(div.senderInfos);
     })
     btn.back.click(async () => {
         await click_backButtonAsync(
@@ -165,8 +166,14 @@ $(function () {
     async function setupPageAsync() {
         await beforePopulateAsync(div.articles);
         await populateFuelPurchaseArticlesAsync();
+        await populateFormAsync(
+            div.senderInfos_inputs,
+            div.answererInfos_inputs,
+            div.demand_inputs);
         await populateInfoMessagesAsync({
-            div_senderInfos_base: ["Şeklin üzerine tıklayarak talebi gönderen personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
+            div_senderInfos: ["Şeklin üzerine tıklayarak talebi gönderen personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
+            div_answererInfos: ["Şeklin üzerine tıklayarak talebe cevap veren personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
+            div_demandInfos: ["Şeklin üzerine tıklayarak talep bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
             div_notes: ["şekli, sağ alt ucundan aşağı doğru çekerek uzatabilirsin.",]
         });
     }
@@ -197,9 +204,9 @@ $(function () {
 
                     div_article_info.append(`
                         <div>
-                            <h2>${demandInfos.flag}</h2>
-                            <h3 style="margin-top:3px">${demandInfos.yachtType}</h3>
-                            <h4 style="margin-top:2px">${demandInfos.yachtName}</h4>
+                            <h2>${getDefaultValueIfValueNull(demandInfos.flag)}</h2>
+                            <h3 style="margin-top:3px">${getDefaultValueIfValueNull(demandInfos.yachtType)}</h3 >
+                            <h4 style="margin-top:2px">${getDefaultValueIfValueNull(demandInfos.yachtName)}</h4>
                             <h4 style="margin-top:20px">${demandInfos.nameSurname}</h4>
                             <h6 style="margin-top:10px">${demandInfos.notes.substring(0, 200)}...</h6>
                         </div>

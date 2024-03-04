@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "idbcwlmEH9XR07j2Emr8SQlCBlwf/lDhKyjOCUZm1Ww=",
+  "Hash": "QxJoinaVZB4RBA6SggEoMxPPjgaGvzPqa7nya4zQ4bo=",
   "Source": "BegumYacht_Web",
   "BasePath": "_content/BegumYacht_Web",
   "Mode": "Default",
@@ -814,6 +814,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\newNotification.png"
+    },
+    {
+      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\images\\noImage.png",
+      "SourceId": "BegumYacht_Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\",
+      "BasePath": "_content/BegumYacht_Web",
+      "RelativePath": "images/noImage.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\noImage.png"
     },
     {
       "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\images\\notification.png",

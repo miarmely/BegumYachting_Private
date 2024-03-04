@@ -206,7 +206,7 @@ namespace BegumYatch.Service.Services
                     (int)totalCount.Value,
                     demandParams.PageNumber,
                     demandParams.PageSize,
-                    "Demand_FuelPurchase",
+                    "Demand-FuelPurchase",
                     context);
             #endregion
 

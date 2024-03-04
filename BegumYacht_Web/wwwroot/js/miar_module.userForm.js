@@ -102,8 +102,8 @@ export async function populateInputFormAsync(rowNo, html_label, html_input) {
     //#endregion
 }
 export async function populateInfoMessagesAsync(
-    infoMessages = { divId: ["message1", "message2"] }) {
-
+    infoMessages = { divId: ["message1", "message2"] }
+) {
     //#region fill in info messages
     for (let div_id in infoMessages)
         for (let msgIndex in infoMessages[div_id]) {

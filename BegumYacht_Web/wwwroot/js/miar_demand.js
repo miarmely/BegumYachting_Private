@@ -1,4 +1,4 @@
-﻿import { addCriticalSectionAsync } from "./miar_module.js";
+﻿import { addCriticalSectionAsync, updateElementText } from "./miar_module.js";
 import { resetFormAsync, showOrHideBackButtonAsync } from "./miar_module.userForm.js";
 
 import {
@@ -51,7 +51,7 @@ export async function resize_windowAsync(
             500);
     //#endregion
 }
-export async function click_senderInfosDivAsync() {
+export async function click_senderInfosDivAsync(div_senderInfos) {
     //#region when sender infos is not loaded to inputs before (ajax)
     if (!isSenderInfosLoadedBefore)
         await new Promise(resolve => {
@@ -80,7 +80,7 @@ export async function click_senderInfosDivAsync() {
         });
     //#endregion
 
-    await showOrHideInputsOfSenderInfosAsync();
+    await showOrHideInputsOfSenderInfosAsync(div_senderInfos);
 }
 export async function click_backButtonAsync(
     lbl_result,
@@ -129,37 +129,6 @@ export async function click_articleAsync(
     //#endregion
 
     await showOrHideBackButtonAsync(div_backButton, div_panelTitle, btn_back);
-}
-export async function change_articleMenuSelectAsync() {}
-export async function change_articleSubMenuSelectAsync(slct_article_submenu) {
-
-    //$.ajax({
-    //    method: "GET",
-    //    url: (baseApiUrl + "/adminPanel/fuelPurchaseDemand/filter` +
-    //        `?demandStatus=${slct_article_submenu.val()}`
-    //        `&pageSize=${pagingBuffer.pageSize}` +
-    //        `&pageNumber=${pagingBuffer.pageNumber}`),
-    //    contentType = "application/json",
-    //    dataType = "json",
-    //    beforeSend: () => {
-    //        addMsgWithImgToDivArticlesAsync(
-    //            path.loadingImage,
-    //            "Yükleniyor",
-    //            "Yükleniyor...");
-    //    },
-    //    success: (demands) => {
-    //        new Promise(async () => {
-    //            await resetDivArticlesAsync();
-    //            alert("successful");
-    //        })
-    //    },
-    //    error: (response) => {
-    //        addMsgWithImgToDivArticlesAsync(
-    //            path.questionImage,
-    //            "Form Bulunamadı",
-    //            "Form Bulunamadı...");
-    //    }
-    //})
 }
 //#endregion
 
@@ -245,6 +214,111 @@ export async function populateArticlesAsync(
         })
     });  // populate article
 }
+export async function populateFormAsync(
+    div_senderInfos_inputs,
+    div_answererInfos_inputs,
+    div_demand_inputs,
+) {
+    //#region add inputs to form
+    let inputInfos = [
+        ["input", "text", "nameSurname", "Ad Soyad", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],  // type for switch/case | type for switch/case | type for input | id | label name | info message | hidden/disabled/readonly of input | place to add
+        ["input", "text", "phone", "Telefon", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
+        ["input", "text", "email", "Email", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
+        ["input", "text", "newPassportNo", "Yeni Pasaport No", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
+        ["input", "text", "oldPassportNo", "Eski Pasapart No", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
+        ["input", "text", "rank", "Rank", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
+        ["input", "text", "nationality", "Uyruk", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
+        ["input", "text", "gender", "Cinsiyet", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
+        ["input", "text", "yachtName", "Yat Adı", false, "readonly", [div_demand_inputs]],
+        ["input", "text", "yachtType", "Yat Tipi", false, "readonly", [div_demand_inputs]],
+        ["input", "text", "flag", "Bayrak", false, "readonly", [div_demand_inputs]],
+        ["input", "text", "isDutyPaid", "Gümrüklü Mü", false, "readonly", [div_demand_inputs]],
+        ["input", "text", "mgo", "MGO", false, "readonly", [div_demand_inputs]],  // marine gas oil
+        ["input", "text", "ago", "AGO", false, "readonly", [div_demand_inputs]],  // automotive gas oil
+        ["input", "text", "fuelType", "Yakıt Tipi", false, "readonly", [div_demand_inputs]],
+        ["input", "text", "requestedFuel", "İstenen Yakıt Miktarı (L)", false, "readonly", [div_demand_inputs]],
+        ["input", "text", "fuelSupplyPort", "Yakıt İkmal Yeri", false, "readonly", [div_demand_inputs]],
+        ["input", "text", "fuelSupplyDate", "Yakıt İkmal Tarihi", false, "readonly", [div_demand_inputs]],
+        ["input", "text", "creationDate", "Talep Tarihi", false, "readonly", [div_demand_inputs]],
+        ["textarea", "notes", "Notlar", true, "readonly", [div_demand_inputs]]  // type for switch/case | id | label name | info message | hidden/disabled/readonly of input | place to add            
+    ];
+
+    for (let index in inputInfos) {
+        let inputInfo = inputInfos[index];
+        let div_formGroup_id;
+        let inpt_id;
+
+        switch (inputInfo[0]) {
+            case "input":
+                //#region add inputs to answerer, sender or demand <div>s
+                div_formGroup_id  = "div_" + inputInfo[2];
+                inpt_id = "inpt_" + inputInfo[2];
+
+                for (let index2 in inputInfo[6]) {
+                    //#region add label and <input>
+                    let div = inputInfo[6][index2];
+
+                    div.append(`
+                        <div id="${div_formGroup_id}" class="form-group">
+                            <label class="col-sm-3 control-label">${inputInfo[3]}</label>
+                            <div class="col-sm-6">
+                                <input id="${inpt_id}" type="${inputInfo[1]}" class="form-control" ${inputInfo[5]}>
+                                <span id="spn_help_${inpt_id}" class="help-block"></span>
+                            </div>
+                        </div>
+                    `);
+                    //#endregion
+
+                    //#region add info message if desired
+                    if (inputInfo[4])
+                        $("#" + div_formGroup_id).append(`
+                            <div class="col-sm-3 div_infoMessage">
+                                <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+                                <ul role="menu" class="dropdown-menu"></ul>
+                            </div>
+                        `);
+                    //#endregion
+                }
+                //#endregion
+
+                break;
+            case "textarea":
+                //#region add inputs to answerer, sender or demand divs
+                div_formGroup_id = "div_" + inputInfo[1];
+                inpt_id = "inpt_" + inputInfo[1];
+
+                for (let index2 in inputInfo[5]) {
+                    //#region add label and <textarea>
+                    let div = inputInfo[5][index2];
+
+                    div.append(`
+                        <div id="${div_formGroup_id}" class="form-group">
+                            <label class="col-sm-3 control-label">${inputInfo[2]}</label>
+                            <div class="col-sm-6">
+                                <textarea id="${inpt_id}" class="form-control" ${inputInfo[4]}></textarea>
+                                <span id="spn_help_${inpt_id}" class="help-block"></span>
+                            </div>
+                        </div>
+                    `);
+                    //#endregion
+
+                    //#region add info message if desired
+                    if (inputInfo[3])
+                        $("#" + div_formGroup_id).append(`
+                            <div class="col-sm-3 div_infoMessage">
+                                <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+                                <ul role="menu" class="dropdown-menu"></ul>
+                            </div>
+                        `);
+                    //#endregion
+                }
+                //#endregion
+
+                break;
+        }
+    }
+    //#endregion
+}
 export async function updateEntityQuantityAsync(lbl_entityQuantity, newQuantity) {
     let b_entityQuantity = lbl_entityQuantity.children("b");
 
@@ -283,6 +357,9 @@ export async function addImageToArticleAsync(articleId, yachtType) {
         case "MotorYacht":
             path_image = "/images/motorYacht.png";
             break;
+        default:  // when yacht type is null or invalid
+            path_image = "/images/noImage.png";
+            break;
     }
     //#endregion
 
@@ -302,6 +379,9 @@ export async function resetDivArticlesAsync() {
     articleBuffer.div_articles.empty();
     articleBuffer.div_articles.removeAttr("style");
 }
+export function getDefaultValueIfValueNull(value) {
+    return value == null ? "Girilmedi" : value;
+}
 async function showInputsOfSenderInfosAsync() {
     // show inputs
     for (let elementName in elementNamesAndPropertyNames)
@@ -309,18 +389,26 @@ async function showInputsOfSenderInfosAsync() {
 
     isSenderInfosDisplaying = true;
 }
+async function showOrHideInputsOfSenderInfosAsync(div_senderInfos) {
+    if (isSenderInfosDisplaying) {
+        await hideInputsOfSenderInfosAsync();
+        updateElementText(
+            div_senderInfos.find("h4"),
+            "Gönderenin Bilgilerini Göster");
+    }
+
+    else {
+        await showInputsOfSenderInfosAsync();
+        updateElementText(
+            div_senderInfos.find("h4"),
+            "Gönderenin Bilgilerini Gizle");
+    }
+}
 async function hideInputsOfSenderInfosAsync() {
     // hide inputs
     for (let elementName in elementNamesAndPropertyNames)
         $("#div_" + elementName).attr("hidden", "");
 
     isSenderInfosDisplaying = false;
-}
-async function showOrHideInputsOfSenderInfosAsync() {
-    if (isSenderInfosDisplaying)
-        await hideInputsOfSenderInfosAsync();
-
-    else
-        await showInputsOfSenderInfosAsync();
 }
 //#endregion
