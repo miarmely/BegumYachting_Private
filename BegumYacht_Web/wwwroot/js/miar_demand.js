@@ -81,6 +81,40 @@ export async function click_senderInfosDivAsync(div_senderInfos) {
     //#endregion
 
     await showOrHideInputsOfSenderInfosAsync(div_senderInfos);
+}  // deprecated
+export async function click_InfoDivAsync(event) {
+    //#region set variables
+    let div_infos_id = event.currentTarget.parentNode.id;
+    let div_infos = $("#" + div_infos_id);
+    let div_infos_button = div_infos.children(".div_infos_button");
+    let div_infos_inputs = $("#" + div_infos_id + "_inputs");
+    let inputTypesForBorderColor = ["input", "textarea"];
+    //#endregion
+
+    //#region when inputs of info is showing (HIDE)
+    if (div_infos_inputs.attr("hidden") == null) {
+        div_infos_inputs.attr("hidden", "");
+        updateElementText(
+            div_infos_button.children("h4 span"),
+            "Görüntüle");
+    }
+    //#endregion
+
+    //#region when inputs of info is not showing (SHOW)
+    else {
+        // add border color of div_infos to inputs
+        for (let index in inputTypesForBorderColor)
+            div_infos_inputs
+                .find(inputTypesForBorderColor[index])
+                .css("border-color", div_infos_button.css("border-color"));
+
+        // show inputs
+        div_infos_inputs.removeAttr("hidden");
+        updateElementText(
+            div_infos_button.children("h4 span"),
+            "Gizle");
+    }
+    //#endregion
 }
 export async function click_backButtonAsync(
     lbl_result,
@@ -88,6 +122,9 @@ export async function click_backButtonAsync(
     div_panelTitle,
     div_article_update,
     div_article_display,
+    div_senderInfos_inputs,
+    div_answererInfos_inputs,
+    div_demandInfos_inputs,
     btn_back
 ) {
     await resetFormAsync(lbl_result);
@@ -96,6 +133,12 @@ export async function click_backButtonAsync(
         div_backButton,
         div_panelTitle,
         btn_back);
+
+    //#region hide info <div>s
+    div_senderInfos_inputs.attr("hidden", "");
+    div_answererInfos_inputs.attr("hidden", "");
+    div_demandInfos_inputs.attr("hidden", "");
+    //#endregion
 
     //#region show user display page
     isSenderInfosLoadedBefore = false;
@@ -112,7 +155,7 @@ export async function click_articleAsync(
     div_backButton,
     div_panelTitle,
     btn_back,
-    func_populateDemandInputsAsync
+    func_populateInputsAsync = (infosOfLastClickedArticle) => { }
 ) {
     //#region save clicked article infos
     window.scrollTo(0, 0);  // take scroll to start of page
@@ -121,7 +164,7 @@ export async function click_articleAsync(
     infosOfLastClickedArticle = articleIdsAndInfos[articleId];
     //#endregion
 
-    await func_populateDemandInputsAsync(infosOfLastClickedArticle);
+    await func_populateInputsAsync(infosOfLastClickedArticle);
 
     //#region show article update page
     div_article_display.attr("hidden", "");
@@ -217,7 +260,7 @@ export async function populateArticlesAsync(
 export async function populateFormAsync(
     div_senderInfos_inputs,
     div_answererInfos_inputs,
-    div_demand_inputs,
+    div_demandInfos_inputs,
 ) {
     //#region add inputs to form
     let inputInfos = [
@@ -229,18 +272,18 @@ export async function populateFormAsync(
         ["input", "text", "rank", "Rank", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
         ["input", "text", "nationality", "Uyruk", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
         ["input", "text", "gender", "Cinsiyet", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "yachtName", "Yat Adı", false, "readonly", [div_demand_inputs]],
-        ["input", "text", "yachtType", "Yat Tipi", false, "readonly", [div_demand_inputs]],
-        ["input", "text", "flag", "Bayrak", false, "readonly", [div_demand_inputs]],
-        ["input", "text", "isDutyPaid", "Gümrüklü Mü", false, "readonly", [div_demand_inputs]],
-        ["input", "text", "mgo", "MGO", false, "readonly", [div_demand_inputs]],  // marine gas oil
-        ["input", "text", "ago", "AGO", false, "readonly", [div_demand_inputs]],  // automotive gas oil
-        ["input", "text", "fuelType", "Yakıt Tipi", false, "readonly", [div_demand_inputs]],
-        ["input", "text", "requestedFuel", "İstenen Yakıt Miktarı (L)", false, "readonly", [div_demand_inputs]],
-        ["input", "text", "fuelSupplyPort", "Yakıt İkmal Yeri", false, "readonly", [div_demand_inputs]],
-        ["input", "text", "fuelSupplyDate", "Yakıt İkmal Tarihi", false, "readonly", [div_demand_inputs]],
-        ["input", "text", "creationDate", "Talep Tarihi", false, "readonly", [div_demand_inputs]],
-        ["textarea", "notes", "Notlar", true, "readonly", [div_demand_inputs]]  // type for switch/case | id | label name | info message | hidden/disabled/readonly of input | place to add            
+        ["input", "text", "yachtName", "Yat Adı", false, "readonly", [div_demandInfos_inputs]],
+        ["input", "text", "yachtType", "Yat Tipi", false, "readonly", [div_demandInfos_inputs]],
+        ["input", "text", "flag", "Bayrak", false, "readonly", [div_demandInfos_inputs]],
+        ["input", "text", "isDutyPaid", "Gümrüklü Mü", false, "readonly", [div_demandInfos_inputs]],
+        ["input", "text", "mgo", "MGO", false, "readonly", [div_demandInfos_inputs]],  // marine gas oil
+        ["input", "text", "ago", "AGO", false, "readonly", [div_demandInfos_inputs]],  // automotive gas oil
+        ["input", "text", "fuelType", "Yakıt Tipi", false, "readonly", [div_demandInfos_inputs]],
+        ["input", "text", "requestedFuel", "İstenen Yakıt Miktarı (L)", false, "readonly", [div_demandInfos_inputs]],
+        ["input", "text", "fuelSupplyPort", "Yakıt İkmal Yeri", false, "readonly", [div_demandInfos_inputs]],
+        ["input", "text", "fuelSupplyDate", "Yakıt İkmal Tarihi", false, "readonly", [div_demandInfos_inputs]],
+        ["input", "text", "creationDate", "Talep Tarihi", false, "readonly", [div_demandInfos_inputs]],
+        ["textarea", "notes", "Notlar", true, "readonly", [div_demandInfos_inputs]]  // type for switch/case | id | label name | info message | hidden/disabled/readonly of input | place to add            
     ];
 
     for (let index in inputInfos) {
@@ -251,7 +294,7 @@ export async function populateFormAsync(
         switch (inputInfo[0]) {
             case "input":
                 //#region add inputs to answerer, sender or demand <div>s
-                div_formGroup_id  = "div_" + inputInfo[2];
+                div_formGroup_id = "div_" + inputInfo[2];
                 inpt_id = "inpt_" + inputInfo[2];
 
                 for (let index2 in inputInfo[6]) {
@@ -319,6 +362,38 @@ export async function populateFormAsync(
     }
     //#endregion
 }
+export async function populateSenderAndAnswererInputsAsync(
+    div_senderInfos_inputs,
+    div_answererInfos_inputs
+) {
+    //#region populate inputs of sender and answerer infos
+    let idsAndInfoDivs = {}
+    idsAndInfoDivs[infosOfLastClickedArticle.userId] = div_senderInfos_inputs;
+    idsAndInfoDivs[infosOfLastClickedArticle.answererId] = div_answererInfos_inputs;
+
+    for (let id in idsAndInfoDivs) {
+        let div_infos = idsAndInfoDivs[id];
+
+        $.ajax({
+            method: "GET",
+            url: baseApiUrl + `/adminPanel/userInfos?userId=${id}`,
+            contentType: "application/json",
+            dataType: "json",
+            success: (senderInfos) => {
+                //#region populate input
+                for (let elementName in elementNamesAndPropertyNames) {
+                    let propertyName = elementNamesAndPropertyNames[elementName];
+
+                    div_infos
+                        .find("#inpt_" + elementName)
+                        .val(senderInfos[propertyName]);
+                }
+                //#endregion
+            },
+        })
+    }
+    //#endregion
+}
 export async function updateEntityQuantityAsync(lbl_entityQuantity, newQuantity) {
     let b_entityQuantity = lbl_entityQuantity.children("b");
 
@@ -382,13 +457,14 @@ export async function resetDivArticlesAsync() {
 export function getDefaultValueIfValueNull(value) {
     return value == null ? "Girilmedi" : value;
 }
+
 async function showInputsOfSenderInfosAsync() {
     // show inputs
     for (let elementName in elementNamesAndPropertyNames)
         $("#div_" + elementName).removeAttr("hidden");
 
     isSenderInfosDisplaying = true;
-}
+}  // deprecated
 async function showOrHideInputsOfSenderInfosAsync(div_senderInfos) {
     if (isSenderInfosDisplaying) {
         await hideInputsOfSenderInfosAsync();
@@ -403,12 +479,12 @@ async function showOrHideInputsOfSenderInfosAsync(div_senderInfos) {
             div_senderInfos.find("h4"),
             "Gönderenin Bilgilerini Gizle");
     }
-}
+} // deprecated
 async function hideInputsOfSenderInfosAsync() {
     // hide inputs
     for (let elementName in elementNamesAndPropertyNames)
         $("#div_" + elementName).attr("hidden", "");
 
     isSenderInfosDisplaying = false;
-}
+} // deprecated
 //#endregion

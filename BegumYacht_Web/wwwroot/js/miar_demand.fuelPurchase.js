@@ -4,8 +4,8 @@ import { addCriticalSectionAsync, shiftTheChildDivToBottomOfParentDivAsync } fro
 
 import {
     addImageToArticleAsync, beforePopulateAsync, click_articleAsync, click_backButtonAsync,
-    click_senderInfosDivAsync, getDefaultValueIfValueNull, populateArticlesAsync,
-    populateFormAsync, resize_windowAsync,
+    click_InfoDivAsync, getDefaultValueIfValueNull, populateArticlesAsync,
+    populateFormAsync, populateSenderAndAnswererInputsAsync, resize_windowAsync,
 } from "./miar_demand.js"
 
 import {
@@ -41,7 +41,7 @@ $(function () {
         panelTitle: $("#div_panelTitle"),
         senderInfos_inputs: $("#div_senderInfos_inputs"),
         answererInfos_inputs: $("#div_answererInfos_inputs"),
-        demand_inputs: $("#div_demand_inputs"),
+        demandInfos_inputs: $("#div_demandInfos_inputs"),
     };
     const btn = {
         back: $("#btn_back")
@@ -141,12 +141,15 @@ $(function () {
                 //#endregion
             }
         );
+        await populateSenderAndAnswererInputsAsync(
+            div.senderInfos_inputs,
+            div.answererInfos_inputs);
     })
     //#endregion
 
     //#region update page
-    $(".div_infos").click(async () => {
-        await click_senderInfosDivAsync(div.senderInfos);
+    $(".div_infos_button").click(async (event) => {
+        await click_InfoDivAsync(event);
     })
     btn.back.click(async () => {
         await click_backButtonAsync(
@@ -155,6 +158,9 @@ $(function () {
             div.panelTitle,
             div.article_update,
             div.article_display,
+            div.senderInfos_inputs,
+            div.answererInfos_inputs,
+            div.demandInfos_inputs,
             btn.back);
         await alignArticlesToCenterAsync();
     })
@@ -169,7 +175,7 @@ $(function () {
         await populateFormAsync(
             div.senderInfos_inputs,
             div.answererInfos_inputs,
-            div.demand_inputs);
+            div.demandInfos_inputs);
         await populateInfoMessagesAsync({
             div_senderInfos: ["Şeklin üzerine tıklayarak talebi gönderen personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
             div_answererInfos: ["Şeklin üzerine tıklayarak talebe cevap veren personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],

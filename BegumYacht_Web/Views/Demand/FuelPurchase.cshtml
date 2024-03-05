@@ -22,11 +22,11 @@
                 <form>
                     <div id="div_form" class="form-horizontal bucket-form" style="padding-top:20px">                    
                         @*display sender infos*@
-                        <div id="div_senderInfos" class="form-group text-center">
+                        <div id="div_senderInfos" class="form-group text-center  div_infos">
                             <div class="col-sm-3"></div>
-                            <div class="col-sm-6  div_infos">
+                            <div class="col-sm-6  div_infos_button">
                                 <img src="~/images/captain2.png"/>
-                                <h4>Gönderenin Bilgilerini Görüntüle</h4>
+                                <h4>Gönderenin Bilgilerini <span>Görüntüle</span></h4>
                             </div>
                             <div class="col-sm-3"></div>
                             <div class="col-sm-3 text-left div_infoMessage">
@@ -35,14 +35,14 @@
                             </div>   
                         </div>
 
-                        <div id="div_senderInfos_inputs"></div>
+                        <div id="div_senderInfos_inputs" class="div_infos_inputs" hidden></div>
 
                         @*display answerer infos*@
-                        <div id="div_answererInfos" class="form-group text-center">
+                        <div id="div_answererInfos" class="form-group text-center  div_infos">
                             <div class="col-sm-3"></div>
-                            <div class="col-sm-6  div_infos">
+                            <div class="col-sm-6  div_infos_button">
                                 <img src="~/images/captain2.png"/>
-                                <h4>Cevaplayanın Bilgilerini Görüntüle</h4>
+                                <h4>Cevaplayanın Bilgilerini <span>Görüntüle</span></h4>
                             </div>
                             <div class="col-sm-3"></div>
                             <div class="col-sm-3 text-left div_infoMessage">
@@ -51,14 +51,14 @@
                             </div>   
                         </div>
 
-                        <div id="div_answererInfos_inputs"></div>
+                        <div id="div_answererInfos_inputs" class="div_infos_inputs" hidden></div>
 
                         @*display demand*@
-                        <div id="div_demandInfos" class="form-group text-center">
+                        <div id="div_demandInfos" class="form-group text-center  div_infos">
                             <div class="col-sm-3"></div>
-                            <div class="col-sm-6  div_infos">
+                            <div class="col-sm-6  div_infos_button">
                                 <img src="~/images/captain2.png"/>
-                                <h4>Talep Bilgilerini Görüntüle</h4>
+                                <h4>Talep Bilgilerini <span>Görüntüle</span></h4>
                             </div>
                             <div class="col-sm-3"></div>
                             <div class="col-sm-3 text-left div_infoMessage">
@@ -67,7 +67,7 @@
                             </div>   
                         </div>
 
-                        <div id="div_demand_inputs"></div>
+                        <div id="div_demandInfos_inputs" class="div_infos_inputs" hidden></div>
                         
                         @*accept and reject buttons*@
                         <div id="div_buttons" class="form-group">
