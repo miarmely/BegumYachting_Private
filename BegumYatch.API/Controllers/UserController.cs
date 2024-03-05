@@ -6,6 +6,7 @@ using BegumYatch.Core.DTOs.UserLogin;
 using BegumYatch.Core.DTOs.UserRegister;
 using BegumYatch.Core.Enums;
 using BegumYatch.Core.Models.User;
+using BegumYatch.Core.QueryParameters;
 using BegumYatch.Core.Repositories;
 using BegumYatch.Core.Services;
 using BegumYatch.Core.UnitOfWorks;
@@ -286,25 +287,24 @@ namespace BegumYatch.API.Controllers
         }
 
 
-        [HttpGet("adminPanel/userInfos")]
+        [HttpGet("adminPanel/userDisplay/filter")]
         public async Task<IActionResult> GetUserInfos(
-            [FromQuery(Name = "userId")] int userId)
+            [FromQuery] UserParamsForDisplayByFiltering userParams)
         {
-            #region get user infos (error)
-            var userInfos = await _userService.GetByIdAsync(userId);
-
+            #region get user infos (THROW)
+            var users = await _userService
+                .GetUsersByFilteringAsync(userParams);
+           
             // when user not found
-            if (userInfos == null)
+            if (users.Count == 0)
                 throw new MiarException(
                     404,
                     "NF-U",
                     "Not Found - User",
                     "kullanıcı bulunamadı");
-            
-            var userDto = _mapper.Map<GetUsersDto>(userInfos);
             #endregion
 
-            return Ok(userDto);
+            return Ok(users);
         }
 
 

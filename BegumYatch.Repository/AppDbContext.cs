@@ -18,12 +18,11 @@ using System.Threading.Tasks;
 
 namespace BegumYatch.Repository
 {
-    public class AppDbContext : IdentityDbContext<AppUser, AppRole, int>
+    public partial class AppDbContext : IdentityDbContext<AppUser, AppRole, int>
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
-
         public DbSet<FuelPurchaseDemand> FuelPurchaseDemands { get; set; }
         public DbSet<ConciergeServiceDemand> ConciergeServiceDemands { get; set; }
         public DbSet<ExcursionDemand> ExcursionDemands { get; set; }
@@ -36,9 +35,6 @@ namespace BegumYatch.Repository
         public DbSet<CheckIn> CheckIn { get; set; }
         public DbSet<VipServiceDemand> VipDemand { get; set; }
         public DbSet<MailOtp> MailOtp { get; set; }
-        public DbSet<AnsweredUnansweredFuelPurchaseDemand> AnsweredFuelPurchaseDemands 
-            { get; set; }
-
 
         public override int SaveChanges()
         {
@@ -113,5 +109,12 @@ namespace BegumYatch.Repository
                 }
             }
         }
+    }
+
+    public partial class AppDbContext  // By MERT
+    {
+        public DbSet<AnsweredUnansweredFuelPurchaseDemand> AnsweredFuelPurchaseDemands
+        { get; set; }
+        public DbSet<MiarUser> MiarUser { get; set; }
     }
 }

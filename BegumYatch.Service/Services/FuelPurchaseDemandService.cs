@@ -4,6 +4,7 @@ using BegumYatch.Core.DTOs.Error;
 using BegumYatch.Core.DTOs.ExcursionDemand;
 using BegumYatch.Core.DTOs.FuelPurchaseDemand;
 using BegumYatch.Core.DTOs.MainPage;
+using BegumYatch.Core.DTOs.User;
 using BegumYatch.Core.Enums;
 using BegumYatch.Core.Models.Demands;
 using BegumYatch.Core.Models.Demands.AdminPanel;
@@ -27,9 +28,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace BegumYatch.Service.Services
 {
-    public class FuelPurchaseDemandService
+    public partial class FuelPurchaseDemandService
         : Service<FuelPurchaseDemand>, IFuelPurchaseDemandService
     {
         private readonly IGenericRepository<FuelPurchaseDemand> _fuelPurchaseDemandRepository;
@@ -121,9 +123,10 @@ namespace BegumYatch.Service.Services
             else
                 return null;
         }
+    }  
 
-
-        #region By MERT
+    public partial class FuelPurchaseDemandService  // By MERT
+    {
         public async Task<PagingList<DemandDtoForFuelPurchase>> GetAllFuelPurchaseDemandsAsync(
             PagingParams pagingParam,
             HttpContext context)
@@ -212,6 +215,5 @@ namespace BegumYatch.Service.Services
 
             return demandPagingList;
         }
-        #endregion
     }
 }

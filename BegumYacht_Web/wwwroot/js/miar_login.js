@@ -113,14 +113,14 @@ $(function () {
 
         $.ajax({
             method: "GET",
-            url: baseApiUrl + `/adminPanel/userInfos?userId=${accountId}`,
+            url: baseApiUrl + `/adminPanel/userDisplay/filter?userId=${accountId}`,
             contentType: "application/json",
             dataType: "json",
-            success: (accountInfos) => {
+            success: (users) => {
                 // save account infos to local
                 localStorage.setItem(
                     "accountInfos",
-                    JSON.stringify(accountInfos));
+                    JSON.stringify(users[0]));
 
                 // sign in 
                 window.location.replace(`/homepage/index`);

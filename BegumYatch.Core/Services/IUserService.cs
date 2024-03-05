@@ -1,11 +1,11 @@
 ﻿using BegumYatch.Core.DTOs.User;
 using BegumYatch.Core.DTOs.UserRegister;
 using BegumYatch.Core.Models.User;
-
+using BegumYatch.Core.QueryParameters;
 
 namespace BegumYatch.Core.Services
 {
-    public interface IUserService : IService<AppUser>
+    public partial interface IUserService : IService<AppUser>
     {
         Task<GetPersonelInfoByIdDto> GetPersonelInfo(int id);
         Task<List<ReturnResponseModel>> IsChangeEmail(SendConfirmCodeUpdateEmail sendConfirmCodeUpdateEmailDto);
@@ -13,11 +13,15 @@ namespace BegumYatch.Core.Services
         Task<String> SendOtp(MailOtp model);
         Task<String> VerifyOtp(String code, int UserId);
         Task<List<TDto>> GetAllUsers<TDto>();
+    }
 
-        #region By MERT
+    public partial interface IUserService  // By MERT
+    {
         Task CreateUserAsync(UserDtoForCreate userDto);
         Task UpdateUserAsync(string email, UserDtoForUpdate userDto);
         Task DeleteUsersAsync(UserDtoForDelete userDto);
-        #endregion
+
+        Task<List<MiarUser>> GetUsersByFilteringAsync(
+            UserParamsForDisplayByFiltering userParams);
     }
 }

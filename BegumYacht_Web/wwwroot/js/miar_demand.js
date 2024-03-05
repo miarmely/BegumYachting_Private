@@ -51,37 +51,6 @@ export async function resize_windowAsync(
             500);
     //#endregion
 }
-export async function click_senderInfosDivAsync(div_senderInfos) {
-    //#region when sender infos is not loaded to inputs before (ajax)
-    if (!isSenderInfosLoadedBefore)
-        await new Promise(resolve => {
-            $.ajax({
-                method: "GET",
-                url: baseApiUrl + `/adminPanel/userInfos?userId=${infosOfLastClickedArticle.userId}`,
-                contentType: "application/json",
-                dataType: "json",
-                success: (userInfos) => {
-                    //#region populate inputs belong to sender infos
-                    for (let elementName in elementNamesAndPropertyNames) {
-                        let propertyName = elementNamesAndPropertyNames[elementName];
-                        let inpt = $("#inpt_" + elementName)
-
-                        inpt.val(userInfos[propertyName]);
-                        inpt.css(css_inputsOfSenderInfos);
-                    }
-
-                    isSenderInfosLoadedBefore = true;
-                    //#endregion
-                },
-                complete: () => {
-                    resolve();
-                }
-            });
-        });
-    //#endregion
-
-    await showOrHideInputsOfSenderInfosAsync(div_senderInfos);
-}  // deprecated
 export async function click_InfoDivAsync(event) {
     //#region set variables
     let div_infos_id = event.currentTarget.parentNode.id;
@@ -128,7 +97,6 @@ export async function click_backButtonAsync(
     btn_back
 ) {
     await resetFormAsync(lbl_result);
-    await hideInputsOfSenderInfosAsync();
     await showOrHideBackButtonAsync(
         div_backButton,
         div_panelTitle,
@@ -376,7 +344,7 @@ export async function populateSenderAndAnswererInputsAsync(
 
         $.ajax({
             method: "GET",
-            url: baseApiUrl + `/adminPanel/userInfos?userId=${id}`,
+            url: baseApiUrl + `/adminPanel/userDisplay/filter?userId=${id}`,
             contentType: "application/json",
             dataType: "json",
             success: (senderInfos) => {
@@ -457,6 +425,7 @@ export async function resetDivArticlesAsync() {
 export function getDefaultValueIfValueNull(value) {
     return value == null ? "Girilmedi" : value;
 }
+//#endregion
 
 async function showInputsOfSenderInfosAsync() {
     // show inputs
@@ -487,4 +456,34 @@ async function hideInputsOfSenderInfosAsync() {
 
     isSenderInfosDisplaying = false;
 } // deprecated
-//#endregion
+export async function click_senderInfosDivAsync(div_senderInfos) {
+    //#region when sender infos is not loaded to inputs before (ajax)
+    if (!isSenderInfosLoadedBefore)
+        await new Promise(resolve => {
+            $.ajax({
+                method: "GET",
+                url: baseApiUrl + `/adminPanel/userInfos?userId=${infosOfLastClickedArticle.userId}`,
+                contentType: "application/json",
+                dataType: "json",
+                success: (userInfos) => {
+                    //#region populate inputs belong to sender infos
+                    for (let elementName in elementNamesAndPropertyNames) {
+                        let propertyName = elementNamesAndPropertyNames[elementName];
+                        let inpt = $("#inpt_" + elementName)
+
+                        inpt.val(userInfos[propertyName]);
+                        inpt.css(css_inputsOfSenderInfos);
+                    }
+
+                    isSenderInfosLoadedBefore = true;
+                    //#endregion
+                },
+                complete: () => {
+                    resolve();
+                }
+            });
+        });
+    //#endregion
+
+    await showOrHideInputsOfSenderInfosAsync(div_senderInfos);
+}  // deprecated

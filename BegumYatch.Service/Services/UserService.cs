@@ -4,6 +4,7 @@ using BegumYatch.Core.DTOs.User;
 using BegumYatch.Core.DTOs.UserRegister;
 using BegumYatch.Core.Enums;
 using BegumYatch.Core.Models.User;
+using BegumYatch.Core.QueryParameters;
 using BegumYatch.Core.Repositories;
 using BegumYatch.Core.Services;
 using BegumYatch.Core.UnitOfWorks;
@@ -22,7 +23,7 @@ using System.Threading.Tasks;
 
 namespace BegumYatch.Service.Services
 {
-    public class UserService : Service<AppUser>, IUserService
+    public partial class UserService : Service<AppUser>, IUserService
     {
         private readonly IGenericRepository<AppUser> _userRepository;
         private readonly IGenericRepository<MailOtp> _mailOtpRepository;
@@ -225,20 +226,60 @@ namespace BegumYatch.Service.Services
                 return null;
         }
 
+        // BELONG TO RUMEYSA (REMOVED SERVICES) (By MERT)
+        //public async Task<int> UpdateCrewAndPassenger(
+        //    CrewAndPassengerUpdateDto crewAndPassengerUpdateDto)
+        //{
+        //    var distanceMonth = crewAndPassengerUpdateDto.PassPortExpiry.Month - DateTime.Now.Month;
 
-        #region By MERT
+        //    var currentUser = _userRepository
+        //        .Where(x => x.Id == crewAndPassengerUpdateDto.Id)
+        //        .FirstOrDefault();
+
+        //    if (currentUser == null)
+        //        throw new Exception("There is no user with this information.");
+
+        //    if (crewAndPassengerUpdateDto.IsPersonel)
+        //    {
+        //        currentUser.IsPersonel = true;
+        //        currentUser.Rank = crewAndPassengerUpdateDto.Rank;
+        //    }
+
+        //    else
+        //    {
+        //        currentUser.IsPersonel = false;
+        //        currentUser.Rank = null;
+        //    }
+        //    //pasaportun bitiş tarihi bilgilendirme maili, 6 ay / 180 gün önce atılması sağlanmalıdır.
+
+        //    if (distanceMonth < 0)
+        //        distanceMonth = (-1) * distanceMonth;
+
+        //    if (distanceMonth == 6)
+        //        await _emailService.SendEmailAsync("Information about passport expiry date", "Dear " + $"{currentUser.NameSurname}" + " , there are 6 months until the expiry date of your passport. For your information.", currentUser.Email);
+        //    //yeni ve eski pasaport doluluğunu kontrol et. ve bunu yukarıdaki kontrol kısmına oturt
+
+        //    _userRepository.Update(currentUser);
+        //    await _unitOfWork.CommitAsync();
+
+        //    return crewAndPassengerUpdateDto.Id;
+        //}
+    }
+
+    public partial class UserService  // By MERT
+    {
         public async Task CreateUserAsync(UserDtoForCreate userDto)
         {
             await ControlConflictForUserAsync(
-                userDto.Email, 
+                userDto.Email,
                 userDto.PhoneNumber);
 
             #region create user
             var user = _mapper.Map<AppUser>(userDto);
             user.UserName = userDto.Email;
-            
+
             var result = await _userManager.CreateAsync(
-                user, 
+                user,
                 userDto.Password);
             #endregion
 
@@ -255,7 +296,7 @@ namespace BegumYatch.Service.Services
         public async Task UpdateUserAsync(string email, UserDtoForUpdate userDto)
         {
             await ControlConflictForUserAsync(
-                userDto.Email, 
+                userDto.Email,
                 userDto.PhoneNumber);
 
             #region  get user by id (throw)
@@ -336,6 +377,37 @@ namespace BegumYatch.Service.Services
             #endregion
         }
 
+        public async Task<List<MiarUser>> GetUsersByFilteringAsync(
+            UserParamsForDisplayByFiltering userParams)
+        {
+            #region get users by filtering
+            var sql = "EXEC User_GetUsersByFiltering " +
+                "@UserId = {0}, " +
+                "@Email = {1}, " +
+                "@Phone = {2}, " +
+                "@CheckIsDeleted = {3}";
+
+            var users = await _userRepository
+                .FromSqlRawAsync<MiarUser>(
+                    sql,
+                    userParams.UserId,
+                    userParams.Email,
+                    userParams.Phone,
+                    userParams.CheckIsDeleted);
+            #endregion
+
+            #region when any user not found (THROW)
+            if (users.Count == 0)
+                throw new MiarException(
+                    404,
+                    "NF-U",
+                    "Not Found - User",
+                    "kullanıcı bulunamadı");
+            #endregion
+
+            return users;
+        }
+
         private async Task ControlConflictForUserAsync(
             string? email = null,
             string? phone = null)
@@ -385,46 +457,5 @@ namespace BegumYatch.Service.Services
             }
             #endregion
         }
-        #endregion
-
-
-        // BELONG TO RUMEYSA (REMOVED SERVICES) (By MERT)
-        //public async Task<int> UpdateCrewAndPassenger(
-        //    CrewAndPassengerUpdateDto crewAndPassengerUpdateDto)
-        //{
-        //    var distanceMonth = crewAndPassengerUpdateDto.PassPortExpiry.Month - DateTime.Now.Month;
-
-        //    var currentUser = _userRepository
-        //        .Where(x => x.Id == crewAndPassengerUpdateDto.Id)
-        //        .FirstOrDefault();
-
-        //    if (currentUser == null)
-        //        throw new Exception("There is no user with this information.");
-
-        //    if (crewAndPassengerUpdateDto.IsPersonel)
-        //    {
-        //        currentUser.IsPersonel = true;
-        //        currentUser.Rank = crewAndPassengerUpdateDto.Rank;
-        //    }
-
-        //    else
-        //    {
-        //        currentUser.IsPersonel = false;
-        //        currentUser.Rank = null;
-        //    }
-        //    //pasaportun bitiş tarihi bilgilendirme maili, 6 ay / 180 gün önce atılması sağlanmalıdır.
-
-        //    if (distanceMonth < 0)
-        //        distanceMonth = (-1) * distanceMonth;
-
-        //    if (distanceMonth == 6)
-        //        await _emailService.SendEmailAsync("Information about passport expiry date", "Dear " + $"{currentUser.NameSurname}" + " , there are 6 months until the expiry date of your passport. For your information.", currentUser.Email);
-        //    //yeni ve eski pasaport doluluğunu kontrol et. ve bunu yukarıdaki kontrol kısmına oturt
-
-        //    _userRepository.Update(currentUser);
-        //    await _unitOfWork.CommitAsync();
-
-        //    return crewAndPassengerUpdateDto.Id;
-        //}
     }
 }
