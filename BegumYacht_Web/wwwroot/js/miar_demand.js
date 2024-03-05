@@ -330,37 +330,49 @@ export async function populateFormAsync(
     }
     //#endregion
 }
-export async function populateSenderAndAnswererInputsAsync(
-    div_senderInfos_inputs,
-    div_answererInfos_inputs
-) {
-    //#region populate inputs of sender and answerer infos
-    let idsAndInfoDivs = {}
-    idsAndInfoDivs[infosOfLastClickedArticle.userId] = div_senderInfos_inputs;
-    idsAndInfoDivs[infosOfLastClickedArticle.answererId] = div_answererInfos_inputs;
+export async function populateSenderInfosAsync(div_senderInfos_inputs) {
+    // get senderer infos and add to inputs
+    $.ajax({
+        method: "GET",
+        url: (baseApiUrl + "/adminPanel/userDisplay/id?" +
+            `userId=${infosOfLastClickedArticle.userId}` +
+            `&checkIsDeleted=false`),
+        contentType: "application/json",
+        dataType: "json",
+        success: (senderInfos) => {
+            //#region populate inputs
+            for (let elementName in elementNamesAndPropertyNames) {
+                let propertyName = elementNamesAndPropertyNames[elementName];
 
-    for (let id in idsAndInfoDivs) {
-        let div_infos = idsAndInfoDivs[id];
+                div_senderInfos_inputs
+                    .find("#inpt_" + elementName)
+                    .val(senderInfos[propertyName]);
+            }
+            //#endregion
+        },
+    })
+}
+export async function populateAnswererInfosAsync(div_answererInfos_inputs) {
+    // get answerer infos and add to inputs
+    $.ajax({
+        method: "GET",
+        url: (baseApiUrl + "/adminPanel/userDisplay/id?" +
+            `userId=${infosOfLastClickedArticle.answererId}` +
+            `&checkIsDeleted=false`),
+        contentType: "application/json",
+        dataType: "json",
+        success: (answererInfos) => {
+            //#region populate inputs
+            for (let elementName in elementNamesAndPropertyNames) {
+                let propertyName = elementNamesAndPropertyNames[elementName];
 
-        $.ajax({
-            method: "GET",
-            url: baseApiUrl + `/adminPanel/userDisplay/filter?userId=${id}`,
-            contentType: "application/json",
-            dataType: "json",
-            success: (senderInfos) => {
-                //#region populate input
-                for (let elementName in elementNamesAndPropertyNames) {
-                    let propertyName = elementNamesAndPropertyNames[elementName];
-
-                    div_infos
-                        .find("#inpt_" + elementName)
-                        .val(senderInfos[propertyName]);
-                }
-                //#endregion
-            },
-        })
-    }
-    //#endregion
+                div_answererInfos_inputs
+                    .find("#inpt_" + elementName)
+                    .val(answererInfos[propertyName]);
+            }
+            //#endregion
+        },
+    })
 }
 export async function updateEntityQuantityAsync(lbl_entityQuantity, newQuantity) {
     let b_entityQuantity = lbl_entityQuantity.children("b");
@@ -426,6 +438,7 @@ export function getDefaultValueIfValueNull(value) {
     return value == null ? "Girilmedi" : value;
 }
 //#endregion
+
 
 async function showInputsOfSenderInfosAsync() {
     // show inputs

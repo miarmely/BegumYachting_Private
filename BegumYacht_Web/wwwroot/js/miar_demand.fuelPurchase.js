@@ -4,8 +4,8 @@ import { addCriticalSectionAsync, shiftTheChildDivToBottomOfParentDivAsync } fro
 
 import {
     addImageToArticleAsync, beforePopulateAsync, click_articleAsync, click_backButtonAsync,
-    click_InfoDivAsync, getDefaultValueIfValueNull, populateArticlesAsync,
-    populateFormAsync, populateSenderAndAnswererInputsAsync, resize_windowAsync,
+    click_InfoDivAsync, getDefaultValueIfValueNull, populateAnswererInfosAsync,
+    populateArticlesAsync, populateFormAsync, populateSenderInfosAsync, resize_windowAsync,
 } from "./miar_demand.js"
 
 import {
@@ -141,9 +141,8 @@ $(function () {
                 //#endregion
             }
         );
-        await populateSenderAndAnswererInputsAsync(
-            div.senderInfos_inputs,
-            div.answererInfos_inputs);
+        await populateSenderInfosAsync(div.senderInfos_inputs);
+        await populateAnswererInfosAsync(div.answererInfos_inputs);
     })
     //#endregion
 

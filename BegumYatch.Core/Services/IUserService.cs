@@ -22,6 +22,9 @@ namespace BegumYatch.Core.Services
         Task DeleteUsersAsync(UserDtoForDelete userDto);
 
         Task<List<MiarUser>> GetUsersByFilteringAsync(
-            UserParamsForDisplayByFiltering userParams);
+            int? UserId = null,
+            string? Email = null,
+            string? Phone = null,
+            bool CheckIsDeleted = true);
     }
 }

@@ -21,7 +21,7 @@ using System.Security.Claims;
 
 namespace BegumYatch.API.Controllers
 {
-    public class UserController : Controller
+    public partial class UserController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
@@ -53,14 +53,14 @@ namespace BegumYatch.API.Controllers
 
             else
             {
-                var mapUser = _mapper.Map<AppUser>(userRegisterDto);   
+                var mapUser = _mapper.Map<AppUser>(userRegisterDto);
                 mapUser.UserName = userRegisterDto.Email/*.Split('@')[0]*/;
                 mapUser.DateOfIssue = DateTime.MinValue; // temporary
                 mapUser.PassPortExpiry = DateTime.MinValue;  // temporary
                 mapUser.DateOfBirth = DateTime.MinValue;  // temporary
 
                 var result = await _userManager.CreateAsync(
-                    mapUser, 
+                    mapUser,
                     userRegisterDto.Password);
 
                 if (result.Succeeded)
@@ -167,7 +167,7 @@ namespace BegumYatch.API.Controllers
         public async Task<IActionResult> GetAllUsers()
         {
             var response = await _userService.GetAllUsers<GetUsersDto>();
-            
+
             return Ok(response);
         }
 
@@ -274,8 +274,10 @@ namespace BegumYatch.API.Controllers
 
             }
         }
+    }
 
-
+    public partial class UserController // By MERT
+    {
         #region writed by mert 
         [HttpPost("adminPanel/userCreate")]
         public async Task<IActionResult> CreateUser(
@@ -287,22 +289,28 @@ namespace BegumYatch.API.Controllers
         }
 
 
+        [HttpGet("adminPanel/userDisplay/Id")]
+        public async Task<IActionResult> GetUserInfos(
+            [FromQuery] UserParamsForDisplayById userParams)
+        {
+            var users = await _userService
+                .GetUsersByFilteringAsync(
+                    userParams.UserId,
+                    CheckIsDeleted: userParams.CheckIsDeleted);
+                
+            return Ok(users
+                .FirstOrDefault());
+        }
+
+
         [HttpGet("adminPanel/userDisplay/filter")]
         public async Task<IActionResult> GetUserInfos(
             [FromQuery] UserParamsForDisplayByFiltering userParams)
         {
-            #region get user infos (THROW)
-            var users = await _userService
-                .GetUsersByFilteringAsync(userParams);
-           
-            // when user not found
-            if (users.Count == 0)
-                throw new MiarException(
-                    404,
-                    "NF-U",
-                    "Not Found - User",
-                    "kullanıcı bulunamadı");
-            #endregion
+            var users = await _userService.GetUsersByFilteringAsync(
+                Email: userParams.Email,
+                Phone: userParams.Phone,
+                CheckIsDeleted: userParams.CheckIsDeleted);
 
             return Ok(users);
         }

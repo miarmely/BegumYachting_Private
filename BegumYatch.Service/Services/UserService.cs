@@ -378,7 +378,10 @@ namespace BegumYatch.Service.Services
         }
 
         public async Task<List<MiarUser>> GetUsersByFilteringAsync(
-            UserParamsForDisplayByFiltering userParams)
+            int? UserId = null,
+            string? Email = null,
+            string? Phone = null,
+            bool CheckIsDeleted = true)
         {
             #region get users by filtering
             var sql = "EXEC User_GetUsersByFiltering " +
@@ -390,10 +393,10 @@ namespace BegumYatch.Service.Services
             var users = await _userRepository
                 .FromSqlRawAsync<MiarUser>(
                     sql,
-                    userParams.UserId,
-                    userParams.Email,
-                    userParams.Phone,
-                    userParams.CheckIsDeleted);
+                    UserId,
+                    Email,
+                    Phone,
+                    CheckIsDeleted);
             #endregion
 
             #region when any user not found (THROW)
