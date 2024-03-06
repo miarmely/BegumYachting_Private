@@ -4,8 +4,8 @@ import { addCriticalSectionAsync, shiftTheChildDivToBottomOfParentDivAsync } fro
 
 import {
     addImageToArticleAsync, beforePopulateAsync, click_articleAsync, click_backButtonAsync,
-    click_InfoDivAsync, getDefaultValueIfValueNull, populateAnswererInfosAsync,
-    populateArticlesAsync, populateFormAsync, populateSenderInfosAsync, resize_windowAsync,
+    click_InfoDivAsync, getDefaultValueIfValueNull, inpt_id, populateArticlesAsync,
+    addInputsToInfoDivsAsync, resize_windowAsync, txt_id,
 } from "./miar_demand.js"
 
 import {
@@ -36,7 +36,7 @@ $(function () {
         article_display: $("#div_article_display"),
         articles: $("#div_articles"),
         sidebarMenuButton: $("#div_sidebarMenuButton"),
-        senderInfos: $("#div_senderInfos"),
+        answererInfos: $("#div_answererInfos"),
         backButton: $("#div_backButton"),
         panelTitle: $("#div_panelTitle"),
         senderInfos_inputs: $("#div_senderInfos_inputs"),
@@ -49,26 +49,11 @@ $(function () {
     const lbl = {
         entityQuantity: $("#small_entityQuantity")
     };
-    const inpt = {
-        "yachtName": $("#inpt_yachtName"),
-        "yachtType": $("#inpt_yachtType"),
-        "flag": $("#inpt_flag"),
-        "isDutyPaid": $("#inpt_isDutyPaid"),
-        "mgo": $("#inpt_mgo"),
-        "ago": $("#inpt_ago"),
-        "fuelType": $("#inpt_fuelType"),
-        "requestedFuel": $("#inpt_requestedFuel"),
-        "fuelSupplyPort": $("#inpt_fuelSupplyPort"),
-        "fuelSupplyDate": $("#inpt_fuelSupplyDate"),
-        "creationDate": $("#inpt_creationDate"),
-    };
-    const txt = {
-        "notes": $("#txt_notes"),
-    }
     const slct = {
         article_submenu_display: $("#slct_article_submenu_display")
-    }
+    };
     let articleIdsAndInfos = {};
+    let demandType = "Unanswered";
     //#endregion
 
     //#region events
@@ -109,6 +94,18 @@ $(function () {
             populateFuelPurchaseArticlesAsync);
     })
     slct.article_submenu_display.change(async () => {
+        //#region show/hide anserer infos <div>
+        // show
+        demandType = slct.article_submenu_display.val();
+        if (demandType == "Accepted"
+            || demandType == "Rejected")
+            div.answererInfos.removeAttr("hidden");
+
+        // hide
+        else
+            div.answererInfos.attr("hidden", ""); 
+        //#endregion
+
         await populateFuelPurchaseArticlesAsync();
     })
     spn_eventManager.on("click_article", async (_, event) => {
@@ -119,30 +116,35 @@ $(function () {
             div.article_update,
             div.backButton,
             div.panelTitle,
+            div.senderInfos_inputs,
+            div.answererInfos_inputs,
             btn.back,
+            demandType,
             async (infosOfLastClickedArticle) => {
-                //#region populate demand inputs
-                inpt.yachtName.val(infosOfLastClickedArticle.yachtName);
-                inpt.yachtType.val(infosOfLastClickedArticle.yachtType);
-                inpt.flag.val(infosOfLastClickedArticle.flag);
-                inpt.isDutyPaid.val(infosOfLastClickedArticle.isDutyPaid);
-                inpt.mgo.val(infosOfLastClickedArticle.mgo);
-                inpt.ago.val(infosOfLastClickedArticle.ago);
-                inpt.fuelType.val(infosOfLastClickedArticle.fuelType);
-                inpt.requestedFuel.val(infosOfLastClickedArticle.requestedFuel);
-                inpt.fuelSupplyPort.val(infosOfLastClickedArticle.fuelSupplyPort);
-                inpt.fuelSupplyDate.val(
+                div.demandInfos_inputs.find("#" + inpt_id.yachtName).val(
+                    getDefaultValueIfValueNull(infosOfLastClickedArticle.yachtName));
+                div.demandInfos_inputs.find("#" + inpt_id.yachtType).val(
+                    getDefaultValueIfValueNull(infosOfLastClickedArticle.yachtType));
+                div.demandInfos_inputs.find("#" + inpt_id.flag).val(
+                    getDefaultValueIfValueNull(infosOfLastClickedArticle.flag));
+                div.demandInfos_inputs.find("#" + inpt_id.isDutyPaid).val(infosOfLastClickedArticle.isDutyPaid);
+                div.demandInfos_inputs.find("#" + inpt_id.mgo).val(infosOfLastClickedArticle.mgo);
+                div.demandInfos_inputs.find("#" + inpt_id.ago).val(infosOfLastClickedArticle.ago);
+                div.demandInfos_inputs.find("#" + inpt_id.fuelType).val(infosOfLastClickedArticle.fuelType);
+                div.demandInfos_inputs.find("#" + inpt_id.requestedFuel).val(infosOfLastClickedArticle.requestedFuel);
+                div.demandInfos_inputs.find("#" + inpt_id.fuelSupplyPort).val(infosOfLastClickedArticle.fuelSupplyPort);
+                div.demandInfos_inputs.find("#" + inpt_id.fuelSupplyDate).val(
                     await convertStrUtcDateToStrLocalDateAsync(
-                        infosOfLastClickedArticle.fuelSupplyDate));
-                inpt.creationDate.val(
+                        infosOfLastClickedArticle.fuelSupplyDate,
+                        { hours: true, minutes: true, seconds: false }));
+                div.demandInfos_inputs.find("#" + inpt_id.createdDate).val(
                     await convertStrUtcDateToStrLocalDateAsync(
-                        infosOfLastClickedArticle.createdDate));
-                txt.notes.val(infosOfLastClickedArticle.notes);
-                //#endregion
-            }
+                        infosOfLastClickedArticle.createdDate,
+                        { hours: true, minutes: true, seconds: false }));
+                div.demandInfos_inputs.find("#" + txt_id.notes).val(
+                    getDefaultValueIfValueNull(infosOfLastClickedArticle.notes));
+            }  // populate demand inputs
         );
-        await populateSenderInfosAsync(div.senderInfos_inputs);
-        await populateAnswererInfosAsync(div.answererInfos_inputs);
     })
     //#endregion
 
@@ -171,10 +173,12 @@ $(function () {
     async function setupPageAsync() {
         await beforePopulateAsync(div.articles);
         await populateFuelPurchaseArticlesAsync();
-        await populateFormAsync(
+        await addInputsToInfoDivsAsync(
             div.senderInfos_inputs,
             div.answererInfos_inputs,
-            div.demandInfos_inputs);
+            div.demandInfos_inputs,
+            div.answererInfos,
+            demandType);
         await populateInfoMessagesAsync({
             div_senderInfos: ["Şeklin üzerine tıklayarak talebi gönderen personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
             div_answererInfos: ["Şeklin üzerine tıklayarak talebe cevap veren personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
@@ -187,7 +191,7 @@ $(function () {
             "/adminPanel/fuelPurchaseDemand/filter?" + (
                 `pageSize=${pagingBuffer.pageSize}` +
                 `&pageNumber=${pagingBuffer.pageNumber}` +
-                `&demandStatus= ${slct.article_submenu_display.val()}`),
+                `&demandStatus= ${demandType}`),
             headerKeys.fuelPurchase,
             lbl.entityQuantity,
             async (demands) => {

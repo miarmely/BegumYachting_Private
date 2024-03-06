@@ -8,30 +8,41 @@ import {
 } from "./miar_module.article.js";
 
 import { addValueToPaginationLastButtonAsync, controlPaginationBackAndNextButtonsAsync, pagingBuffer, setPagingBufferAsync } from "./miar_module.pagination.js";
+import { convertStrUtcDateToStrLocalDateAsync } from "./miar_module.date.js";
 
 
 //#region variables
-export let infosOfLastClickedArticle = {};
-const elementNamesAndPropertyNames = {
-    nameSurname: "nameSurname",
-    phone: "phoneNumber",
-    email: "email",
-    newPassportNo: "newPassportNo",
-    oldPassportNo: "oldPassportNo",
-    rank: "rank",
-    nationality: "nationality",
-    gender: "gender"
+export const inpt_id = {
+    nameSurname: "inpt_nameSurname",
+    phone: "inpt_phone",
+    email: "inpt_email",
+    newPassportNo: "inpt_newPassportNo",
+    oldPassportNo: "inpt_oldPassportNo",
+    rank: "inpt_rank",
+    nationality: "inpt_nationality",
+    gender: "inpt_gender",
+    answeredDate: "inpt_answeredDate",
+    yachtName: "inpt_yachtName",
+    yachtType: "inpt_yachtType",
+    flag: "inpt_flag",
+    isDutyPaid: "inpt_isDutyPaid",
+    mgo: "inpt_mgo",
+    ago: "inpt_ago",
+    fuelType: "inpt_fuelType",
+    requestedFuel: "inpt_requestedFuel",
+    fuelSupplyPort: "inpt_fuelSupplyPort",
+    fuelSupplyDate: "inpt_fuelSupplyDate",
+    createdDate: "inpt_createdDate",
+    answeredDate: "inpt_answeredDate",
 };
-const css_inputsOfSenderInfos = {
-    "border-color": "#4136f1",
-    "border-width": "1.5px"
-}
+export const txt_id = {
+    notes: "txt_notes"
+};
+export let infosOfLastClickedArticle = {};
 const path = {
     loadingImage: "./images/loading.gif",
     questionImage: "./images/question.png"
 }
-let isSenderInfosDisplaying = false;
-let isSenderInfosLoadedBefore = false;
 //#endregion
 
 //#region events
@@ -109,8 +120,6 @@ export async function click_backButtonAsync(
     //#endregion
 
     //#region show user display page
-    isSenderInfosLoadedBefore = false;
-
     div_article_update.attr("hidden", "");
     div_article_display.removeAttr("hidden");
     //#endregion
@@ -122,8 +131,11 @@ export async function click_articleAsync(
     div_article_update,
     div_backButton,
     div_panelTitle,
+    div_senderInfos_inputs,
+    div_answererInfos_inputs,
     btn_back,
-    func_populateInputsAsync = (infosOfLastClickedArticle) => { }
+    demandType = "Unanswered|Accepted|Rejected",
+    func_populateDemandInfosAsync = (infosOfLastClickedArticle) => { }
 ) {
     //#region save clicked article infos
     window.scrollTo(0, 0);  // take scroll to start of page
@@ -132,7 +144,15 @@ export async function click_articleAsync(
     infosOfLastClickedArticle = articleIdsAndInfos[articleId];
     //#endregion
 
-    await func_populateInputsAsync(infosOfLastClickedArticle);
+    await populateSenderInfosAsync(div_senderInfos_inputs);
+
+    //#region populate answerer infos
+    if (demandType == "Accepted"
+        || demandType == "Rejected")
+        await populateAnswererInfosAsync(div_answererInfos_inputs);
+    //#endregion
+
+    await func_populateDemandInfosAsync(infosOfLastClickedArticle);
 
     //#region show article update page
     div_article_display.attr("hidden", "");
@@ -225,10 +245,12 @@ export async function populateArticlesAsync(
         })
     });  // populate article
 }
-export async function populateFormAsync(
+export async function addInputsToInfoDivsAsync(
     div_senderInfos_inputs,
     div_answererInfos_inputs,
     div_demandInfos_inputs,
+    div_answererInfos,
+    demandType = "Unanswered|Accepted|Rejected"
 ) {
     //#region add inputs to form
     let inputInfos = [
@@ -240,6 +262,7 @@ export async function populateFormAsync(
         ["input", "text", "rank", "Rank", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
         ["input", "text", "nationality", "Uyruk", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
         ["input", "text", "gender", "Cinsiyet", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
+        ["input", "text", "answeredDate", "Cevaplanma Tarihi", false, "readonly", [div_answererInfos_inputs]],
         ["input", "text", "yachtName", "Yat Adı", false, "readonly", [div_demandInfos_inputs]],
         ["input", "text", "yachtType", "Yat Tipi", false, "readonly", [div_demandInfos_inputs]],
         ["input", "text", "flag", "Bayrak", false, "readonly", [div_demandInfos_inputs]],
@@ -250,20 +273,20 @@ export async function populateFormAsync(
         ["input", "text", "requestedFuel", "İstenen Yakıt Miktarı (L)", false, "readonly", [div_demandInfos_inputs]],
         ["input", "text", "fuelSupplyPort", "Yakıt İkmal Yeri", false, "readonly", [div_demandInfos_inputs]],
         ["input", "text", "fuelSupplyDate", "Yakıt İkmal Tarihi", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "creationDate", "Talep Tarihi", false, "readonly", [div_demandInfos_inputs]],
+        ["input", "text", "createdDate", "Talep Tarihi", false, "readonly", [div_demandInfos_inputs]],
         ["textarea", "notes", "Notlar", true, "readonly", [div_demandInfos_inputs]]  // type for switch/case | id | label name | info message | hidden/disabled/readonly of input | place to add            
     ];
 
     for (let index in inputInfos) {
         let inputInfo = inputInfos[index];
         let div_formGroup_id;
-        let inpt_id;
+        let inputId;
 
         switch (inputInfo[0]) {
             case "input":
                 //#region add inputs to answerer, sender or demand <div>s
                 div_formGroup_id = "div_" + inputInfo[2];
-                inpt_id = "inpt_" + inputInfo[2];
+                inputId = "inpt_" + inputInfo[2];
 
                 for (let index2 in inputInfo[6]) {
                     //#region add label and <input>
@@ -273,8 +296,8 @@ export async function populateFormAsync(
                         <div id="${div_formGroup_id}" class="form-group">
                             <label class="col-sm-3 control-label">${inputInfo[3]}</label>
                             <div class="col-sm-6">
-                                <input id="${inpt_id}" type="${inputInfo[1]}" class="form-control" ${inputInfo[5]}>
-                                <span id="spn_help_${inpt_id}" class="help-block"></span>
+                                <input id="${inputId}" type="${inputInfo[1]}" class="form-control" ${inputInfo[5]}>
+                                <span id="spn_help_${inputId}" class="help-block"></span>
                             </div>
                         </div>
                     `);
@@ -296,7 +319,7 @@ export async function populateFormAsync(
             case "textarea":
                 //#region add inputs to answerer, sender or demand divs
                 div_formGroup_id = "div_" + inputInfo[1];
-                inpt_id = "inpt_" + inputInfo[1];
+                inputId = "txt_" + inputInfo[1];
 
                 for (let index2 in inputInfo[5]) {
                     //#region add label and <textarea>
@@ -306,8 +329,8 @@ export async function populateFormAsync(
                         <div id="${div_formGroup_id}" class="form-group">
                             <label class="col-sm-3 control-label">${inputInfo[2]}</label>
                             <div class="col-sm-6">
-                                <textarea id="${inpt_id}" class="form-control" ${inputInfo[4]}></textarea>
-                                <span id="spn_help_${inpt_id}" class="help-block"></span>
+                                <textarea id="${inputId}" class="form-control" ${inputInfo[4]}></textarea>
+                                <span id="spn_help_${inputId}" class="help-block"></span>
                             </div>
                         </div>
                     `);
@@ -329,6 +352,12 @@ export async function populateFormAsync(
         }
     }
     //#endregion
+
+    //#region show answerer infos <div> 
+    if (demandType == "Accepted"
+        || demandType == "Rejected")
+        div_answererInfos.removeAttr("hidden");
+    //#endregion
 }
 export async function populateSenderInfosAsync(div_senderInfos_inputs) {
     // get senderer infos and add to inputs
@@ -341,13 +370,19 @@ export async function populateSenderInfosAsync(div_senderInfos_inputs) {
         dataType: "json",
         success: (senderInfos) => {
             //#region populate inputs
-            for (let elementName in elementNamesAndPropertyNames) {
-                let propertyName = elementNamesAndPropertyNames[elementName];
-
-                div_senderInfos_inputs
-                    .find("#inpt_" + elementName)
-                    .val(senderInfos[propertyName]);
-            }
+            div_senderInfos_inputs.find("#" + inpt_id.nameSurname).val(senderInfos.nameSurname);
+            div_senderInfos_inputs.find("#" + inpt_id.phone).val(senderInfos.phoneNumber);
+            div_senderInfos_inputs.find("#" + inpt_id.email).val(senderInfos.email);
+            div_senderInfos_inputs.find("#" + inpt_id.newPassportNo).val(
+                getDefaultValueIfValueNull(senderInfos.newPassportNo));
+            div_senderInfos_inputs.find("#" + inpt_id.oldPassportNo).val(
+                getDefaultValueIfValueNull(senderInfos.oldPassportNo));
+            div_senderInfos_inputs.find("#" + inpt_id.rank).val(
+                getDefaultValueIfValueNull(senderInfos.rank));
+            div_senderInfos_inputs.find("#" + inpt_id.nationality).val(
+                getDefaultValueIfValueNull(senderInfos.nationality));
+            div_senderInfos_inputs.find("#" + inpt_id.gender).val(
+            getDefaultValueIfValueNull(senderInfos.gender));
             //#endregion
         },
     })
@@ -363,13 +398,27 @@ export async function populateAnswererInfosAsync(div_answererInfos_inputs) {
         dataType: "json",
         success: (answererInfos) => {
             //#region populate inputs
-            for (let elementName in elementNamesAndPropertyNames) {
-                let propertyName = elementNamesAndPropertyNames[elementName];
+            new Promise(async resolve => {
+                div_answererInfos_inputs.find("#" + inpt_id.nameSurname).val(answererInfos.nameSurname);
+                div_answererInfos_inputs.find("#" + inpt_id.phone).val(answererInfos.phoneNumber);
+                div_answererInfos_inputs.find("#" + inpt_id.email).val(answererInfos.email);
+                div_answererInfos_inputs.find("#" + inpt_id.newPassportNo).val(
+                    getDefaultValueIfValueNull(answererInfos.newPassportNo));
+                div_answererInfos_inputs.find("#" + inpt_id.oldPassportNo).val(
+                    getDefaultValueIfValueNull(answererInfos.oldPassportNo));
+                div_answererInfos_inputs.find("#" + inpt_id.rank).val(
+                    getDefaultValueIfValueNull(answererInfos.rank));
+                div_answererInfos_inputs.find("#" + inpt_id.nationality).val(
+                    getDefaultValueIfValueNull(answererInfos.nationality));
+                div_answererInfos_inputs.find("#" + inpt_id.gender).val(
+                    getDefaultValueIfValueNull(answererInfos.gender));
+                div_answererInfos_inputs.find("#" + inpt_id.answeredDate).val(
+                    await convertStrUtcDateToStrLocalDateAsync(
+                        infosOfLastClickedArticle.answeredDate,
+                        { hours: true, minutes: true, seconds: false }));
 
-                div_answererInfos_inputs
-                    .find("#inpt_" + elementName)
-                    .val(answererInfos[propertyName]);
-            }
+                resolve();
+            });
             //#endregion
         },
     })
@@ -438,65 +487,3 @@ export function getDefaultValueIfValueNull(value) {
     return value == null ? "Girilmedi" : value;
 }
 //#endregion
-
-
-async function showInputsOfSenderInfosAsync() {
-    // show inputs
-    for (let elementName in elementNamesAndPropertyNames)
-        $("#div_" + elementName).removeAttr("hidden");
-
-    isSenderInfosDisplaying = true;
-}  // deprecated
-async function showOrHideInputsOfSenderInfosAsync(div_senderInfos) {
-    if (isSenderInfosDisplaying) {
-        await hideInputsOfSenderInfosAsync();
-        updateElementText(
-            div_senderInfos.find("h4"),
-            "Gönderenin Bilgilerini Göster");
-    }
-
-    else {
-        await showInputsOfSenderInfosAsync();
-        updateElementText(
-            div_senderInfos.find("h4"),
-            "Gönderenin Bilgilerini Gizle");
-    }
-} // deprecated
-async function hideInputsOfSenderInfosAsync() {
-    // hide inputs
-    for (let elementName in elementNamesAndPropertyNames)
-        $("#div_" + elementName).attr("hidden", "");
-
-    isSenderInfosDisplaying = false;
-} // deprecated
-export async function click_senderInfosDivAsync(div_senderInfos) {
-    //#region when sender infos is not loaded to inputs before (ajax)
-    if (!isSenderInfosLoadedBefore)
-        await new Promise(resolve => {
-            $.ajax({
-                method: "GET",
-                url: baseApiUrl + `/adminPanel/userInfos?userId=${infosOfLastClickedArticle.userId}`,
-                contentType: "application/json",
-                dataType: "json",
-                success: (userInfos) => {
-                    //#region populate inputs belong to sender infos
-                    for (let elementName in elementNamesAndPropertyNames) {
-                        let propertyName = elementNamesAndPropertyNames[elementName];
-                        let inpt = $("#inpt_" + elementName)
-
-                        inpt.val(userInfos[propertyName]);
-                        inpt.css(css_inputsOfSenderInfos);
-                    }
-
-                    isSenderInfosLoadedBefore = true;
-                    //#endregion
-                },
-                complete: () => {
-                    resolve();
-                }
-            });
-        });
-    //#endregion
-
-    await showOrHideInputsOfSenderInfosAsync(div_senderInfos);
-}  // deprecated
