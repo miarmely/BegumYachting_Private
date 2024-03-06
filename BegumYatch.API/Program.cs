@@ -27,6 +27,7 @@ using Autofac.Core;
 using System.Text.Json.Serialization;
 using BegumYatch.Service.Middlewares;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -103,11 +104,11 @@ builder.Services.ConfigureApplicationCookie(opt =>
         opt.ExpireTimeSpan = TimeSpan.FromDays(60);
         opt.SlidingExpiration = true;
     });
-builder.Services.ConfigureCors();  // by MERT
+builder.Services.ConfigureCors(); // By MERT
 
 var app = builder.Build();
 
-app.ConfigureGlobalExceptionHandler();  // by MERT
+app.ConfigureGlobalExceptionHandler();  // By MERT
 
 using (var scope = app.Services.CreateScope())
 {
@@ -127,7 +128,7 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 //app.UseMiddleware<ResponseFormatterMiddleware>();
-app.UseCors();  // mert
+app.UseCors();  // By MERT
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

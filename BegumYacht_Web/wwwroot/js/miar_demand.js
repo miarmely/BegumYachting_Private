@@ -134,7 +134,7 @@ export async function click_articleAsync(
     div_senderInfos_inputs,
     div_answererInfos_inputs,
     btn_back,
-    demandType = "Unanswered|Accepted|Rejected",
+    formStatus = "Unanswered|Accepted|Rejected",
     func_populateDemandInfosAsync = (infosOfLastClickedArticle) => { }
 ) {
     //#region save clicked article infos
@@ -147,8 +147,8 @@ export async function click_articleAsync(
     await populateSenderInfosAsync(div_senderInfos_inputs);
 
     //#region populate answerer infos
-    if (demandType == "Accepted"
-        || demandType == "Rejected")
+    if (formStatus == "Accepted"
+        || formStatus == "Rejected")
         await populateAnswererInfosAsync(div_answererInfos_inputs);
     //#endregion
 
@@ -250,7 +250,7 @@ export async function addInputsToInfoDivsAsync(
     div_answererInfos_inputs,
     div_demandInfos_inputs,
     div_answererInfos,
-    demandType = "Unanswered|Accepted|Rejected"
+    formStatus = "Unanswered|Accepted|Rejected"
 ) {
     //#region add inputs to form
     let inputInfos = [
@@ -354,8 +354,8 @@ export async function addInputsToInfoDivsAsync(
     //#endregion
 
     //#region show answerer infos <div> 
-    if (demandType == "Accepted"
-        || demandType == "Rejected")
+    if (formStatus == "Accepted"
+        || formStatus == "Rejected")
         div_answererInfos.removeAttr("hidden");
     //#endregion
 }

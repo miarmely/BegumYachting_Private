@@ -8,6 +8,7 @@ using BegumYatch.Core.DTOs.SecurityServiceDemand;
 using BegumYatch.Core.DTOs.TechnicalAssitanceandSparePartOrder;
 using BegumYatch.Core.DTOs.VipDemand.BegumYatch.Core.DTOs.VipDemand;
 using BegumYatch.Core.Enums;
+using BegumYatch.Core.Models.AdminPanel;
 using BegumYatch.Core.Models.Demands;
 using BegumYatch.Core.QueryParameters;
 using BegumYatch.Core.Services;
@@ -16,7 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BegumYatch.API.Controllers
 {
-    public class DemandController : Controller
+    public partial class DemandController : Controller
     {
         private readonly IFuelPurchaseDemandService _fuelPurchaseDemandService;
         private readonly IConciergeServiceDemandService _conciergeService;
@@ -25,8 +26,8 @@ namespace BegumYatch.API.Controllers
         private readonly IFileOperationService _fileOperationService;
         private readonly ITechnicalAssitanceandSparePartOrderService _technicalAssitanceandSparePartOrderService;
         private readonly IProvisionOrderService _provisionOrderService;
-
         
+
         public DemandController(IFuelPurchaseDemandService fuelPurchaseDemandService, IConciergeServiceDemandService conciergeService, IExcursionDemandService excursionDemandService, ISecurityServiceDemandService securityServiceDemandService, IFileOperationService fileOperationService, ITechnicalAssitanceandSparePartOrderService technicalAssitanceandSparePartOrderService, IProvisionOrderService provisionOrderService)
         {
             _fuelPurchaseDemandService = fuelPurchaseDemandService;
@@ -204,31 +205,19 @@ namespace BegumYatch.API.Controllers
             var concierges = await _conciergeService.GetAllRequetsService(userId);
             return Ok(concierges);
         }
+    }
 
-
-        #region By MERT
-        [HttpGet("adminPanel/fuelPurchaseDemand/all")]
-        public async Task<IActionResult> GetAllFuelPurchaseDemands(
-            [FromQuery] PagingParams pagingParam)
-        {
-            var fuelPurchaseDemands = await _fuelPurchaseDemandService
-                .GetAllFuelPurchaseDemandsAsync(
-                    pagingParam,
-                    HttpContext);
-
-            return Ok(fuelPurchaseDemands);
-        }
-
-
+    public partial class DemandController  // By MERT
+    {
         [HttpGet("adminPanel/fuelPurchaseDemand/filter")]
         public async Task<IActionResult> GetFuelPurchaseDemandsByFilter(
-            [FromQuery] DemandParamsForAnsweredFuelPurchase demandParams)
+            [FromQuery] FormParamsForDisplayFormByStatus formParams)
         {
-            var demands = await _fuelPurchaseDemandService
-                .GetFuelPurchaseDemandsByFilterAsync(demandParams, HttpContext);
+            var demands = await  _fuelPurchaseDemandService.GetFormsByStatusAsync(
+                formParams, 
+                HttpContext);
 
             return Ok(demands);
         }
-        #endregion
     }
 }

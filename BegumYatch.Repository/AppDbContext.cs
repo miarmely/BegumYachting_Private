@@ -1,4 +1,5 @@
 ﻿using BegumYatch.Core.Models;
+using BegumYatch.Core.Models.AdminPanel;
 using BegumYatch.Core.Models.BerthRezervation;
 using BegumYatch.Core.Models.Demands;
 using BegumYatch.Core.Models.Demands.AdminPanel;
@@ -113,8 +114,9 @@ namespace BegumYatch.Repository
 
     public partial class AppDbContext  // By MERT
     {
-        public DbSet<AnsweredUnansweredFuelPurchaseDemand> AnsweredFuelPurchaseDemands
+        public DbSet<FuelPurchaseDemandModel> AnsweredFuelPurchaseDemands
         { get; set; }
         public DbSet<MiarUser> MiarUser { get; set; }
+        public DbSet<Temp> Temp { get; set; }
     }
 }

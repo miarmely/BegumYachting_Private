@@ -57,5 +57,5 @@ namespace BegumYatch.API.Extensions
                 });
             });
         }
-    }
+    } // By MERT
 }

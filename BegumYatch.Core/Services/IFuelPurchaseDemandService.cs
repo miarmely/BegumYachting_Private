@@ -1,6 +1,7 @@
 ﻿using BegumYatch.Core.DTOs.AdminPanel.Demands;
 using BegumYatch.Core.DTOs.FuelPurchaseDemand;
 using BegumYatch.Core.DTOs.MainPage;
+using BegumYatch.Core.Models.AdminPanel;
 using BegumYatch.Core.Models.Demands;
 using BegumYatch.Core.Models.Demands.AdminPanel;
 using BegumYatch.Core.QueryParameters;
@@ -14,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace BegumYatch.Core.Services
 {
-    public interface IFuelPurchaseDemandService : IService<FuelPurchaseDemand>
+    public partial interface IFuelPurchaseDemandService : IService<FuelPurchaseDemand>
     {
         Task AddFuelPurchaseDemand(AddFuelPurchaseDemandDto addFuelPurchaseDemandDto);
         Task<List<GetAllFuelPurchaseDemandsDto>> GetAllFuelPurchaseDemands(int userId);
@@ -23,15 +24,12 @@ namespace BegumYatch.Core.Services
         Task<List<GetFuelPurchaseDemandByIdandUserIdDto>> GetDemands();
         Task<CheckIn> GetAllInfo(int userId);
 
+    }
 
-        #region By MERT
-        Task<PagingList<DemandDtoForFuelPurchase>> GetAllFuelPurchaseDemandsAsync(
-            PagingParams pagingParam,
+    public partial interface IFuelPurchaseDemandService
+    {
+        Task<PagingList<FuelPurchaseDemandModel>> GetFormsByStatusAsync(
+            FormParamsForDisplayFormByStatus formParams,
             HttpContext context);
-
-        Task<PagingList<AnsweredUnansweredFuelPurchaseDemand>> GetFuelPurchaseDemandsByFilterAsync(
-            DemandParamsForAnsweredFuelPurchase demandParams,
-            HttpContext context);
-        #endregion
     }
 }

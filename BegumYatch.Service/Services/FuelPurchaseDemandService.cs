@@ -6,6 +6,7 @@ using BegumYatch.Core.DTOs.FuelPurchaseDemand;
 using BegumYatch.Core.DTOs.MainPage;
 using BegumYatch.Core.DTOs.User;
 using BegumYatch.Core.Enums;
+using BegumYatch.Core.Models.AdminPanel;
 using BegumYatch.Core.Models.Demands;
 using BegumYatch.Core.Models.Demands.AdminPanel;
 using BegumYatch.Core.Models.FileOperations;
@@ -90,7 +91,6 @@ namespace BegumYatch.Service.Services
 
         public async Task AddFuelPurchaseDemand(AddFuelPurchaseDemandDto addFuelPurchaseDemandDto)
         {
-
             var entity = _mapper.Map<FuelPurchaseDemand>(addFuelPurchaseDemandDto);
             await _fuelPurchaseDemandRepository.AddAsync(entity);
             await _unitOfWork.CommitAsync();
@@ -123,54 +123,12 @@ namespace BegumYatch.Service.Services
             else
                 return null;
         }
-    }  
+    }
 
     public partial class FuelPurchaseDemandService  // By MERT
     {
-        public async Task<PagingList<DemandDtoForFuelPurchase>> GetAllFuelPurchaseDemandsAsync(
-            PagingParams pagingParam,
-            HttpContext context)
-        {
-            #region get all demands
-            var entity = await _fuelPurchaseDemandRepository
-               .GetAll()
-               .Include(d => d.User)
-               .OrderByDescending(y => y.CreatedDate)
-               .ToListAsync();
-
-            var paginedEntity = entity
-                .Skip((pagingParam.PageNumber - 1) * pagingParam.PageSize)
-                .Take(pagingParam.PageSize);
-
-            var demands = _mapper
-                .Map<List<DemandDtoForFuelPurchase>>(paginedEntity);
-            #endregion
-
-            #region when any demand not found  (throw)
-            if (demands.Count == 0)
-                throw new MiarException(
-                    404,
-                    "NF-D-FP",
-                    "Not Found - Demand - Fuel Purchase",
-                    "herhangi bir yakıt alım talebi bulunmamaktadır");
-            #endregion
-
-            #region add pagination infos to header
-            var demandsInPagingList = await PagingList<DemandDtoForFuelPurchase>
-                .ToPagingListAsync(
-                    demands,
-                    entity.Count,
-                    pagingParam.PageNumber,
-                    pagingParam.PageSize,
-                    "Demand-FuelPurchase",
-                    context);
-            #endregion
-
-            return demandsInPagingList;
-        }
-
-        public async Task<PagingList<AnsweredUnansweredFuelPurchaseDemand>> GetFuelPurchaseDemandsByFilterAsync(
-            DemandParamsForAnsweredFuelPurchase demandParams,
+        public async Task<PagingList<FuelPurchaseDemandModel>> GetFormsByStatusAsync(
+            FormParamsForDisplayFormByStatus formParams,
             HttpContext context)
         {
             #region set sql command
@@ -178,7 +136,7 @@ namespace BegumYatch.Service.Services
             {
                 Direction = ParameterDirection.Output
             };
-            var sql = "EXEC Demand_FuelPurchase_GetAnsweredDemands " +
+            var sql = "EXEC Demand_FuelPurchase_GetFormsByStatus " +
                 "@StatusId = {0}, " +
                 "@PageSize = {1}, " +
                 "@PageNumber = {2}, " +
@@ -187,11 +145,11 @@ namespace BegumYatch.Service.Services
 
             #region get accepted/rejected demands (THROW)
             var demands = await _fuelPurchaseDemandRepository
-                .FromSqlRawAsync<AnsweredUnansweredFuelPurchaseDemand>(
+                .FromSqlRawAsync<FuelPurchaseDemandModel>(
                     sql,
-                    demandParams.DemandStatus,
-                    demandParams.PageSize,
-                    demandParams.PageNumber,
+                    formParams.FormStatus,
+                    formParams.PageSize,
+                    formParams.PageNumber,
                     totalCount);
 
             if (demands.Count == 0)
@@ -199,16 +157,16 @@ namespace BegumYatch.Service.Services
                     404,
                     "NF-D-FP",
                     "Not Found - Demand - Fuel Purchase",
-                    "cevaplanmış talep bulunamadı");
+                    "form bulunamadı");
             #endregion
 
             #region save paging infos to header
-            var demandPagingList = await PagingList<AnsweredUnansweredFuelPurchaseDemand>
+            var demandPagingList = await PagingList<FuelPurchaseDemandModel>
                 .ToPagingListAsync(
                     demands,
                     (int)totalCount.Value,
-                    demandParams.PageNumber,
-                    demandParams.PageSize,
+                    formParams.PageNumber,
+                    formParams.PageSize,
                     "Demand-FuelPurchase",
                     context);
             #endregion

@@ -52,8 +52,9 @@ $(function () {
     const slct = {
         article_submenu_display: $("#slct_article_submenu_display")
     };
+    const formType = "FuelPurchaseDemand";
     let articleIdsAndInfos = {};
-    let demandType = "Unanswered";
+    let formStatus = "Unanswered";
     //#endregion
 
     //#region events
@@ -95,15 +96,16 @@ $(function () {
     })
     slct.article_submenu_display.change(async () => {
         //#region show/hide anserer infos <div>
+        formStatus = slct.article_submenu_display.val();
+
         // show
-        demandType = slct.article_submenu_display.val();
-        if (demandType == "Accepted"
-            || demandType == "Rejected")
+        if (formStatus == "Accepted"
+            || formStatus == "Rejected")
             div.answererInfos.removeAttr("hidden");
 
         // hide
         else
-            div.answererInfos.attr("hidden", ""); 
+            div.answererInfos.attr("hidden", "");
         //#endregion
 
         await populateFuelPurchaseArticlesAsync();
@@ -119,7 +121,7 @@ $(function () {
             div.senderInfos_inputs,
             div.answererInfos_inputs,
             btn.back,
-            demandType,
+            formStatus,
             async (infosOfLastClickedArticle) => {
                 div.demandInfos_inputs.find("#" + inpt_id.yachtName).val(
                     getDefaultValueIfValueNull(infosOfLastClickedArticle.yachtName));
@@ -178,7 +180,7 @@ $(function () {
             div.answererInfos_inputs,
             div.demandInfos_inputs,
             div.answererInfos,
-            demandType);
+            formStatus);
         await populateInfoMessagesAsync({
             div_senderInfos: ["Şeklin üzerine tıklayarak talebi gönderen personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
             div_answererInfos: ["Şeklin üzerine tıklayarak talebe cevap veren personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
@@ -191,7 +193,8 @@ $(function () {
             "/adminPanel/fuelPurchaseDemand/filter?" + (
                 `pageSize=${pagingBuffer.pageSize}` +
                 `&pageNumber=${pagingBuffer.pageNumber}` +
-                `&demandStatus= ${demandType}`),
+                `&formType=${formType}` +
+                `&formStatus=${formStatus}`),
             headerKeys.fuelPurchase,
             lbl.entityQuantity,
             async (demands) => {

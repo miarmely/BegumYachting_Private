@@ -1,8 +1,10 @@
-﻿namespace BegumYatch.Core.QueryParameters
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BegumYatch.Core.QueryParameters
 {
     public record PagingParams
     {
-        public int PageSize{ get; init; }
-        public int PageNumber { get; init; }
+        [Required] public int PageSize{ get; init; }
+        [Required] public int PageNumber { get; init; }
     }
 }
