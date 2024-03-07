@@ -31,4 +31,9 @@ namespace BegumYatch.Core.Models.AdminPanel
         public string? Notes { get; init; }
         public bool? Status { get; init; }
     }
+
+    public record CheckInAndOutDemandModel : BaseDemandAndOrderModel
+    {
+
+    }
 }
