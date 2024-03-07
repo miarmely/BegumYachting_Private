@@ -114,9 +114,11 @@ namespace BegumYatch.Repository
 
     public partial class AppDbContext  // By MERT
     {
-        public DbSet<FuelPurchaseDemandModel> AnsweredFuelPurchaseDemands
-        { get; set; }
-        public DbSet<MiarUser> MiarUser { get; set; }
         public DbSet<Temp> Temp { get; set; }
+        public DbSet<MiarUser> MiarUser { get; set; }
+        public DbSet<FuelPurchaseDemandModel> AnsweredFuelPurchaseDemands
+            { get; set; }
+        public DbSet<CheckinAndCheckoutDemandModel> CheckinAndCheckoutDemands 
+            { get; set; }
     }
 }

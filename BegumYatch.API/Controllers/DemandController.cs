@@ -26,9 +26,10 @@ namespace BegumYatch.API.Controllers
         private readonly IFileOperationService _fileOperationService;
         private readonly ITechnicalAssitanceandSparePartOrderService _technicalAssitanceandSparePartOrderService;
         private readonly IProvisionOrderService _provisionOrderService;
-        
+        private readonly ICheckinAndCheckoutService _checkinAndCheckoutService;
 
-        public DemandController(IFuelPurchaseDemandService fuelPurchaseDemandService, IConciergeServiceDemandService conciergeService, IExcursionDemandService excursionDemandService, ISecurityServiceDemandService securityServiceDemandService, IFileOperationService fileOperationService, ITechnicalAssitanceandSparePartOrderService technicalAssitanceandSparePartOrderService, IProvisionOrderService provisionOrderService)
+
+        public DemandController(IFuelPurchaseDemandService fuelPurchaseDemandService, IConciergeServiceDemandService conciergeService, IExcursionDemandService excursionDemandService, ISecurityServiceDemandService securityServiceDemandService, IFileOperationService fileOperationService, ITechnicalAssitanceandSparePartOrderService technicalAssitanceandSparePartOrderService, IProvisionOrderService provisionOrderService, ICheckinAndCheckoutService checkinAndCheckoutService)
         {
             _fuelPurchaseDemandService = fuelPurchaseDemandService;
             _conciergeService = conciergeService;
@@ -37,6 +38,7 @@ namespace BegumYatch.API.Controllers
             _fileOperationService = fileOperationService;
             _technicalAssitanceandSparePartOrderService = technicalAssitanceandSparePartOrderService;
             _provisionOrderService = provisionOrderService;
+            _checkinAndCheckoutService = checkinAndCheckoutService;
         }
 
 
@@ -215,6 +217,18 @@ namespace BegumYatch.API.Controllers
         {
             var demands = await  _fuelPurchaseDemandService.GetFormsByStatusAsync(
                 formParams, 
+                HttpContext);
+
+            return Ok(demands);
+        }
+
+
+        [HttpGet("adminPanel/checkinAndCheckout/filter")]
+        public async Task<IActionResult> GetCheckinAndCheckoutDemandsByFilter(
+            [FromQuery] FormParamsForDisplayFormByStatus formParams)
+        {
+            var demands = await _checkinAndCheckoutService.GetFormsByStatusAsync(
+                formParams,
                 HttpContext);
 
             return Ok(demands);

@@ -8,5 +8,10 @@ namespace BegumYacht_Web.Controllers
         {
             return View();
         }
+
+        public IActionResult CheckinAndCheckout()
+        {
+            return View();
+        }
     }
 }

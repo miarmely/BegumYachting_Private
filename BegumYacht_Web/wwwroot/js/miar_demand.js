@@ -12,32 +12,6 @@ import { convertStrUtcDateToStrLocalDateAsync } from "./miar_module.date.js";
 
 
 //#region variables
-export const inpt_id = {
-    nameSurname: "inpt_nameSurname",
-    phone: "inpt_phone",
-    email: "inpt_email",
-    newPassportNo: "inpt_newPassportNo",
-    oldPassportNo: "inpt_oldPassportNo",
-    rank: "inpt_rank",
-    nationality: "inpt_nationality",
-    gender: "inpt_gender",
-    answeredDate: "inpt_answeredDate",
-    yachtName: "inpt_yachtName",
-    yachtType: "inpt_yachtType",
-    flag: "inpt_flag",
-    isDutyPaid: "inpt_isDutyPaid",
-    mgo: "inpt_mgo",
-    ago: "inpt_ago",
-    fuelType: "inpt_fuelType",
-    requestedFuel: "inpt_requestedFuel",
-    fuelSupplyPort: "inpt_fuelSupplyPort",
-    fuelSupplyDate: "inpt_fuelSupplyDate",
-    createdDate: "inpt_createdDate",
-    answeredDate: "inpt_answeredDate",
-};
-export const txt_id = {
-    notes: "txt_notes"
-};
 export let infosOfLastClickedArticle = {};
 const path = {
     loadingImage: "./images/loading.gif",
@@ -75,7 +49,7 @@ export async function click_InfoDivAsync(event) {
     if (div_infos_inputs.attr("hidden") == null) {
         div_infos_inputs.attr("hidden", "");
         updateElementText(
-            div_infos_button.children("h4 span"),
+            div_infos_button.children("h4").children("span"),
             "Görüntüle");
     }
     //#endregion
@@ -91,7 +65,7 @@ export async function click_InfoDivAsync(event) {
         // show inputs
         div_infos_inputs.removeAttr("hidden");
         updateElementText(
-            div_infos_button.children("h4 span"),
+            div_infos_button.children("h4").children("span"),
             "Gizle");
     }
     //#endregion
@@ -126,6 +100,7 @@ export async function click_backButtonAsync(
 }
 export async function click_articleAsync(
     event,
+    inputIds,
     articleIdsAndInfos,
     div_article_display,
     div_article_update,
@@ -144,12 +119,12 @@ export async function click_articleAsync(
     infosOfLastClickedArticle = articleIdsAndInfos[articleId];
     //#endregion
 
-    await populateSenderInfosAsync(div_senderInfos_inputs);
+    await populateSenderInfosAsync(inputIds, div_senderInfos_inputs);
 
     //#region populate answerer infos
     if (formStatus == "Accepted"
         || formStatus == "Rejected")
-        await populateAnswererInfosAsync(div_answererInfos_inputs);
+        await populateAnswererInfosAsync(inputIds, div_answererInfos_inputs);
     //#endregion
 
     await func_populateDemandInfosAsync(infosOfLastClickedArticle);
@@ -164,17 +139,17 @@ export async function click_articleAsync(
 //#endregion
 
 //#region functions
-export async function beforePopulateAsync(div_articles) {
+export async function beforePopulateAsync(articleWidth, articleHeight, div_articles) {
     await setArticleBufferAsync({
         div_articles: div_articles,
         articleType: "imageAndText",
         articleStyle: {
             "width": await getValidArticleWidthAsync({
-                width: 300,
+                width: articleWidth,
                 marginL: 20,
                 marginR: 20
             }, div_articles),
-            "height": 550,
+            "height": articleHeight,
             "marginT": 10,
             "marginB": 10,
             "marginR": 20,
@@ -245,38 +220,8 @@ export async function populateArticlesAsync(
         })
     });  // populate article
 }
-export async function addInputsToInfoDivsAsync(
-    div_senderInfos_inputs,
-    div_answererInfos_inputs,
-    div_demandInfos_inputs,
-    div_answererInfos,
-    formStatus = "Unanswered|Accepted|Rejected"
-) {
+export async function addInputsToInfoDivsAsync(inputInfos) {
     //#region add inputs to form
-    let inputInfos = [
-        ["input", "text", "nameSurname", "Ad Soyad", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],  // type for switch/case | type for switch/case | type for input | id | label name | info message | hidden/disabled/readonly of input | place to add
-        ["input", "text", "phone", "Telefon", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "email", "Email", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "newPassportNo", "Yeni Pasaport No", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "oldPassportNo", "Eski Pasapart No", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "rank", "Rank", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "nationality", "Uyruk", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "gender", "Cinsiyet", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "answeredDate", "Cevaplanma Tarihi", false, "readonly", [div_answererInfos_inputs]],
-        ["input", "text", "yachtName", "Yat Adı", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "yachtType", "Yat Tipi", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "flag", "Bayrak", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "isDutyPaid", "Gümrüklü Mü", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "mgo", "MGO", false, "readonly", [div_demandInfos_inputs]],  // marine gas oil
-        ["input", "text", "ago", "AGO", false, "readonly", [div_demandInfos_inputs]],  // automotive gas oil
-        ["input", "text", "fuelType", "Yakıt Tipi", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "requestedFuel", "İstenen Yakıt Miktarı (L)", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "fuelSupplyPort", "Yakıt İkmal Yeri", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "fuelSupplyDate", "Yakıt İkmal Tarihi", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "createdDate", "Talep Tarihi", false, "readonly", [div_demandInfos_inputs]],
-        ["textarea", "notes", "Notlar", true, "readonly", [div_demandInfos_inputs]]  // type for switch/case | id | label name | info message | hidden/disabled/readonly of input | place to add            
-    ];
-
     for (let index in inputInfos) {
         let inputInfo = inputInfos[index];
         let div_formGroup_id;
@@ -290,17 +235,17 @@ export async function addInputsToInfoDivsAsync(
 
                 for (let index2 in inputInfo[6]) {
                     //#region add label and <input>
-                    let div = inputInfo[6][index2];
+                    let divInfos = inputInfo[6][index2];
+                    let div = $("#" + divInfos.id);
 
-                    div.append(`
-                        <div id="${div_formGroup_id}" class="form-group">
+                    div.append(
+                        `<div id="${div_formGroup_id}" class="form-group">
                             <label class="col-sm-3 control-label">${inputInfo[3]}</label>
                             <div class="col-sm-6">
-                                <input id="${inputId}" type="${inputInfo[1]}" class="form-control" ${inputInfo[5]}>
+                                <input id="${inputId}" type="${inputInfo[1]}" class="form-control" ${inputInfo[5]} />
                                 <span id="spn_help_${inputId}" class="help-block"></span>
                             </div>
-                        </div>
-                    `);
+                        </div>`);
                     //#endregion
 
                     //#region add info message if desired
@@ -323,7 +268,8 @@ export async function addInputsToInfoDivsAsync(
 
                 for (let index2 in inputInfo[5]) {
                     //#region add label and <textarea>
-                    let div = inputInfo[5][index2];
+                    let divInfos = inputInfo[5][index2];
+                    let div = $("#" + divInfos.id);
 
                     div.append(`
                         <div id="${div_formGroup_id}" class="form-group">
@@ -352,14 +298,8 @@ export async function addInputsToInfoDivsAsync(
         }
     }
     //#endregion
-
-    //#region show answerer infos <div> 
-    if (formStatus == "Accepted"
-        || formStatus == "Rejected")
-        div_answererInfos.removeAttr("hidden");
-    //#endregion
 }
-export async function populateSenderInfosAsync(div_senderInfos_inputs) {
+export async function populateSenderInfosAsync(inputIds, div_senderInfos_inputs) {
     // get senderer infos and add to inputs
     $.ajax({
         method: "GET",
@@ -370,18 +310,18 @@ export async function populateSenderInfosAsync(div_senderInfos_inputs) {
         dataType: "json",
         success: (senderInfos) => {
             //#region populate inputs
-            div_senderInfos_inputs.find("#" + inpt_id.nameSurname).val(senderInfos.nameSurname);
-            div_senderInfos_inputs.find("#" + inpt_id.phone).val(senderInfos.phoneNumber);
-            div_senderInfos_inputs.find("#" + inpt_id.email).val(senderInfos.email);
-            div_senderInfos_inputs.find("#" + inpt_id.newPassportNo).val(
+            div_senderInfos_inputs.find("#" + inputIds.nameSurname).val(senderInfos.nameSurname);
+            div_senderInfos_inputs.find("#" + inputIds.phone).val(senderInfos.phoneNumber);
+            div_senderInfos_inputs.find("#" + inputIds.email).val(senderInfos.email);
+            div_senderInfos_inputs.find("#" + inputIds.newPassportNo).val(
                 getDefaultValueIfValueNull(senderInfos.newPassportNo));
-            div_senderInfos_inputs.find("#" + inpt_id.oldPassportNo).val(
+            div_senderInfos_inputs.find("#" + inputIds.oldPassportNo).val(
                 getDefaultValueIfValueNull(senderInfos.oldPassportNo));
-            div_senderInfos_inputs.find("#" + inpt_id.rank).val(
+            div_senderInfos_inputs.find("#" + inputIds.rank).val(
                 getDefaultValueIfValueNull(senderInfos.rank));
-            div_senderInfos_inputs.find("#" + inpt_id.nationality).val(
+            div_senderInfos_inputs.find("#" + inputIds.nationality).val(
                 getDefaultValueIfValueNull(senderInfos.nationality));
-            div_senderInfos_inputs.find("#" + inpt_id.gender).val(
+            div_senderInfos_inputs.find("#" + inputIds.gender).val(
             getDefaultValueIfValueNull(senderInfos.gender));
             //#endregion
         },
@@ -399,20 +339,20 @@ export async function populateAnswererInfosAsync(div_answererInfos_inputs) {
         success: (answererInfos) => {
             //#region populate inputs
             new Promise(async resolve => {
-                div_answererInfos_inputs.find("#" + inpt_id.nameSurname).val(answererInfos.nameSurname);
-                div_answererInfos_inputs.find("#" + inpt_id.phone).val(answererInfos.phoneNumber);
-                div_answererInfos_inputs.find("#" + inpt_id.email).val(answererInfos.email);
-                div_answererInfos_inputs.find("#" + inpt_id.newPassportNo).val(
+                div_answererInfos_inputs.find("#" + inputIds.nameSurname).val(answererInfos.nameSurname);
+                div_answererInfos_inputs.find("#" + inputIds.phone).val(answererInfos.phoneNumber);
+                div_answererInfos_inputs.find("#" + inputIds.email).val(answererInfos.email);
+                div_answererInfos_inputs.find("#" + inputIds.newPassportNo).val(
                     getDefaultValueIfValueNull(answererInfos.newPassportNo));
-                div_answererInfos_inputs.find("#" + inpt_id.oldPassportNo).val(
+                div_answererInfos_inputs.find("#" + inputIds.oldPassportNo).val(
                     getDefaultValueIfValueNull(answererInfos.oldPassportNo));
-                div_answererInfos_inputs.find("#" + inpt_id.rank).val(
+                div_answererInfos_inputs.find("#" + inputIds.rank).val(
                     getDefaultValueIfValueNull(answererInfos.rank));
-                div_answererInfos_inputs.find("#" + inpt_id.nationality).val(
+                div_answererInfos_inputs.find("#" + inputIds.nationality).val(
                     getDefaultValueIfValueNull(answererInfos.nationality));
-                div_answererInfos_inputs.find("#" + inpt_id.gender).val(
+                div_answererInfos_inputs.find("#" + inputIds.gender).val(
                     getDefaultValueIfValueNull(answererInfos.gender));
-                div_answererInfos_inputs.find("#" + inpt_id.answeredDate).val(
+                div_answererInfos_inputs.find("#" + inputIds.answeredDate).val(
                     await convertStrUtcDateToStrLocalDateAsync(
                         infosOfLastClickedArticle.answeredDate,
                         { hours: true, minutes: true, seconds: false }));
@@ -447,7 +387,12 @@ export async function setPageSizeAsync() {
         pageSize: pageSize
     });
 }
-export async function addImageToArticleAsync(articleId, yachtType) {
+export async function addImageToArticleAsync(
+    articleId,
+    yachtType,
+    imageWidthRate,  // ex: 65 / 100
+    imageHeightRate  
+) {
     //#region set image path by yacht type
     let path_image = "";
 
@@ -469,8 +414,8 @@ export async function addImageToArticleAsync(articleId, yachtType) {
 
     //#region add image to article
     let div_article_image = $("#" + articleId + " #" + div_article_image_id);
-    let img_width = div_article_image.prop("offsetWidth") * (65 / 100);  // %n of width
-    let img_height = div_article_image.prop("offsetHeight") * (65 / 100);  // %n of height
+    let img_width = div_article_image.prop("offsetWidth") * imageWidthRate;  // %n of width
+    let img_height = div_article_image.prop("offsetHeight") * imageHeightRate;  // %n of height
 
     div_article_image.append(
         `<img src="${path_image}" style="width:${img_width}px; height:${img_height}px"></img>`

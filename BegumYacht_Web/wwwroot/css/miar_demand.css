@@ -23,6 +23,10 @@
     resize: vertical;
 }
 
+#div_form{
+    padding-top: 20px;
+}
+
 .div_infos_button {
     cursor: pointer;
     border-width: 1px;
@@ -51,10 +55,6 @@
     margin-bottom: 50px;
 }
 
-#div_yachtName {
-    margin-top: 40px
-}
-
 #div_article_update textarea {
     min-height: 200px;
 }
@@ -77,4 +77,9 @@
 
 #slct_article_submenu_display {
     width: 130px;
+}
+
+#a_infoMessage ul{
+    font-size: 14px;
+    min-width: 225px;
 }

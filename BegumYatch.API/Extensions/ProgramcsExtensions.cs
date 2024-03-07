@@ -43,8 +43,8 @@ namespace BegumYatch.API.Extensions
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .WithExposedHeaders(
-                            "Demand-FuelPurchase"
-                        );
+                            "Demand-FuelPurchase",
+                            "Demand-Checkinandcheckout");
                 });
             });
         #endregion

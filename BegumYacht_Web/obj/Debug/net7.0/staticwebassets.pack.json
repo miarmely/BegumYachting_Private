@@ -53,10 +53,6 @@
       "PackagePath": "staticwebassets\\css\\miar_demand.css"
     },
     {
-      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\css\\miar_demand.fuelPurchase.css",
-      "PackagePath": "staticwebassets\\css\\miar_demand.fuelPurchase.css"
-    },
-    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\css\\miar_login.css",
       "PackagePath": "staticwebassets\\css\\miar_login.css"
     },
@@ -267,6 +263,10 @@
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\js\\jquery2.0.3.min.js",
       "PackagePath": "staticwebassets\\js\\jquery2.0.3.min.js"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\js\\miar_demand.checkinAndCheckout.js",
+      "PackagePath": "staticwebassets\\js\\miar_demand.checkinAndCheckout.js"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\js\\miar_demand.fuelPurchase.js",

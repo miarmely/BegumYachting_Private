@@ -3,9 +3,9 @@ import { convertDateToStrDateAsync, getPassedTimeInStringAsync } from "./miar_mo
 import { addCriticalSectionAsync, shiftTheChildDivToBottomOfParentDivAsync } from "./miar_module.js"
 
 import {
-    addImageToArticleAsync, beforePopulateAsync, click_articleAsync, click_backButtonAsync,
-    click_InfoDivAsync, getDefaultValueIfValueNull, inpt_id, populateArticlesAsync,
-    addInputsToInfoDivsAsync, resize_windowAsync, txt_id,
+    addImageToArticleAsync, beforePopulateAsync, click_articleAsync, resize_windowAsync,
+    click_backButtonAsync, click_InfoDivAsync, getDefaultValueIfValueNull,
+    populateArticlesAsync, addInputsToInfoDivsAsync,
 } from "./miar_demand.js"
 
 import {
@@ -23,9 +23,6 @@ $(function () {
     //#region variables
     const ul_pagination = $("#ul_pagination");
     const p_resultLabel = $("#p_resultLabel");
-    const headerKeys = {
-        fuelPurchase: "Demand-FuelPurchase"
-    };
     const criticalSectionIds = {
         sidebarMenuButton: "sidebarMenuButton",
         window: "window",
@@ -53,6 +50,54 @@ $(function () {
         article_submenu_display: $("#slct_article_submenu_display")
     };
     const formType = "FuelPurchaseDemand";
+    const inputInfos = [
+        ["input", "text", "nameSurname", "Ad Soyad", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],  // type for switch/case | type for switch/case | type for input | id | label name | info message | hidden/disabled/readonly of input | place to add
+        ["input", "text", "phone", "Telefon", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
+        ["input", "text", "email", "Email", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
+        ["input", "text", "newPassportNo", "Yeni Pasaport No", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
+        ["input", "text", "oldPassportNo", "Eski Pasapart No", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
+        ["input", "text", "rank", "Rank", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
+        ["input", "text", "nationality", "Uyruk", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
+        ["input", "text", "gender", "Cinsiyet", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
+        ["input", "text", "answeredDate", "Cevaplanma Tarihi", false, "readonly", [div_answererInfos_inputs]],
+        ["input", "text", "yachtType", "Yat Tipi", false, "readonly", [div_demandInfos_inputs]],
+        ["input", "text", "yachtName", "Yat Adı", false, "readonly", [div_demandInfos_inputs]],
+        ["input", "text", "flag", "Bayrak", false, "readonly", [div_demandInfos_inputs]],
+        ["input", "text", "isDutyPaid", "Gümrüklü Mü", false, "readonly", [div_demandInfos_inputs]],
+        ["input", "text", "mgo", "MGO", false, "readonly", [div_demandInfos_inputs]],  // marine gas oil
+        ["input", "text", "ago", "AGO", false, "readonly", [div_demandInfos_inputs]],  // automotive gas oil
+        ["input", "text", "fuelType", "Yakıt Tipi", false, "readonly", [div_demandInfos_inputs]],
+        ["input", "text", "requestedFuel", "İstenen Yakıt Miktarı (L)", false, "readonly", [div_demandInfos_inputs]],
+        ["input", "text", "fuelSupplyPort", "Yakıt İkmal Yeri", false, "readonly", [div_demandInfos_inputs]],
+        ["input", "text", "fuelSupplyDate", "Yakıt İkmal Tarihi", false, "readonly", [div_demandInfos_inputs]],
+        ["input", "text", "createdDate", "Talep Tarihi", false, "readonly", [div_demandInfos_inputs]],
+        ["textarea", "notes", "Notlar", true, "readonly", [div_demandInfos_inputs]]  // type for switch/case | id | label name | info message | hidden/disabled/readonly of input | place to add            
+    ];
+    const inpt_id = {
+        nameSurname: "inpt_nameSurname",
+        phone: "inpt_phone",
+        email: "inpt_email",
+        newPassportNo: "inpt_newPassportNo",
+        oldPassportNo: "inpt_oldPassportNo",
+        rank: "inpt_rank",
+        nationality: "inpt_nationality",
+        gender: "inpt_gender",
+        createdDate: "inpt_createdDate",
+        answeredDate: "inpt_answeredDate",
+        yachtName: "inpt_yachtName",
+        yachtType: "inpt_yachtType",
+        flag: "inpt_flag",
+        isDutyPaid: "inpt_isDutyPaid",
+        mgo: "inpt_mgo",
+        ago: "inpt_ago",
+        fuelType: "inpt_fuelType",
+        requestedFuel: "inpt_requestedFuel",
+        fuelSupplyPort: "inpt_fuelSupplyPort",
+        fuelSupplyDate: "inpt_fuelSupplyDate",
+    };
+    const txt_id = {
+        notes: "txt_notes"
+    }
     let articleIdsAndInfos = {};
     let formStatus = "Unanswered";
     //#endregion
@@ -109,10 +154,11 @@ $(function () {
         //#endregion
 
         await populateFuelPurchaseArticlesAsync();
-    })
+    })  // DISABLED
     spn_eventManager.on("click_article", async (_, event) => {
         await click_articleAsync(
             event,
+            inpt_id,
             articleIdsAndInfos,
             div.article_display,
             div.article_update,
@@ -173,14 +219,9 @@ $(function () {
 
     //#region functions
     async function setupPageAsync() {
-        await beforePopulateAsync(div.articles);
+        await beforePopulateAsync(300, 550, div.articles);
         await populateFuelPurchaseArticlesAsync();
-        await addInputsToInfoDivsAsync(
-            div.senderInfos_inputs,
-            div.answererInfos_inputs,
-            div.demandInfos_inputs,
-            div.answererInfos,
-            formStatus);
+        await addInputsToInfoDivsAsync(inputInfos);
         await populateInfoMessagesAsync({
             div_senderInfos: ["Şeklin üzerine tıklayarak talebi gönderen personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
             div_answererInfos: ["Şeklin üzerine tıklayarak talebe cevap veren personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
@@ -193,7 +234,6 @@ $(function () {
             "/adminPanel/fuelPurchaseDemand/filter?" + (
                 `pageSize=${pagingBuffer.pageSize}` +
                 `&pageNumber=${pagingBuffer.pageNumber}` +
-                `&formType=${formType}` +
                 `&formStatus=${formStatus}`),
             headerKeys.fuelPurchase,
             lbl.entityQuantity,
@@ -209,7 +249,12 @@ $(function () {
                     articleIdsAndInfos[articleId] = demandInfos;
                     //#endregion
 
-                    await addImageToArticleAsync(articleId, demandInfos.yachtType);
+                    await addImageToArticleAsync(
+                        articleId,
+                        demandInfos.yachtType,
+                        65 / 100,
+                        65 / 100
+                    );
 
                     //#region add article infos 
                     let div_article_info = article.children("#" + div_article_info_id);

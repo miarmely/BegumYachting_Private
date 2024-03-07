@@ -1,13 +1,11 @@
 ﻿<link rel="stylesheet" href="~/css/miar_module.article.css"/>
 <link rel="stylesheet" href="~/css/miar_demand.css" />
-<link rel="stylesheet" href="~/css/miar_demand.fuelPurchase.css" />
 <link rel="stylesheet" href="~/css/miar_module.pagination.css" />
 <link rel="stylesheet" href="~/css/miar_module.userForm.css" />
 
 
 <div class="table-agile-info">
     <div class="panel panel-default">
-        @*title*@
         <div class="panel-heading">
             <div id="div_backButton" style="float:right" hidden>
                 <button id="btn_back" type="button" class="btn">
@@ -16,11 +14,10 @@
             </div>
             <div id="div_panelTitle">YAKIT ALIM TALEBİ</div>
         </div>
-        @*/title*@
         <div class="panel-body">
             <div id="div_article_update" hidden>
                 <form>
-                    <div id="div_form" class="form-horizontal bucket-form" style="padding-top:20px">                    
+                    <div id="div_form" class="form-horizontal bucket-form">                    
                         @*display sender infos*@
                         <div id="div_senderInfos" class="form-group text-center  div_infos">
                             <div class="col-sm-3"></div>
@@ -34,10 +31,9 @@
                                 <ul role="menu" class="dropdown-menu"></ul>
                             </div>   
                         </div>
-
                         <div id="div_senderInfos_inputs" class="div_infos_inputs" hidden></div>
 
-                        @*display answerer infos*@
+                        @*display answerer infos  (DISABLED)*@
                         <div id="div_answererInfos" class="form-group text-center  div_infos" hidden>
                             <div class="col-sm-3"></div>
                             <div class="col-sm-6  div_infos_button">
@@ -50,7 +46,6 @@
                                 <ul role="menu" class="dropdown-menu"></ul>
                             </div>   
                         </div>
-
                         <div id="div_answererInfos_inputs" class="div_infos_inputs" hidden></div>
 
                         @*display demand infos*@
@@ -66,10 +61,9 @@
                                 <ul role="menu" class="dropdown-menu"></ul>
                             </div>   
                         </div>
-
                         <div id="div_demandInfos_inputs" class="div_infos_inputs" hidden></div>
                         
-                        @*accept and reject buttons*@   <!-- DISABLED -->
+                        @*accept and reject buttons  (DISABLED)*@
                         <div id="div_buttons" class="form-group" hidden>
                             <div class="col-sm-6; text-center">
                                 <button id="btn_accept" type="button" class="btn btn-danger">Onayla</button>
@@ -95,7 +89,7 @@
                             @*<option value="delete">Sil</option>*@
                         </select>
 
-                        @*submenu of display option*@
+                        @*submenu of display option  (DISABLED)*@
                         <div hidden>
                             <select id="slct_article_submenu_display" class="input-sm form-control w-sm inline v-middle">
                                 <option value="Unanswered" checked>Cevaplanmamış</option>
@@ -104,7 +98,7 @@
                             </select>
                         </div>
 
-                        @*apply button*@
+                        @*apply button  (DISABLED)*@
                         <div id="div_menubar_button" hidden>
                             <button id="btn_menubar_apply" class="btn btn-sm btn_menubar_apply ">Uygula</button>
                         </div>
@@ -172,7 +166,7 @@
                                         <i class="fa fa-chevron-right"></i>
                                     </a>
                                 </li>
-                            </ul>    
+                            </ul>
                         </div>
                     </div>
                 </footer>
