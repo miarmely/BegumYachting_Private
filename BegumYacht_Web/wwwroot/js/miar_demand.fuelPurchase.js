@@ -1,5 +1,5 @@
 ﻿import { populateInfoMessagesAsync } from "./miar_module.userForm.js"
-import { convertStrUtcDateToStrLocalDateAsync, getPassedTimeInStringAsync } from "./miar_module.date.js";
+import { convertDateToStrDateAsync, getPassedTimeInStringAsync } from "./miar_module.date.js";
 import { addCriticalSectionAsync, shiftTheChildDivToBottomOfParentDivAsync } from "./miar_module.js"
 
 import {
@@ -136,12 +136,12 @@ $(function () {
                 div.demandInfos_inputs.find("#" + inpt_id.requestedFuel).val(infosOfLastClickedArticle.requestedFuel);
                 div.demandInfos_inputs.find("#" + inpt_id.fuelSupplyPort).val(infosOfLastClickedArticle.fuelSupplyPort);
                 div.demandInfos_inputs.find("#" + inpt_id.fuelSupplyDate).val(
-                    await convertStrUtcDateToStrLocalDateAsync(
-                        infosOfLastClickedArticle.fuelSupplyDate,
+                    await convertDateToStrDateAsync(
+                        new Date(infosOfLastClickedArticle.fuelSupplyDate),
                         { hours: true, minutes: true, seconds: false }));
                 div.demandInfos_inputs.find("#" + inpt_id.createdDate).val(
-                    await convertStrUtcDateToStrLocalDateAsync(
-                        infosOfLastClickedArticle.createdDate,
+                    await convertDateToStrDateAsync(
+                        new Date(infosOfLastClickedArticle.createdDate),
                         { hours: true, minutes: true, seconds: false }));
                 div.demandInfos_inputs.find("#" + txt_id.notes).val(
                     getDefaultValueIfValueNull(infosOfLastClickedArticle.notes));
@@ -222,8 +222,7 @@ $(function () {
                             <h4 style="margin-top:20px">${demandInfos.nameSurname}</h4>
                             <h6 style="margin-top:10px">${demandInfos.notes.substring(0, 200)}...</h6>
                         </div>
-                        <div id="div_passedTime">${await getPassedTimeInStringAsync(demandInfos.createdDate)}</div>
-
+                        <div id="div_passedTime">${await getPassedTimeInStringAsync(null, demandInfos.createdDate)}</div>
                     `);
                     //#endregion
 

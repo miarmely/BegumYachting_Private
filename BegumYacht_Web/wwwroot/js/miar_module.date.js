@@ -174,13 +174,17 @@ export async function isDatesEqualAsync(date1, date2, check = {
 
     return true;
 }
-export async function getPassedTimeInStringAsync(utcDateTimeInStr) {
+export async function getPassedTimeInStringAsync(
+    utcDateInStr = null,
+    localDateInStr = null
+) {
     //#region get dates in unix
     let nowDate = new Date();
     let nowDateInMs = nowDate.getTime();
 
-    let oldDateInLocal = await convertUtcDateToLocalDateAsync(
-        new Date(utcDateTimeInStr));
+    let oldDateInLocal = utcDateInStr != null ?
+        await convertUtcDateToLocalDateAsync(new Date(utcDateTimeInStr))
+        : new Date(localDateInStr);
     let oldDateInMs = oldDateInLocal.getTime();
     //#endregion
 

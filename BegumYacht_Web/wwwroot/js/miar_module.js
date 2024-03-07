@@ -450,7 +450,6 @@ export async function shiftTheChildDivToBottomOfParentDivAsync(div_parent, div_c
     for (let index = 0; index < infosOfChildrenDivs.length; index++) {
         let infosOfChildrenDiv = infosOfChildrenDivs[index];
         div_parent_whiteSpaceQuantity -= infosOfChildrenDiv.offsetHeight;
-        let x = 0;
     }
     //#endregion
 
