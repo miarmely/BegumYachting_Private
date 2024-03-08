@@ -4,7 +4,7 @@ import { addCriticalSectionAsync, shiftTheChildDivToBottomOfParentDivAsync } fro
 
 import {
     addImageToArticleAsync, beforePopulateAsync, click_articleAsync, resize_windowAsync,
-    click_backButtonAsync, click_InfoDivAsync, getDefaultValueIfValueNull,
+    click_backButtonAsync, click_InfoDivAsync, getDefaultValueIfValueNullOrEmpty,
     populateArticlesAsync, addInputsToInfoDivsAsync,
 } from "./miar_demand.js"
 
@@ -33,7 +33,9 @@ $(function () {
         article_display: $("#div_article_display"),
         articles: $("#div_articles"),
         sidebarMenuButton: $("#div_sidebarMenuButton"),
+        senderInfos: $("#div_senderInfos"),
         answererInfos: $("#div_answererInfos"),
+        demandInfos: $("#div_demandInfos"),
         backButton: $("#div_backButton"),
         panelTitle: $("#div_panelTitle"),
         senderInfos_inputs: $("#div_senderInfos_inputs"),
@@ -170,11 +172,11 @@ $(function () {
             formStatus,
             async (infosOfLastClickedArticle) => {
                 div.demandInfos_inputs.find("#" + inpt_id.yachtName).val(
-                    getDefaultValueIfValueNull(infosOfLastClickedArticle.yachtName));
+                    getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtName));
                 div.demandInfos_inputs.find("#" + inpt_id.yachtType).val(
-                    getDefaultValueIfValueNull(infosOfLastClickedArticle.yachtType));
+                    getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtType));
                 div.demandInfos_inputs.find("#" + inpt_id.flag).val(
-                    getDefaultValueIfValueNull(infosOfLastClickedArticle.flag));
+                    getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.flag));
                 div.demandInfos_inputs.find("#" + inpt_id.isDutyPaid).val(infosOfLastClickedArticle.isDutyPaid);
                 div.demandInfos_inputs.find("#" + inpt_id.mgo).val(infosOfLastClickedArticle.mgo);
                 div.demandInfos_inputs.find("#" + inpt_id.ago).val(infosOfLastClickedArticle.ago);
@@ -190,7 +192,7 @@ $(function () {
                         new Date(infosOfLastClickedArticle.createdDate),
                         { hours: true, minutes: true, seconds: false }));
                 div.demandInfos_inputs.find("#" + txt_id.notes).val(
-                    getDefaultValueIfValueNull(infosOfLastClickedArticle.notes));
+                    getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.notes));
             }  // populate demand inputs
         );
     })
@@ -207,6 +209,9 @@ $(function () {
             div.panelTitle,
             div.article_update,
             div.article_display,
+            div.senderInfos,
+            div.answererInfos,
+            div.demandInfos,
             div.senderInfos_inputs,
             div.answererInfos_inputs,
             div.demandInfos_inputs,
@@ -261,9 +266,9 @@ $(function () {
 
                     div_article_info.append(`
                         <div>
-                            <h2>${getDefaultValueIfValueNull(demandInfos.flag)}</h2>
-                            <h3 style="margin-top:3px">${getDefaultValueIfValueNull(demandInfos.yachtType)}</h3 >
-                            <h4 style="margin-top:2px">${getDefaultValueIfValueNull(demandInfos.yachtName)}</h4>
+                            <h2>${getDefaultValueIfValueNullOrEmpty(demandInfos.flag)}</h2>
+                            <h3 style="margin-top:3px">${getDefaultValueIfValueNullOrEmpty(demandInfos.yachtType)}</h3 >
+                            <h4 style="margin-top:2px">${getDefaultValueIfValueNullOrEmpty(demandInfos.yachtName)}</h4>
                             <h4 style="margin-top:20px">${demandInfos.nameSurname}</h4>
                             <h6 style="margin-top:10px">${demandInfos.notes.substring(0, 200)}...</h6>
                         </div>

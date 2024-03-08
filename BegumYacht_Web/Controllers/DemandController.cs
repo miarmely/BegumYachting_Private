@@ -4,14 +4,8 @@ namespace BegumYacht_Web.Controllers
 {
     public class DemandController : Controller
     {
-        public IActionResult FuelPurchase()
-        {
-            return View();
-        }
-
-        public IActionResult CheckinAndCheckout()
-        {
-            return View();
-        }
+        public IActionResult FuelPurchase() => View();
+        public IActionResult CheckinAndCheckout() => View();
+        public IActionResult BerthReservation() => View();
     }
 }

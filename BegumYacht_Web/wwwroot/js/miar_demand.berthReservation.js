@@ -3,9 +3,9 @@ import { convertDateToStrDateAsync, getPassedTimeInStringAsync } from "./miar_mo
 import { addCriticalSectionAsync, shiftTheChildDivToBottomOfParentDivAsync } from "./miar_module.js"
 
 import {
-    addImageToArticleAsync, beforePopulateAsync, click_articleAsync,
+    addImageToArticleAsync, beforePopulateAsync, click_articleAsync, resize_windowAsync,
     click_backButtonAsync, click_InfoDivAsync, getDefaultValueIfValueNullOrEmpty,
-    populateArticlesAsync, addInputsToInfoDivsAsync, resize_windowAsync
+    populateArticlesAsync, addInputsToInfoDivsAsync
 } from "./miar_demand.js"
 
 import {
@@ -65,11 +65,13 @@ $(function () {
         ["input", "text", "yachtType", "Yat Tipi", false, "readonly", [div_demandInfos_inputs]],
         ["input", "text", "yachtName", "Yat Adı", false, "readonly", [div_demandInfos_inputs]],
         ["input", "text", "flag", "Bayrak", false, "readonly", [div_demandInfos_inputs]],
+        ["input", "text", "marinaName", "Marina Adı", false, "readonly", [div_demandInfos_inputs]],
         ["input", "text", "checkinDate", "Giriş Tarihi", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "arrivalPort", "Giriş Yeri", false, "readonly", [div_demandInfos_inputs]],
         ["input", "text", "checkoutDate", "Çıkış Tarihi", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "departurePort", "Varış Yeri", false, "readonly", [div_demandInfos_inputs]],
+        ["input", "text", "requestShorePower", "İstenen Elektrik Gücü", false, "readonly", [div_demandInfos_inputs]],
+        ["input", "text", "accountOps", "Ücretin Ödeneceği Hesap", true, "readonly", [div_demandInfos_inputs]],
         ["input", "text", "createdDate", "Talep Tarihi", false, "readonly", [div_demandInfos_inputs]],
+        ["textarea", "notes", "Notlar", false, "readonly", [div_demandInfos_inputs]],
     ];
     const inpt_id = {
         nameSurname: "inpt_nameSurname",
@@ -85,10 +87,14 @@ $(function () {
         yachtName: "inpt_yachtName",
         yachtType: "inpt_yachtType",
         flag: "inpt_flag",
+        marinaName: "inpt_marinaName",
         checkinDate: "inpt_checkinDate",
-        arrivalPort: "inpt_arrivalPort",
         checkoutDate: "inpt_checkoutDate",
-        departurePort: "inpt_departurePort"
+        requestShorePower: "inpt_requestShorePower",
+        accountOps: "inpt_accountOps",
+    };
+    const txt_id = {
+        notes: "txt_notes"
     };
     let articleIdsAndInfos = {};
     let formStatus = "Unanswered";
@@ -124,12 +130,12 @@ $(function () {
     ul_pagination.click(async (event) => {
         await click_ul_paginationAsync(
             event,
-            populateCheckinAndCheckoutArticlesAsync);
+            populateDemandArticlesAsync);
     })
     ul_pagination.keyup(async (event) => {
         await keyup_ul_paginationAsync(
             event,
-            populateCheckinAndCheckoutArticlesAsync);
+            populateDemandArticlesAsync);
     })
     slct.article_submenu_display.change(async () => {
         //#region show/hide anserer infos <div>
@@ -145,7 +151,7 @@ $(function () {
             div.answererInfos.attr("hidden", "");
         //#endregion
 
-        await populateCheckinAndCheckoutArticlesAsync();
+        await populateDemandArticlesAsync();
     })  // DISABLED
     spn_eventManager.on("click_article", async (_, event) => {
         await click_articleAsync(
@@ -161,28 +167,49 @@ $(function () {
             btn.back,
             formStatus,
             async (infosOfLastClickedArticle) => {
-                div.demandInfos_inputs.find("#" + inpt_id.yachtName).val(
-                    getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtName));
-                div.demandInfos_inputs.find("#" + inpt_id.yachtType).val(
-                    getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtType));
-                div.demandInfos_inputs.find("#" + inpt_id.flag).val(
-                    getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.flag));
-                div.demandInfos_inputs.find("#" + inpt_id.checkinDate).val(
-                    await convertDateToStrDateAsync(
-                        new Date(infosOfLastClickedArticle.checkInDate),
-                        { hours: true, minutes: true, seconds: false }));
-                div.demandInfos_inputs.find("#" + inpt_id.arrivalPort).val(
-                    infosOfLastClickedArticle.arrivalPort);
-                div.demandInfos_inputs.find("#" + inpt_id.checkoutDate).val(
-                    await convertDateToStrDateAsync(
-                        new Date(infosOfLastClickedArticle.checkOutDate),
-                        { hours: true, minutes: true, seconds: false }));
-                div.demandInfos_inputs.find("#" + inpt_id.departurePort).val(
-                    infosOfLastClickedArticle.departurePort);
-                div.demandInfos_inputs.find("#" + inpt_id.createdDate).val(
-                    await convertDateToStrDateAsync(
-                        new Date(infosOfLastClickedArticle.createdDate),
-                        { hours: true, minutes: true, seconds: false }));
+                //#region set form infos
+                let checkinDateInStr = getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.checkinDate);
+                let checkoutDateInStr = getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.checkoutDate);
+                let createdDateInStr = getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.createdDate);
+
+                let formInfos = {
+                    yachtName: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtName),
+                    yachtType: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtType),
+                    flag: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.flag),
+                    marinaName: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.marinaName),
+                    checkinDate: (checkinDateInStr == infosOfLastClickedArticle.checkinDate ?
+                        await convertDateToStrDateAsync(
+                            new Date(checkinDateInStr),
+                            { hours: false, minutes: false, seconds: false }) // when date is not null or empty
+                        : checkinDateInStr),  // when date is null or empty
+                    checkoutDate: (checkoutDateInStr == infosOfLastClickedArticle.checkoutDate ?
+                        await convertDateToStrDateAsync(
+                            new Date(checkoutDateInStr),
+                            { hours: false, minutes: false, seconds: false }) // when date is not null or empty
+                        : checkoutDateInStr),  // when date is null or empty
+                    requestShorePower: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.requestShorePower),
+                    accountOps: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.accountOps),
+                    createdDate: (createdDateInStr == infosOfLastClickedArticle.createdDate ?
+                        await convertDateToStrDateAsync(
+                            new Date(createdDateInStr),
+                            { hours: true, minutes: true, seconds: false }) // when date is not null or empty
+                        : createdDateInStr),  // when date is null or empty,
+                    notes: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.notes)
+                };
+                //#endregion
+
+                //#region populate inputs
+                div.demandInfos_inputs.find("#" + inpt_id.yachtType).val(formInfos.yachtType);
+                div.demandInfos_inputs.find("#" + inpt_id.yachtName).val(formInfos.yachtName);
+                div.demandInfos_inputs.find("#" + inpt_id.flag).val(formInfos.flag);
+                div.demandInfos_inputs.find("#" + inpt_id.marinaName).val(formInfos.marinaName);
+                div.demandInfos_inputs.find("#" + inpt_id.checkinDate).val(formInfos.checkinDate);
+                div.demandInfos_inputs.find("#" + inpt_id.checkoutDate).val(formInfos.checkoutDate);
+                div.demandInfos_inputs.find("#" + inpt_id.requestShorePower).val(formInfos.requestShorePower);
+                div.demandInfos_inputs.find("#" + inpt_id.accountOps).val(formInfos.accountOps);
+                div.demandInfos_inputs.find("#" + inpt_id.createdDate).val(formInfos.createdDate);
+                div.demandInfos_inputs.find("#" + txt_id.notes).val(formInfos.notes);
+                //#endregion
             }  // populate demand inputs
         );
     })
@@ -214,22 +241,23 @@ $(function () {
 
     //#region functions
     async function setupPageAsync() {
-        await beforePopulateAsync(300, 400, div.articles);
-        await populateCheckinAndCheckoutArticlesAsync();
+        await beforePopulateAsync(300, 550, div.articles);
+        await populateDemandArticlesAsync();
         await addInputsToInfoDivsAsync(inputInfos);
         await populateInfoMessagesAsync({
             div_senderInfos: ["Şeklin üzerine tıklayarak talebi gönderen personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
             div_answererInfos: ["Şeklin üzerine tıklayarak talebe cevap veren personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
             div_demandInfos: ["Şeklin üzerine tıklayarak talep bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
+            div_accountOps: ["Marina ücretinin yatın hesabına mı yoksa müşterinin hesabına mı ekleneceğidir."]
         });
     }
-    async function populateCheckinAndCheckoutArticlesAsync() {
+    async function populateDemandArticlesAsync() {
         await populateArticlesAsync(
-            "/adminPanel/checkinAndCheckout/filter?" + (
+            "/adminPanel/berthReservation/filter?" + (
                 `pageSize=${pagingBuffer.pageSize}` +
                 `&pageNumber=${pagingBuffer.pageNumber}` +
                 `&formStatus=${formStatus}`),
-            headerKeys.checkinAndCheckout,
+            headerKeys.berthReservation,
             lbl.entityQuantity,
             async (demands) => {
                 for (let index in demands) {
@@ -245,8 +273,37 @@ $(function () {
                     await addImageToArticleAsync(
                         articleId,
                         demandInfos.yachtType,
-                        55 / 100,
-                        70 / 100);
+                        65 / 100,
+                        65 / 100);
+
+                    //#region set article Infos 
+                    let checkinDateInStr = getDefaultValueIfValueNullOrEmpty(demandInfos.checkinDate);
+                    let checkoutDateInStr = getDefaultValueIfValueNullOrEmpty(demandInfos.checkoutDate);
+                    let notes = getDefaultValueIfValueNullOrEmpty(demandInfos.notes);
+
+                    let articleInfos = {
+                        marinaName: getDefaultValueIfValueNullOrEmpty(demandInfos.marinaName),
+                        checkinDate: (checkinDateInStr == demandInfos.checkinDate ?
+                            await convertDateToStrDateAsync(
+                                new Date(demandInfos.checkinDate),
+                                { hours: true, minutes: true, seconds: false })  // when date is not null or empty
+                            : checkinDateInStr),  // when date is null or empty
+                        checkoutDate: (checkoutDateInStr == demandInfos.checkoutDate ?
+                            await convertDateToStrDateAsync(
+                                new Date(demandInfos.checkoutDate),
+                                { hours: true, minutes: true, seconds: false })
+                            : checkoutDateInStr),
+                        yachtType: getDefaultValueIfValueNullOrEmpty(demandInfos.yachtType),
+                        yachtName: getDefaultValueIfValueNullOrEmpty(demandInfos.yachtName),
+                        requestShorePower: getDefaultValueIfValueNullOrEmpty(demandInfos.requestShorePower),
+                        accountOps: getDefaultValueIfValueNullOrEmpty(demandInfos.accountOps),
+                        nameSurname: getDefaultValueIfValueNullOrEmpty(demandInfos.nameSurname),
+                        notes: (notes == demandInfos.notes ?
+                            notes.substring(0, 200) // when notes is not null or empty
+                            : notes),  // when notes is null or empty                            
+                        passedTime: await getPassedTimeInStringAsync(null, demandInfos.createdDate)
+                    };
+                    //#endregion
 
                     //#region add article infos 
                     let div_article_info = article.children("#" + div_article_info_id);
@@ -254,13 +311,13 @@ $(function () {
 
                     div_article_info.append(`
                         <div>
-                            <h3>Giriş: ${demandInfos.arrivalPort}</h3>
-                            <h3>Çıkış: ${demandInfos.departurePort}</h3>
-                            <h4 style="margin-top:15px">${getDefaultValueIfValueNullOrEmpty(demandInfos.yachtType)}</h3 >
-                            <h4 style="margin-top:2px">${getDefaultValueIfValueNullOrEmpty(demandInfos.yachtName)}</h5>
-                            <h5 style="margin-top:10px; font-size: 14.5px">${demandInfos.nameSurname}</h5>
+                            <h2>${articleInfos.marinaName}</h2>
+                            <h3 style="margin-top:15px">${articleInfos.yachtType}</h3>
+                            <h3 style="margin-top:2px">${articleInfos.yachtName}</h3>
+                            <h4 style="margin-top:20px; font-size: 14.5px">${articleInfos.nameSurname}</h4>
+                            <h6 style="margin-top:10px">${articleInfos.notes}</h6>
                         </div>
-                        <div id="${div_passedTime_id}">${await getPassedTimeInStringAsync(null, demandInfos.createdDate)}</div>
+                        <div id="${div_passedTime_id}">${articleInfos.passedTime}</div>
                     `);
                     //#endregion
 

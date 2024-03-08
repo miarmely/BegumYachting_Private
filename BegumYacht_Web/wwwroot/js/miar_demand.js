@@ -76,6 +76,9 @@ export async function click_backButtonAsync(
     div_panelTitle,
     div_article_update,
     div_article_display,
+    div_senderInfos,
+    div_answererInfos,
+    div_demandInfos,
     div_senderInfos_inputs,
     div_answererInfos_inputs,
     div_demandInfos_inputs,
@@ -87,10 +90,22 @@ export async function click_backButtonAsync(
         div_panelTitle,
         btn_back);
 
-    //#region hide info <div>s
+    //#region reset info <div>s
+    // hide <div>s
     div_senderInfos_inputs.attr("hidden", "");
     div_answererInfos_inputs.attr("hidden", "");
     div_demandInfos_inputs.attr("hidden", "");
+
+    // change "Gizle" text to "Görüntüle" text of <div>s
+    updateElementText(
+        div_senderInfos.find("h4 span"),
+        "Görüntüle");
+    updateElementText(
+        div_answererInfos.find("h4 span"),
+        "Görüntüle");
+    updateElementText(
+        div_demandInfos.find("h4 span"),
+        "Görüntüle");
     //#endregion
 
     //#region show user display page
@@ -220,6 +235,70 @@ export async function populateArticlesAsync(
         })
     });  // populate article
 }
+export async function populateSenderInfosAsync(inputIds, div_senderInfos_inputs) {
+    // get senderer infos and add to inputs
+    $.ajax({
+        method: "GET",
+        url: (baseApiUrl + "/adminPanel/userDisplay/id?" +
+            `userId=${infosOfLastClickedArticle.userId}` +
+            `&checkIsDeleted=false`),
+        contentType: "application/json",
+        dataType: "json",
+        success: (senderInfos) => {
+            //#region populate inputs
+            div_senderInfos_inputs.find("#" + inputIds.nameSurname).val(senderInfos.nameSurname);
+            div_senderInfos_inputs.find("#" + inputIds.phone).val(senderInfos.phoneNumber);
+            div_senderInfos_inputs.find("#" + inputIds.email).val(senderInfos.email);
+            div_senderInfos_inputs.find("#" + inputIds.newPassportNo).val(
+                getDefaultValueIfValueNullOrEmpty(senderInfos.newPassportNo));
+            div_senderInfos_inputs.find("#" + inputIds.oldPassportNo).val(
+                getDefaultValueIfValueNullOrEmpty(senderInfos.oldPassportNo));
+            div_senderInfos_inputs.find("#" + inputIds.rank).val(
+                getDefaultValueIfValueNullOrEmpty(senderInfos.rank));
+            div_senderInfos_inputs.find("#" + inputIds.nationality).val(
+                getDefaultValueIfValueNullOrEmpty(senderInfos.nationality));
+            div_senderInfos_inputs.find("#" + inputIds.gender).val(
+            getDefaultValueIfValueNullOrEmpty(senderInfos.gender));
+            //#endregion
+        },
+    })
+}
+export async function populateAnswererInfosAsync(div_answererInfos_inputs) {
+    // get answerer infos and add to inputs
+    $.ajax({
+        method: "GET",
+        url: (baseApiUrl + "/adminPanel/userDisplay/id?" +
+            `userId=${infosOfLastClickedArticle.answererId}` +
+            `&checkIsDeleted=false`),
+        contentType: "application/json",
+        dataType: "json",
+        success: (answererInfos) => {
+            //#region populate inputs
+            new Promise(async resolve => {
+                div_answererInfos_inputs.find("#" + inputIds.nameSurname).val(answererInfos.nameSurname);
+                div_answererInfos_inputs.find("#" + inputIds.phone).val(answererInfos.phoneNumber);
+                div_answererInfos_inputs.find("#" + inputIds.email).val(answererInfos.email);
+                div_answererInfos_inputs.find("#" + inputIds.newPassportNo).val(
+                    getDefaultValueIfValueNullOrEmpty(answererInfos.newPassportNo));
+                div_answererInfos_inputs.find("#" + inputIds.oldPassportNo).val(
+                    getDefaultValueIfValueNullOrEmpty(answererInfos.oldPassportNo));
+                div_answererInfos_inputs.find("#" + inputIds.rank).val(
+                    getDefaultValueIfValueNullOrEmpty(answererInfos.rank));
+                div_answererInfos_inputs.find("#" + inputIds.nationality).val(
+                    getDefaultValueIfValueNullOrEmpty(answererInfos.nationality));
+                div_answererInfos_inputs.find("#" + inputIds.gender).val(
+                    getDefaultValueIfValueNullOrEmpty(answererInfos.gender));
+                div_answererInfos_inputs.find("#" + inputIds.answeredDate).val(
+                    await convertStrUtcDateToStrLocalDateAsync(
+                        infosOfLastClickedArticle.answeredDate,
+                        { hours: true, minutes: true, seconds: false }));
+
+                resolve();
+            });
+            //#endregion
+        },
+    })
+}
 export async function addInputsToInfoDivsAsync(inputInfos) {
     //#region add inputs to form
     for (let index in inputInfos) {
@@ -299,70 +378,6 @@ export async function addInputsToInfoDivsAsync(inputInfos) {
     }
     //#endregion
 }
-export async function populateSenderInfosAsync(inputIds, div_senderInfos_inputs) {
-    // get senderer infos and add to inputs
-    $.ajax({
-        method: "GET",
-        url: (baseApiUrl + "/adminPanel/userDisplay/id?" +
-            `userId=${infosOfLastClickedArticle.userId}` +
-            `&checkIsDeleted=false`),
-        contentType: "application/json",
-        dataType: "json",
-        success: (senderInfos) => {
-            //#region populate inputs
-            div_senderInfos_inputs.find("#" + inputIds.nameSurname).val(senderInfos.nameSurname);
-            div_senderInfos_inputs.find("#" + inputIds.phone).val(senderInfos.phoneNumber);
-            div_senderInfos_inputs.find("#" + inputIds.email).val(senderInfos.email);
-            div_senderInfos_inputs.find("#" + inputIds.newPassportNo).val(
-                getDefaultValueIfValueNull(senderInfos.newPassportNo));
-            div_senderInfos_inputs.find("#" + inputIds.oldPassportNo).val(
-                getDefaultValueIfValueNull(senderInfos.oldPassportNo));
-            div_senderInfos_inputs.find("#" + inputIds.rank).val(
-                getDefaultValueIfValueNull(senderInfos.rank));
-            div_senderInfos_inputs.find("#" + inputIds.nationality).val(
-                getDefaultValueIfValueNull(senderInfos.nationality));
-            div_senderInfos_inputs.find("#" + inputIds.gender).val(
-            getDefaultValueIfValueNull(senderInfos.gender));
-            //#endregion
-        },
-    })
-}
-export async function populateAnswererInfosAsync(div_answererInfos_inputs) {
-    // get answerer infos and add to inputs
-    $.ajax({
-        method: "GET",
-        url: (baseApiUrl + "/adminPanel/userDisplay/id?" +
-            `userId=${infosOfLastClickedArticle.answererId}` +
-            `&checkIsDeleted=false`),
-        contentType: "application/json",
-        dataType: "json",
-        success: (answererInfos) => {
-            //#region populate inputs
-            new Promise(async resolve => {
-                div_answererInfos_inputs.find("#" + inputIds.nameSurname).val(answererInfos.nameSurname);
-                div_answererInfos_inputs.find("#" + inputIds.phone).val(answererInfos.phoneNumber);
-                div_answererInfos_inputs.find("#" + inputIds.email).val(answererInfos.email);
-                div_answererInfos_inputs.find("#" + inputIds.newPassportNo).val(
-                    getDefaultValueIfValueNull(answererInfos.newPassportNo));
-                div_answererInfos_inputs.find("#" + inputIds.oldPassportNo).val(
-                    getDefaultValueIfValueNull(answererInfos.oldPassportNo));
-                div_answererInfos_inputs.find("#" + inputIds.rank).val(
-                    getDefaultValueIfValueNull(answererInfos.rank));
-                div_answererInfos_inputs.find("#" + inputIds.nationality).val(
-                    getDefaultValueIfValueNull(answererInfos.nationality));
-                div_answererInfos_inputs.find("#" + inputIds.gender).val(
-                    getDefaultValueIfValueNull(answererInfos.gender));
-                div_answererInfos_inputs.find("#" + inputIds.answeredDate).val(
-                    await convertStrUtcDateToStrLocalDateAsync(
-                        infosOfLastClickedArticle.answeredDate,
-                        { hours: true, minutes: true, seconds: false }));
-
-                resolve();
-            });
-            //#endregion
-        },
-    })
-}
 export async function updateEntityQuantityAsync(lbl_entityQuantity, newQuantity) {
     let b_entityQuantity = lbl_entityQuantity.children("b");
 
@@ -428,7 +443,9 @@ export async function resetDivArticlesAsync() {
     articleBuffer.div_articles.empty();
     articleBuffer.div_articles.removeAttr("style");
 }
-export function getDefaultValueIfValueNull(value) {
-    return value == null ? "Girilmedi" : value;
+export function getDefaultValueIfValueNullOrEmpty(value) {
+    return value == null || value == "" ?
+        "Girilmedi"
+        : value;
 }
 //#endregion

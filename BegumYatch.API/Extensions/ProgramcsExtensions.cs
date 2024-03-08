@@ -44,7 +44,8 @@ namespace BegumYatch.API.Extensions
                         .AllowAnyHeader()
                         .WithExposedHeaders(
                             "Demand-FuelPurchase",
-                            "Demand-Checkinandcheckout");
+                            "Demand-CheckinAndCheckout",
+                            "Demand-BerthReservation");
                 });
             });
         #endregion

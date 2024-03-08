@@ -32,7 +32,7 @@ using System.Threading.Tasks;
 
 namespace BegumYatch.Service.Services
 {
-    public partial class FuelPurchaseDemandService
+    public class FuelPurchaseDemandService
         : Service<FuelPurchaseDemand>, IFuelPurchaseDemandService
     {
         private readonly IGenericRepository<FuelPurchaseDemand> _fuelPurchaseDemandRepository;
@@ -122,56 +122,6 @@ namespace BegumYatch.Service.Services
                 return fuelPurchaseDto;
             else
                 return null;
-        }
-    }
-
-    public partial class FuelPurchaseDemandService  // By MERT
-    {
-        public async Task<PagingList<FuelPurchaseDemandModel>> GetFormsByStatusAsync(
-            FormParamsForDisplayFormByStatus formParams,
-            HttpContext context)
-        {
-            #region set sql command
-            var totalCount = new SqlParameter("@TotalCount", SqlDbType.Int)
-            {
-                Direction = ParameterDirection.Output
-            };
-            var sql = "EXEC Demand_FuelPurchase_GetFormsByStatus " +
-                "@StatusId = {0}, " +
-                "@PageSize = {1}, " +
-                "@PageNumber = {2}, " +
-                "@TotalCount = {3} OUT";
-            #endregion
-
-            #region get accepted/rejected demands (THROW)
-            var demands = await _fuelPurchaseDemandRepository
-                .FromSqlRawAsync<FuelPurchaseDemandModel>(
-                    sql,
-                    formParams.FormStatus,
-                    formParams.PageSize,
-                    formParams.PageNumber,
-                    totalCount);
-
-            if (demands.Count == 0)
-                throw new MiarException(
-                    404,
-                    "NF-D-FP",
-                    "Not Found - Demand - Fuel Purchase",
-                    "form bulunamadı");
-            #endregion
-
-            #region save paging infos to header
-            var demandPagingList = await PagingList<FuelPurchaseDemandModel>
-                .ToPagingListAsync(
-                    demands,
-                    (int)totalCount.Value,
-                    formParams.PageNumber,
-                    formParams.PageSize,
-                    "Demand-FuelPurchase",
-                    context);
-            #endregion
-
-            return demandPagingList;
         }
     }
 }

@@ -104,7 +104,11 @@ builder.Services.ConfigureApplicationCookie(opt =>
         opt.ExpireTimeSpan = TimeSpan.FromDays(60);
         opt.SlidingExpiration = true;
     });
-builder.Services.ConfigureCors(); // By MERT
+
+#region By MERT
+builder.Services.AddScoped<IBaseDemandService, BaseDemandService>();
+builder.Services.ConfigureCors();
+#endregion
 
 var app = builder.Build();
 

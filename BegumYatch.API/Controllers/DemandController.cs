@@ -26,10 +26,13 @@ namespace BegumYatch.API.Controllers
         private readonly IFileOperationService _fileOperationService;
         private readonly ITechnicalAssitanceandSparePartOrderService _technicalAssitanceandSparePartOrderService;
         private readonly IProvisionOrderService _provisionOrderService;
-        private readonly ICheckinAndCheckoutService _checkinAndCheckoutService;
+        
+        #region By MERT
+        private readonly IBaseDemandService _baseDemandService;
+        #endregion
 
 
-        public DemandController(IFuelPurchaseDemandService fuelPurchaseDemandService, IConciergeServiceDemandService conciergeService, IExcursionDemandService excursionDemandService, ISecurityServiceDemandService securityServiceDemandService, IFileOperationService fileOperationService, ITechnicalAssitanceandSparePartOrderService technicalAssitanceandSparePartOrderService, IProvisionOrderService provisionOrderService, ICheckinAndCheckoutService checkinAndCheckoutService)
+        public DemandController(IFuelPurchaseDemandService fuelPurchaseDemandService, IConciergeServiceDemandService conciergeService, IExcursionDemandService excursionDemandService, ISecurityServiceDemandService securityServiceDemandService, IFileOperationService fileOperationService, ITechnicalAssitanceandSparePartOrderService technicalAssitanceandSparePartOrderService, IProvisionOrderService provisionOrderService, IBaseDemandService baseDemandService)
         {
             _fuelPurchaseDemandService = fuelPurchaseDemandService;
             _conciergeService = conciergeService;
@@ -38,7 +41,7 @@ namespace BegumYatch.API.Controllers
             _fileOperationService = fileOperationService;
             _technicalAssitanceandSparePartOrderService = technicalAssitanceandSparePartOrderService;
             _provisionOrderService = provisionOrderService;
-            _checkinAndCheckoutService = checkinAndCheckoutService;
+            _baseDemandService = baseDemandService;
         }
 
 
@@ -215,9 +218,12 @@ namespace BegumYatch.API.Controllers
         public async Task<IActionResult> GetFuelPurchaseDemandsByFilter(
             [FromQuery] FormParamsForDisplayFormByStatus formParams)
         {
-            var demands = await  _fuelPurchaseDemandService.GetFormsByStatusAsync(
-                formParams, 
-                HttpContext);
+            var demands = await _baseDemandService
+                .GetFormsByStatusAsync<FuelPurchaseDemandModel>(
+                    formParams,
+                    "Demand_FuelPurchase_GetFormsByStatus",
+                    "fuelPurchase",
+                    HttpContext);
 
             return Ok(demands);
         }
@@ -227,9 +233,27 @@ namespace BegumYatch.API.Controllers
         public async Task<IActionResult> GetCheckinAndCheckoutDemandsByFilter(
             [FromQuery] FormParamsForDisplayFormByStatus formParams)
         {
-            var demands = await _checkinAndCheckoutService.GetFormsByStatusAsync(
-                formParams,
-                HttpContext);
+            var demands = await _baseDemandService
+                .GetFormsByStatusAsync<CheckinAndCheckoutDemandModel>(
+                    formParams,
+                    "Demand_CheckInAndOut_GetFormsByStatus",
+                    "CheckinAndCheckout",
+                    HttpContext);
+                
+            return Ok(demands);
+        }
+
+
+        [HttpGet("adminPanel/berthReservation/filter")]
+        public async Task<IActionResult> GetBerthReservationDemandsByFilter(
+            [FromQuery] FormParamsForDisplayFormByStatus formParams)
+        {
+            var demands = await _baseDemandService
+                .GetFormsByStatusAsync<BerthReservationDemandModel>(
+                    formParams,
+                    "Demand_BerthReservation_GetFormsByStatus",
+                    "BerthReservation",
+                    HttpContext);
 
             return Ok(demands);
         }

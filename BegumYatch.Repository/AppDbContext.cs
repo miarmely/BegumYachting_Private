@@ -120,5 +120,6 @@ namespace BegumYatch.Repository
             { get; set; }
         public DbSet<CheckinAndCheckoutDemandModel> CheckinAndCheckoutDemands 
             { get; set; }
+        public DbSet<BerthReservationDemandModel> BerthReservationDemands { get; set; }
     }
 }

@@ -16,6 +16,40 @@
         seconds: seconds < 10 ? '0' + seconds : seconds,
     };
 }
+export async function convertDateToStrDateAsync(
+    dateTime,
+    add = { hours: true, minutes: true, seconds: true }) {
+    //#region set date format options
+    let formatOptions = {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+    };
+    if (add.hours) {
+        formatOptions["hour"] = "2-digit";
+        formatOptions["hour12"] = false;
+    }
+    if (add.minutes) formatOptions["minute"] = "2-digit";
+    if (add.seconds) formatOptions["second"] = "2-digit";
+    //#endregion
+
+    //#region if time is "24:00", change it to "00:00"
+    let dateInStr = dateTime.toLocaleString(
+        window.navigator.language,
+        formatOptions);
+    let hourInStr = dateInStr.substring(
+        dateInStr.indexOf(",") + 2);
+
+    if (hourInStr == "24:00") {
+        dateInStr = dateInStr.replace("24:00", "00:00");
+    }
+    else if (hourInStr == "24:00:00") {
+        dateInStr = dateInStr.replace("24:00:00", "00:00:00");
+    }
+    //#endregion
+
+    return dateInStr.replace(", ", "__");  // "12.03.2002, 13:00:00" ~~> "12.03.2002__13:00:00" ;
+}
 export async function convertStrUtcDateToStrLocalDateAsync(
     utcDateTimeInStr,
     add = {hours: true, minutes: true, seconds: true}) {
@@ -97,33 +131,6 @@ export async function convertUtcDateToLocalDateAsync(utcDate) {
         dateInfos.seconds);
 
     return new Date(localDateInNumber);
-}
-export async function convertDateToStrDateAsync(
-    dateTime,
-    add = { hours: true, minutes: true, seconds: true }) {
-    //#region set date format options
-    let formatOptions = {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-    };
-    if (add.hours) {
-        formatOptions["hour"] = "2-digit";
-        formatOptions["hour12"] = false;
-    }
-    if (add.minutes) formatOptions["minute"] = "2-digit";
-    if (add.seconds) formatOptions["second"] = "2-digit";
-    //#endregion
-
-    //#region convert date to str date
-    let dateInStr = dateTime.toLocaleString(
-        window.navigator.language,
-        formatOptions);
-
-    dateInStr = dateInStr.replace(", ", "__");  // "12.03.2002, 13:00:00" ~~> "12.03.2002__13:00:00" 
-    //#endregion
-
-    return dateInStr;
 }
 export async function addValueToDateInputAsync(input, inputType, dateTime = null, dateTimeInStr = null) {
     // inputType? "datetime" | "date"

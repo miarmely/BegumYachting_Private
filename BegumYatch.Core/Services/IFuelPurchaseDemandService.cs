@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace BegumYatch.Core.Services
 {
-    public partial interface IFuelPurchaseDemandService : IService<FuelPurchaseDemand>
+    public interface IFuelPurchaseDemandService : IService<FuelPurchaseDemand>
     {
         Task AddFuelPurchaseDemand(AddFuelPurchaseDemandDto addFuelPurchaseDemandDto);
         Task<List<GetAllFuelPurchaseDemandsDto>> GetAllFuelPurchaseDemands(int userId);
@@ -23,13 +23,5 @@ namespace BegumYatch.Core.Services
         Task<string> AddDemands(CheckIn model);
         Task<List<GetFuelPurchaseDemandByIdandUserIdDto>> GetDemands();
         Task<CheckIn> GetAllInfo(int userId);
-
-    }
-
-    public partial interface IFuelPurchaseDemandService
-    {
-        Task<PagingList<FuelPurchaseDemandModel>> GetFormsByStatusAsync(
-            FormParamsForDisplayFormByStatus formParams,
-            HttpContext context);
     }
 }
