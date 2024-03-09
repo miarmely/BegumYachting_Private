@@ -11,18 +11,17 @@
 }
 
 .p_article:nth-child(3) {
-    font-size: 19px;
+    font-size: 18px;
     margin-top: 2px;
     font-weight: bolder;
 }
 
 .p_article:nth-child(4) {
-    font-size: 16.5px;
+    font-size: 16px;
     font-weight: bolder;
 }
 
 .p_article:nth-child(5) {
     font-size: 14.5px;
-    margin-top: 15px;
-    font-weight: bolder;
+    margin-top: 13px;
 }

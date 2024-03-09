@@ -174,7 +174,7 @@ $(function () {
                 //#region set form infos
                 let excursionDateInStr = getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.excursionDate);
                 let createdDateInStr = getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.createdDate);
-
+                
                 let formInfos = {
                     yachtName: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtName),
                     yachtType: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtType),
