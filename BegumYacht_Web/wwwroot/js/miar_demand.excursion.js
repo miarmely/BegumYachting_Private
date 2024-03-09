@@ -51,7 +51,7 @@ $(function () {
     const slct = {
         article_submenu_display: $("#slct_article_submenu_display")
     };
-    const formType = "VipTransferDemand";
+    const formType = "ExcursionDemand";
     const inputInfos = [
         ["input", "text", "nameSurname", "Ad Soyad", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],  // type for switch/case | type for switch/case | type for input | id | label name | info message | hidden/disabled/readonly of input | place to add
         ["input", "text", "phone", "Telefon", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
@@ -66,11 +66,12 @@ $(function () {
         ["input", "text", "yachtName", "Yat Adı", false, "readonly", [div_demandInfos_inputs]],
         ["input", "text", "flag", "Bayrak", false, "readonly", [div_demandInfos_inputs]],
         ["input", "text", "vehicleType", "Araç Tipi", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "transferDate", "Transfer Tarihi", false, "readonly", [div_demandInfos_inputs]],
+        ["input", "text", "excursionDate", "Gezi Tarihi", false, "readonly", [div_demandInfos_inputs]],
         ["input", "text", "from", "Nereden", false, "readonly", [div_demandInfos_inputs]],
         ["input", "text", "to", "Nereye", false, "readonly", [div_demandInfos_inputs]],
         ["input", "text", "numberOfPeople", "Yolcu Sayısı", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "luggage", "Ek Bagaj Arabası", true, "readonly", [div_demandInfos_inputs]],
+        ["input", "text", "firstLanguage", "1. Dil", false, "readonly", [div_demandInfos_inputs]],
+        ["input", "text", "secondLanguage", "2. Dil", true, "readonly", [div_demandInfos_inputs]],
         ["input", "text", "accountOps", "Ücretin Ödeneceği Hesap", true, "readonly", [div_demandInfos_inputs]],
         ["input", "text", "createdDate", "Talep Tarihi", false, "readonly", [div_demandInfos_inputs]],
         ["textarea", "notes", "Notlar", false, "readonly", [div_demandInfos_inputs]],
@@ -89,11 +90,12 @@ $(function () {
         yachtType: "inpt_yachtType",
         flag: "inpt_flag",
         vehicleType: "inpt_vehicleType",
-        transferDate: "inpt_transferDate",
+        excursionDate: "inpt_excursionDate",
         from: "inpt_from",
         to: "inpt_to",
         numberOfPeople: "inpt_numberOfPeople",
-        luggage: "inpt_luggage",
+        firstLanguage: "inpt_firstLanguage",
+        secondLanguage: "inpt_secondLanguage",
         accountOps: "inpt_accountOps",
         createdDate: "inpt_createdDate",
         notes: "txt_notes"
@@ -170,7 +172,7 @@ $(function () {
             formStatus,
             async (infosOfLastClickedArticle) => {
                 //#region set form infos
-                let transferDateInStr = getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.transferDate);
+                let excursionDateInStr = getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.excursionDate);
                 let createdDateInStr = getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.createdDate);
 
                 let formInfos = {
@@ -178,15 +180,16 @@ $(function () {
                     yachtType: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtType),
                     flag: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.flag),
                     vehicleType: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.vehicleType),
-                    transferDate: (transferDateInStr == infosOfLastClickedArticle.transferDate ?
+                    excursionDate: (excursionDateInStr == infosOfLastClickedArticle.excursionDate ?
                         await convertDateToStrDateAsync(
-                            new Date(transferDateInStr),
+                            new Date(excursionDateInStr),
                             { hours: false, minutes: false, seconds: false }) // when date is not null or empty
-                        : transferDateInStr),  // when date is null or empty
+                        : excursionDateInStr),  // when date is null or empty
                     from: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.from),
                     to: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.to),
                     numberOfPeople: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.numberOfPeople),
-                    luggage: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.luggage),
+                    firstLanguage: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.firstLanguage),
+                    secondLanguage: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.secondLanguage),
                     accountOps: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.accountOps),
                     createdDate: (createdDateInStr == infosOfLastClickedArticle.createdDate ?
                         await convertDateToStrDateAsync(
@@ -242,17 +245,17 @@ $(function () {
             div_senderInfos: ["Şeklin üzerine tıklayarak talebi gönderen personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
             div_answererInfos: ["Şeklin üzerine tıklayarak talebe cevap veren personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
             div_demandInfos: ["Şeklin üzerine tıklayarak talep bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
-            div_luggage: ["Ek bagaj arabasının istenip istenmediğidir."],
+            div_secondLanguage: ["İlk tercih edilen dilde, rehber müsait olmaması durumuna karşı ikinci dil tercihidir."],
             div_accountOps: ["Marina ücretinin yatın hesabına mı yoksa müşterinin hesabına mı ekleneceğidir."]
         });
     }
     async function populateDemandArticlesAsync() {
         await populateArticlesAsync(
-            "/adminPanel/vipTransfer/filter?" + (
+            "/adminPanel/excursion/filter?" + (
                 `pageSize=${pagingBuffer.pageSize}` +
                 `&pageNumber=${pagingBuffer.pageNumber}` +
                 `&formStatus=${formStatus}`),
-            headerKeys.vipTransfer,
+            headerKeys.excursion,
             lbl.entityQuantity,
             async (demands) => {
                 for (let index in demands) {

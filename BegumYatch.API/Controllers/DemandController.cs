@@ -272,5 +272,20 @@ namespace BegumYatch.API.Controllers
 
             return Ok(demands);
         }
+
+
+        [HttpGet("adminPanel/excursion/filter")]
+        public async Task<IActionResult> GetExcursionDemandsByFilter(
+            [FromQuery] FormParamsForDisplayFormByStatus formParams)
+        {
+            var demands = await _baseDemandService
+                .GetFormsByStatusAsync<ExcursionDemandModel>(
+                    formParams,
+                    "Demand_Excursion_GetFormsByStatus",
+                    "Excursion",
+                    HttpContext);
+
+            return Ok(demands);
+        }
     }
 }

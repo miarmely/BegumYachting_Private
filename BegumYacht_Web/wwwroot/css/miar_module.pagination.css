@@ -45,3 +45,7 @@
         position: relative;
         bottom: 1.1px;
     }
+
+    #a_infoMessage ul {
+        font-size: 14px;
+    }

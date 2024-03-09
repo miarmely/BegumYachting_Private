@@ -123,5 +123,6 @@ namespace BegumYatch.Repository
         public DbSet<BerthReservationDemandModel> BerthReservationDemands 
             { get; set; }
         public DbSet<VipTransferDemandModel> VipTransferDemandModels { get; set; }
+        public DbSet<ExcursionDemandModel> ExcursionDemandModels { get; set; }
     }
 }

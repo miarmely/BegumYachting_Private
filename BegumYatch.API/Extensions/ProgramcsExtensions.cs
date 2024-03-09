@@ -46,7 +46,8 @@ namespace BegumYatch.API.Extensions
                             "Demand-FuelPurchase",
                             "Demand-CheckinAndCheckout",
                             "Demand-BerthReservation",
-                            "Demand-VipTransfer");
+                            "Demand-VipTransfer",
+                            "Demand-Excursion" );
                 });
             });
         #endregion

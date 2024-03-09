@@ -8,5 +8,6 @@ namespace BegumYacht_Web.Controllers
         public IActionResult CheckinAndCheckout() => View();
         public IActionResult BerthReservation() => View();
         public IActionResult VipTransfer() => View();
+        public IActionResult Excursion() => View();
     }
 }
