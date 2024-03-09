@@ -51,7 +51,7 @@ $(function () {
     const slct = {
         article_submenu_display: $("#slct_article_submenu_display")
     };
-    const formType = "CheckinAndCheckoutDemand";
+    const formType = "BerthReservationDemand";
     const inputInfos = [
         ["input", "text", "nameSurname", "Ad Soyad", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],  // type for switch/case | type for switch/case | type for input | id | label name | info message | hidden/disabled/readonly of input | place to add
         ["input", "text", "phone", "Telefon", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
@@ -277,26 +277,12 @@ $(function () {
                         65 / 100);
 
                     //#region set article Infos 
-                    let checkinDateInStr = getDefaultValueIfValueNullOrEmpty(demandInfos.checkinDate);
-                    let checkoutDateInStr = getDefaultValueIfValueNullOrEmpty(demandInfos.checkoutDate);
                     let notes = getDefaultValueIfValueNullOrEmpty(demandInfos.notes);
 
                     let articleInfos = {
                         marinaName: getDefaultValueIfValueNullOrEmpty(demandInfos.marinaName),
-                        checkinDate: (checkinDateInStr == demandInfos.checkinDate ?
-                            await convertDateToStrDateAsync(
-                                new Date(demandInfos.checkinDate),
-                                { hours: true, minutes: true, seconds: false })  // when date is not null or empty
-                            : checkinDateInStr),  // when date is null or empty
-                        checkoutDate: (checkoutDateInStr == demandInfos.checkoutDate ?
-                            await convertDateToStrDateAsync(
-                                new Date(demandInfos.checkoutDate),
-                                { hours: true, minutes: true, seconds: false })
-                            : checkoutDateInStr),
                         yachtType: getDefaultValueIfValueNullOrEmpty(demandInfos.yachtType),
                         yachtName: getDefaultValueIfValueNullOrEmpty(demandInfos.yachtName),
-                        requestShorePower: getDefaultValueIfValueNullOrEmpty(demandInfos.requestShorePower),
-                        accountOps: getDefaultValueIfValueNullOrEmpty(demandInfos.accountOps),
                         nameSurname: getDefaultValueIfValueNullOrEmpty(demandInfos.nameSurname),
                         notes: (notes == demandInfos.notes ?
                             notes.substring(0, 200) // when notes is not null or empty

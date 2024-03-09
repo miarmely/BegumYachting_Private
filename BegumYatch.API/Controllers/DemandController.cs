@@ -257,5 +257,20 @@ namespace BegumYatch.API.Controllers
 
             return Ok(demands);
         }
+
+
+        [HttpGet("adminPanel/vipTransfer/filter")]
+        public async Task<IActionResult> GetVipTransferDemandsByFilter(
+            [FromQuery] FormParamsForDisplayFormByStatus formParams)
+        {
+            var demands = await _baseDemandService
+                .GetFormsByStatusAsync<VipTransferDemandModel>(
+                    formParams,
+                    "Demand_VipTransfer_GetFormsByStatus",
+                    "VipTransfer",
+                    HttpContext);
+
+            return Ok(demands);
+        }
     }
 }

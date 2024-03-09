@@ -263,7 +263,7 @@ export async function populateSenderInfosAsync(inputIds, div_senderInfos_inputs)
         },
     })
 }
-export async function populateAnswererInfosAsync(div_answererInfos_inputs) {
+export async function populateAnswererInfosAsync(inputIds, div_answererInfos_inputs) {
     // get answerer infos and add to inputs
     $.ajax({
         method: "GET",

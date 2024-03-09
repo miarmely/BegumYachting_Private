@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "t9/XZfElec/RjdS3jLxUWoRe+FLJANUPHsjhOrJ/1zM=",
+  "Hash": "eQk9PN77xUCugyIKAqpOZ7GbNELL3UFri5VohCGa/NI=",
   "Source": "BegumYacht_Web",
   "BasePath": "_content/BegumYacht_Web",
   "Mode": "Default",
@@ -253,6 +253,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\miar_demand.css"
+    },
+    {
+      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\css\\miar_demand.vipTransfer.css",
+      "SourceId": "BegumYacht_Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\",
+      "BasePath": "_content/BegumYacht_Web",
+      "RelativePath": "css/miar_demand.vipTransfer.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\miar_demand.vipTransfer.css"
     },
     {
       "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\css\\miar_login.css",
@@ -1222,6 +1239,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\js\\miar_demand.js"
+    },
+    {
+      "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\js\\miar_demand.vipTransfer.js",
+      "SourceId": "BegumYacht_Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\",
+      "BasePath": "_content/BegumYacht_Web",
+      "RelativePath": "js/miar_demand.vipTransfer.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\miar_demand.vipTransfer.js"
     },
     {
       "Identity": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\js\\miar_homePage.js",
