@@ -287,5 +287,35 @@ namespace BegumYatch.API.Controllers
 
             return Ok(demands);
         }
+
+
+        [HttpGet("adminPanel/conciergeService/filter")]
+        public async Task<IActionResult> GetConciergeServiceDemandsByFilter(
+            [FromQuery] FormParamsForDisplayFormByStatus formParams)
+        {
+            var demands = await _baseDemandService
+                .GetFormsByStatusAsync<ConciergeServiceDemandModel>(
+                    formParams,
+                    "Demand_ConciergeService_GetFormsByStatus",
+                    "ConciergeService",
+                    HttpContext);
+
+            return Ok(demands);
+        }
+
+
+        [HttpGet("adminPanel/securityAndProtectionService/filter")]
+        public async Task<IActionResult> GetSecurityAndProtectionServiceDemandsByFilter(
+            [FromQuery] FormParamsForDisplayFormByStatus formParams)
+        {
+            var demands = await _baseDemandService
+                .GetFormsByStatusAsync<SecurityAndProtectionServiceDemandModel>(
+                    formParams,
+                    "Demand_SecurityAndProtectionService_GetFormsByStatus",
+                    "SecurityAndProtectionService",
+                    HttpContext);
+
+            return Ok(demands);
+        }
     }
 }

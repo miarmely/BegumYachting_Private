@@ -49,12 +49,20 @@
       "PackagePath": "staticwebassets\\css\\login.css"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\css\\miar_demand.conciergeService.css",
+      "PackagePath": "staticwebassets\\css\\miar_demand.conciergeService.css"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\css\\miar_demand.css",
       "PackagePath": "staticwebassets\\css\\miar_demand.css"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\css\\miar_demand.excursion.css",
       "PackagePath": "staticwebassets\\css\\miar_demand.excursion.css"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\css\\miar_demand.securityAndProtectionService.css",
+      "PackagePath": "staticwebassets\\css\\miar_demand.securityAndProtectionService.css"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\css\\miar_demand.vipTransfer.css",
@@ -281,6 +289,10 @@
       "PackagePath": "staticwebassets\\js\\miar_demand.checkinAndCheckout.js"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\js\\miar_demand.conciergeService.js",
+      "PackagePath": "staticwebassets\\js\\miar_demand.conciergeService.js"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\js\\miar_demand.excursion.js",
       "PackagePath": "staticwebassets\\js\\miar_demand.excursion.js"
     },
@@ -291,6 +303,10 @@
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\js\\miar_demand.js",
       "PackagePath": "staticwebassets\\js\\miar_demand.js"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\js\\miar_demand.securityAndProtectionService.js",
+      "PackagePath": "staticwebassets\\js\\miar_demand.securityAndProtectionService.js"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\js\\miar_demand.vipTransfer.js",

@@ -1,0 +1,180 @@
+﻿<link rel="stylesheet" href="~/css/miar_demand.css" />
+<link rel="stylesheet" href="~/css/miar_demand.securityAndProtectionService.css" />
+<link rel="stylesheet" href="~/css/miar_module.article.css"/>
+<link rel="stylesheet" href="~/css/miar_module.pagination.css" />
+<link rel="stylesheet" href="~/css/miar_module.userForm.css" />
+
+
+<div class="table-agile-info">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div id="div_backButton" style="float:right" hidden>
+                <button id="btn_back" type="button" class="btn">
+                    <img src="~/images/close.png" alt="close"/>
+                </button>
+            </div>
+            <div id="div_panelTitle">GÜVENLİK VE KORUMA HİZMETİ TALEBİ</div>
+        </div>
+        <div class="panel-body">
+            <div id="div_article_update" hidden>
+                <form>
+                    <div id="div_form" class="form-horizontal bucket-form">
+                        @*display sender infos*@
+                        <div id="div_senderInfos" class="form-group text-center  div_infos">
+                            <div class="col-sm-3"></div>
+                            <div class="col-sm-6  div_infos_button">
+                                <img src="~/images/captain2.png"/>
+                                <h4>Gönderenin Bilgilerini <span>Görüntüle</span></h4>
+                            </div>
+                            <div class="col-sm-3"></div>
+                            <div class="col-sm-3 text-left div_infoMessage">
+                                <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+                                <ul role="menu" class="dropdown-menu"></ul>
+                            </div>   
+                        </div>
+                        <div id="div_senderInfos_inputs" class="div_infos_inputs" hidden></div>
+
+                        @*display answerer infos  (DISABLED)*@
+                        <div id="div_answererInfos" class="form-group text-center  div_infos" hidden>
+                            <div class="col-sm-3"></div>
+                            <div class="col-sm-6  div_infos_button">
+                                <img src="~/images/answerer_man2.png">
+                                <h4>Cevaplayanın Bilgilerini <span>Görüntüle</span></h4>
+                            </div>
+                            <div class="col-sm-3"></div>
+                            <div class="col-sm-3 text-left div_infoMessage">
+                                <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+                                <ul role="menu" class="dropdown-menu"></ul>
+                            </div>   
+                        </div>
+                        <div id="div_answererInfos_inputs" class="div_infos_inputs" hidden></div>
+
+                        @*display demand infos*@
+                        <div id="div_demandInfos" class="form-group text-center  div_infos">
+                            <div class="col-sm-3"></div>
+                            <div class="col-sm-6  div_infos_button">
+                                <img src="~/images/demandForm3.png"/>
+                                <h4>Talep Bilgilerini <span>Görüntüle</span></h4>
+                            </div>
+                            <div class="col-sm-3"></div>
+                            <div class="col-sm-3 text-left div_infoMessage">
+                                <button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+                                <ul role="menu" class="dropdown-menu"></ul>
+                            </div>   
+                        </div>
+                        <div id="div_demandInfos_inputs" class="div_infos_inputs" hidden></div>
+                        
+                        @*accept and reject buttons  (DISABLED)*@
+                        <div id="div_buttons" class="form-group" hidden>
+                            <div class="col-sm-6; text-center">
+                                <button id="btn_accept" type="button" class="btn btn-danger">Onayla</button>
+                                <button id="btn_reject" type="button" class="btn btn-danger">Reddet</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                @*result label  (DISABLED)*@
+                <div style="text-align:center">
+                    <p id="p_resultLabel"></p>
+                    <img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px" hidden/>
+                </div>
+            </div>
+            <div id="div_article_display">
+                @*article menubar*@
+                <div class="row w3-res-tb"  style="padding-top:10px">
+                    <div class="col-sm-5 m-b-xs">
+				        @*main menu*@
+                        <select id="slct_article_menu" class="input-sm form-control w-sm inline v-middle" style="float:left">
+                            <option value="display">Görüntüle</option>
+                            @*<option value="delete">Sil</option>  (DISABLED)*@
+                        </select>
+
+                        @*submenu of display option  (DISABLED) *@ 
+                        <div hidden>
+                            <select id="slct_article_submenu_display" class="input-sm form-control w-sm inline v-middle">
+                                <option value="Unanswered" checked>Cevaplanmamış</option>
+                                <option value="Accepted">Kabul Edilen</option>
+                                <option value="Rejected">Reddedilen</option>
+                            </select>
+                        </div>
+
+                        @*apply button  (DISABLED)*@
+                        <div id="div_menubar_button" hidden>
+                            <button id="btn_menubar_apply" class="btn btn-sm btn_menubar_apply ">Uygula</button>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                    </div>
+			        @*search bar  (DISABLED)*@
+			        @*<div class="col-sm-3">
+				        <div class="input-group">
+					        <input type="text" class="input-sm form-control" placeholder="Ara">
+					        <span class="input-group-btn">
+						        <button class="btn btn-sm btn-default" type="button">
+							        Ara
+						        </button>
+					        </span>
+				        </div>
+			        </div>*@
+			        @*/search bar*@
+		        </div>
+
+                @*articles*@
+                <div id="div_articles" class="div_articles">
+                </div>
+
+                @*entity count and pagination buttons*@
+                <footer class="panel-footer">
+                    <div class="row">
+                        @*entity quantity*@
+                        <div class="col-sm-5 text-left">
+                            <small id="small_entityQuantity" class="text-muted inline m-t-sm m-b-s"><b>0/0</b> Talep Görüntüleniyor</small>
+                        </div>
+                        
+                        @*pagination buttons*@
+                        <div class="col-sm-7 text-right text-center-xs">                
+                            <ul id="ul_pagination" class="pagination pagination-sm m-t-rowNone m-b-rowNone">
+                                @*info message*@
+                                <li>
+                                    <a id="a_infoMessage" class="paginationButtons" href="#" style="border-width:0px">
+                                        <div class="div_infoMessage">
+                                            <input type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"/>
+                                            <ul role="menu" class="dropdown-menu">
+                                                <li>* Girilen sayfa numarasını açmak için "Enter" tuşuna veya "/" sembolüne tıklanmalıdır.</li>
+                                            </ul>
+                                        </div>          
+                                    </a>
+                                </li>
+                                <li>
+                                    <a id="a_paginationBack" class="paginationButtons" href="#" hidden>
+                                        <i class="fa fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a id="a_paginationCurrent" class="paginationButtons" href="#">
+                                        <input type="number" min="1" value="1"/>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a id="a_separator" class="paginationButtons" href="#" disabled>/</a>
+                                </li>
+                                <li>
+                                    <a id="a_paginationLast" class="paginationButtons" href="#" disabled></a>
+                                </li>
+                                <li>
+                                    <a id="a_paginationNext" class="paginationButtons" href="#" hidden>
+                                        <i class="fa fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            </ul>    
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="module" src="~/js/miar_demand.securityAndProtectionService.js"></script>

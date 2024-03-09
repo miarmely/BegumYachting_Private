@@ -47,7 +47,9 @@ namespace BegumYatch.API.Extensions
                             "Demand-CheckinAndCheckout",
                             "Demand-BerthReservation",
                             "Demand-VipTransfer",
-                            "Demand-Excursion" );
+                            "Demand-Excursion",
+                            "Demand-ConciergeService",
+                            "Demand-SecurityAndProtectionService");
                 });
             });
         #endregion
