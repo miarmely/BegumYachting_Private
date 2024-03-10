@@ -18,7 +18,7 @@ namespace BegumYatch.Core.Services
 
     public partial interface IUserService  // By MERT
     {
-        Task<string> LoginAsync(UserLoginDto userDto);
+        Task<object> LoginAsync(UserLoginDto userDto);
         Task CreateUserAsync(UserDtoForCreate userDto);
         Task UpdateUserAsync(string email, UserDtoForUpdate userDto);
         Task DeleteUsersAsync(UserDtoForDelete userDto);

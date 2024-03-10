@@ -12,6 +12,7 @@ using BegumYatch.Core.Services;
 using BegumYatch.Core.UnitOfWorks;
 using BegumYatch.Core.ViewModels;
 using BegumYatch.Repository.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -240,7 +241,7 @@ namespace BegumYatch.Service.Services
 
     public partial class UserService  // By MERT
     {
-        public async Task<string> LoginAsync(UserLoginDto userDto)
+        public async Task<object> LoginAsync(UserLoginDto userDto)
         {
             #region when email is wrong (THROW)
             var user = await _userManager.FindByEmailAsync(userDto.Email);
@@ -265,9 +266,14 @@ namespace BegumYatch.Service.Services
                     "email veya şifre yanlış");
             #endregion
 
-            return await GenerateTokenForUserAsync(user);
+            return new
+            {
+                user.Id,
+                Token = await GenerateTokenForUserAsync(user)
+            };
         }
 
+        [Authorize]
         public async Task CreateUserAsync(UserDtoForCreate userDto)
         {
             await ControlConflictForUserAsync(
@@ -293,6 +299,7 @@ namespace BegumYatch.Service.Services
             #endregion
         }
 
+        [Authorize]
         public async Task UpdateUserAsync(string email, UserDtoForUpdate userDto)
         {
             await ControlConflictForUserAsync(
@@ -366,6 +373,7 @@ namespace BegumYatch.Service.Services
             #endregion
         }
 
+        [Authorize]
         public async Task DeleteUsersAsync(UserDtoForDelete userDto)
         {
             #region delete users by email
@@ -377,6 +385,7 @@ namespace BegumYatch.Service.Services
             #endregion
         }
 
+        [Authorize]
         public async Task<List<MiarUser>> GetUsersByFilteringAsync(
             int? UserId = null,
             string? Email = null,
@@ -410,7 +419,10 @@ namespace BegumYatch.Service.Services
 
             return users;
         }
+    }
 
+    public partial class UserService  // By MERT (PRIVATE)
+    {
         private async Task ControlConflictForUserAsync(
             string? email = null,
             string? phone = null)
@@ -460,16 +472,30 @@ namespace BegumYatch.Service.Services
             }
             #endregion
         }
-    }
 
-    public partial class UserService  // By MERT (PRIVATE)
-    {
         private async Task<string> GenerateTokenForUserAsync(AppUser user)
         {
             #region set claims
             var claims = new Collection<Claim>
             {
-                new (ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new ("Id", user.Id.ToString()),
+                //new ("NameSurname", user.NameSurname),
+                //new ("PhoneNumber", user.PhoneNumber),
+                //new ("Email", user.Email),
+                //new ("Gender", user.Gender),
+                //new ("Nationality", user.Nationality),
+                //new ("YachtType", user.YacthType.ToString()),
+                //new ("YachtName", user.YacthName),
+                //new ("Flag", user.Flag),
+                //new ("NewPassportNo", user.NewPassportNo),
+                //new ("OldPassportNo", user.OldPassportNo),
+                //new ("Rank", user.Rank),
+                //new ("DateOfIssue", user.DateOfIssue.ToString()),
+                //new ("PassPortExpiry", user.PassPortExpiry.ToString()),
+                //new ("DateOfBirth", user.DateOfBirth.ToString()),
+                //new ("PlaceOfBirth", user.PlaceOfBirth),
+                //new ("IsPersonel", user.IsPersonel.ToString()),
+                //new ("IsDeleted", user.IsDeleted.ToString()),
             };
             #endregion
 
@@ -489,7 +515,7 @@ namespace BegumYatch.Service.Services
                 claims,
                 signingCredentials: signingCredentials);
             #endregion
-
+            
             return new JwtSecurityTokenHandler()
                 .WriteToken(token);
         }

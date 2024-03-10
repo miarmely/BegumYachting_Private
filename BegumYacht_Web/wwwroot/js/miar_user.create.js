@@ -83,6 +83,9 @@ $("form").submit(async (event) => {
     $.ajax({
         method: "POST",
         url: baseApiUrl + "/adminPanel/userCreate",
+        headers: {
+            authorization: jwtToken
+        },
         data: JSON.stringify({
             nameSurname: inpt.firstnameLastname.val(),
             phoneNumber: inpt.phone.val(),

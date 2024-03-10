@@ -2,10 +2,12 @@
 using BegumYatch.Core.Models.Role;
 using BegumYatch.Core.Models.User;
 using BegumYatch.Repository;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+
 
 namespace BegumYatch.API.Extensions
 {
@@ -80,11 +82,10 @@ namespace BegumYatch.API.Extensions
                         ValidIssuer = section["ValidIssuer"],
                         ValidateAudience = true,
                         ValidAudience = section["ValidAudience1"],
-                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding
                             .UTF8
-                            .GetBytes(section["SecretKey"])),
-                        ValidateIssuerSigningKey = true
+                            .GetBytes(section["SecretKey"]))
                     };
                 });
 

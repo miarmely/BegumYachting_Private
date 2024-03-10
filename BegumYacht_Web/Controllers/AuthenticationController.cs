@@ -1,13 +1,26 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using BegumYatch.Core.Configs;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
+
 
 namespace BegumYacht_Web.Controllers
 {
-	public class AuthenticationController : Controller
+	public partial class AuthenticationController : Controller
 	{
-		public IActionResult Login()
+        private readonly JwtSettingsConfig _jwtSettingsConfig;
+
+        public AuthenticationController(
+            IOptions<JwtSettingsConfig >jwtSettingsConfig) =>
+                _jwtSettingsConfig = jwtSettingsConfig.Value;
+
+        public IActionResult Login()
 		{
 			return View();
 		}
@@ -17,23 +30,84 @@ namespace BegumYacht_Web.Controllers
 			return View();
 		}
 
-		public async Task<IActionResult> AfterLogin(
-			[FromQuery(Name = "AccountId")] string accountId)
-		{
-			#region sign in
-			var claims = new List<Claim>
-			{
-				new (ClaimTypes.SerialNumber, accountId),
-			};
-			var claimsIdentity = new ClaimsIdentity(claims);
-			var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+        public async Task<IActionResult> AfterLogin(
+            [FromQuery(Name = "token")] string token)
+        {
+            // i took token for block the direct access to "afterLogin" with url
 
-			await HttpContext.SignInAsync(
-				CookieAuthenticationDefaults.AuthenticationScheme,
-				claimsPrincipal);
-			#endregion
+            #region when token invalid (REDIRECT)
+            if (await IsTokenInvalidAsync(token))
+                return RedirectToAction(
+                    "Login",
+                    "Authentication");
+            #endregion
 
-			return RedirectToAction("Index", "HomePage");
-		}
-	}
+            #region set claimsIdentity
+            var jwtTokenClaims = new JwtSecurityToken(token)
+                  .Claims;
+
+            var claimsIdentity = new ClaimsIdentity(
+                jwtTokenClaims,
+                CookieAuthenticationDefaults.AuthenticationScheme);
+            #endregion
+
+            #region sign in
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity));
+            #endregion
+
+            #region save claim infos to ViewBag
+            ViewBag.ClaimInfos = new Dictionary<string, string>();
+
+            foreach(var claim in jwtTokenClaims)
+            {
+                ViewBag.ClaimInfos[claim.Type] = claim.Value;
+            }
+            #endregion
+
+            return RedirectToAction("Display", "User");
+        }
+
+
+        [Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme);
+
+            return RedirectToAction("Login");
+        }
+    }
+
+	public partial class AuthenticationController  // private
+	{
+        private async Task<bool> IsTokenInvalidAsync(string token)
+        {
+            #region validate token
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var securityKeyInBytes = Encoding.UTF8
+                .GetBytes(_jwtSettingsConfig.SecretKey);
+
+            var result = await tokenHandler.ValidateTokenAsync(token,
+                new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = _jwtSettingsConfig.ValidIssuer,
+                    ValidateAudience = true,
+                    ValidAudience = _jwtSettingsConfig.ValidAudience1,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(securityKeyInBytes),
+                    ValidateLifetime = false
+                });
+            #endregion
+
+            #region when token is invalid
+            if (!result.IsValid)
+                return true;
+            #endregion
+
+            return false;
+        }
+    }
 }

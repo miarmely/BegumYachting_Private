@@ -11,8 +11,8 @@ namespace BegumYatch.Core.Models.User
         public string? Email { get; init; }
         public string? Gender { get; init; }
         public string? Nationality { get; init; }
-        public string? YacthName { get; init; }
         public YacthType? YacthType { get; init; }
+        public string? YacthName { get; init; }
         public string? Flag { get; init; }
         public string? NewPassportNo { get; init; } // 7 haneli 
         public string? OldPassportNo { get; init; } // 9 haneli

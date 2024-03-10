@@ -62,7 +62,7 @@
 								</li>
 								@*logout*@
 								<li>
-									<a href="#"> <i class="fa fa-close"></i>Çıkış Yap</a>
+									<a href="/authentication/logout"> <i class="fa fa-close"></i>Çıkış Yap</a>
 								</li>
 							</ul>
 						</li>
@@ -221,6 +221,7 @@
 		</section>
 
 		<script>
+			const jwtToken = "Bearer " + localStorage.getItem("token");
 			const baseApiUrl = "https://localhost:7272";  // for local
 			const searchBarPlaceHolderByLanguages = {
 				"TR": "Ara",
@@ -382,6 +383,7 @@
 			const spn_eventManager = $("#spn_eventManager");
 			const localKeys = {
 				accountInfos: "accountInfos",
+				username: "username"
 			}
 			const headerKeys = {
 				demand: {

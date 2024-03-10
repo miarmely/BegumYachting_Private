@@ -1,7 +1,12 @@
-var builder = WebApplication.CreateBuilder(args);
+using BegumYacht_Web.Extensions;
 
 #region add services
+var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddControllersWithViews();
+builder.Services.ConfigureConfigModels(builder.Configuration);
+builder.Services.ConfigureCookie();
+
 var app = builder.Build();
 #endregion
 

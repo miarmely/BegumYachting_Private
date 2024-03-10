@@ -20,6 +20,8 @@ $(function () {
     const img_loading = $("#img_loading");
     const localKeys_username = "username";
     const chck_rememberMe = $("#chck_rememberMe");
+    let token = "";
+    let accountId = 0
     //#endregion
 
     //#region events
@@ -27,12 +29,12 @@ $(function () {
         await keyup_enterKeyAsync(event, btn.login);
     })
     btn.login.click(async () => {
-        //#region sign in
-        let accountId = await loginAsync();
+        //#region login
+        let isSuccess = await loginAsync();
 
         // when login is successful
-        if (accountId != null)
-            await afterLoginAsync(accountId);
+        if (isSuccess)
+            await afterLoginAsync();
         //#endregion
     })
     btn.showPassword.click(async () => {
@@ -57,7 +59,7 @@ $(function () {
         return await new Promise(resolve => {
             $.ajax({
                 method: "POST",
-                url: baseApiUrl + "/userLogin",
+                url: baseApiUrl + "/adminPanel/login",
                 data: JSON.stringify({
                     "email": inpt.email.val(),
                     "password": inpt.password.val()
@@ -69,12 +71,16 @@ $(function () {
                     img_loading.removeAttr("hidden");  // show
                 },
                 success: (response) => {
-                    //#region save account id to local
-                    localStorage.setItem("accountId", response.userId);
+                    //#region save token and account id to local
+                    token = response.token;
+                    accountId = response.id;
+
+                    localStorage.setItem("token", token);
+                    localStorage.setItem("accountId", accountId);
                     img_loading.attr("hidden", "");
                     //#endregion
 
-                    resolve(response.userId);
+                    resolve(true);
                 },
                 error: (response) => {
                     //#region set error message by status code
@@ -84,7 +90,7 @@ $(function () {
                         case 400:  // for syntax error
                             errorMessage = `email veya şifre yanlış`;
                             break;
-                        case 401:  // for wrong username or password
+                        case 404:  // for wrong username or password
                             errorMessage = `email veya şifre yanlış`;
                             break;
                         default:  // for unexpected errors
@@ -100,12 +106,12 @@ $(function () {
                         "30px",
                         img_loading);  // write error
 
-                    resolve(null);
+                    resolve(false);
                 }
             })
         })
     }
-    async function afterLoginAsync(accountId) {
+    async function afterLoginAsync() {
         await saveOrRemoveUsernameFromLocalAsync(
             chck_rememberMe,
             inpt.email,
@@ -114,6 +120,9 @@ $(function () {
         $.ajax({
             method: "GET",
             url: baseApiUrl + `/adminPanel/userDisplay/id?userId=${accountId}`,
+            headers: {
+                authorization: "Bearer " + token
+            },
             contentType: "application/json",
             dataType: "json",
             success: (accountInfos) => {
@@ -123,8 +132,7 @@ $(function () {
                     JSON.stringify(accountInfos));
 
                 // sign in 
-                window.location.replace(`/homepage/index`);
-                //window.location.replace(`/authentication/afterLogin?accountId=${accountInfos.id}`);
+                window.location.replace(`/authentication/afterLogin?token=${token}`);
             },
         })
     }

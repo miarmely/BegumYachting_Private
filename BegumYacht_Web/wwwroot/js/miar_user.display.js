@@ -1,5 +1,5 @@
 ﻿import {
-    isAllObjectValuesNullAsync, isExistsOnArray, updateResultLabel
+    isAllObjectValuesNullAsync, isExistsOnArray, updateElementText, updateResultLabel
 } from "./miar_module.js"
 
 import {
@@ -205,6 +205,9 @@ $(function () {
         $.ajax({
             method: "POST",
             url: baseApiUrl + "/adminPanel/userDelete",
+            headers: {
+                authorization: jwtToken
+            },
             data: JSON.stringify({
                 "emails": emails
             }),
@@ -239,6 +242,9 @@ $(function () {
         $.ajax({
             method: "GET",
             url: baseApiUrl + "/getAllUsers",
+            headers: {
+                authorization: jwtToken
+            },
             dataType: "json",
             success: (users) => {
                 new Promise(async resolve => {
@@ -448,6 +454,9 @@ $(function () {
         $.ajax({
             method: "POST",
             url: baseApiUrl + `/adminPanel/userUpdate?email=${userInfosOfLastClickedRow[2]}`,
+            headers: {
+                authorization: jwtToken
+            },
             data: JSON.stringify(data),
             contentType: "application/json",
             dataType: "json",

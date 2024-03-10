@@ -278,17 +278,13 @@ namespace BegumYatch.API.Controllers
 
     public partial class UserController // By MERT
     {
-        #region writed by mert 
         [HttpPost("adminPanel/login")]
         public async Task<IActionResult> Login(
             [FromBody] UserLoginDto userDto)
         {
-            var token = await _userService.LoginAsync(userDto);
+            var responseObject = await _userService.LoginAsync(userDto);
 
-            return Ok(new
-            {
-                Token = token
-            });
+            return Ok(responseObject);
         }
 
 
@@ -371,6 +367,5 @@ namespace BegumYatch.API.Controllers
         //        Draw = 1
         //    });
         //}
-        #endregion
     }
 }
