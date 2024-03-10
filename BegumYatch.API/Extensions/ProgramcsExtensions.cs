@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace BegumYatch.API.Extensions
 {
-    public static class ProgramcsExtensions
+    public static partial class ProgramcsExtensions
     {
         public static void AddIdentityExt(this IServiceCollection services)
         {
@@ -30,8 +30,10 @@ namespace BegumYatch.API.Extensions
               .AddDefaultTokenProviders()
               .AddEntityFrameworkStores<AppDbContext>();
         }
+    }
 
-        #region By MERT
+    public static partial class ProgramcsExtensions  // By MERT
+    {
         public static void ConfigureCors(this IServiceCollection services) =>
             services.AddCors(setup =>
             {
@@ -49,9 +51,11 @@ namespace BegumYatch.API.Extensions
                             "Demand-VipTransfer",
                             "Demand-Excursion",
                             "Demand-ConciergeService",
-                            "Demand-SecurityAndProtectionService");
+                            "Demand-SecurityAndProtectionService",
+                            "Order-Provision",
+                            "Order-Flower",
+                            "Order-TechnicalAssistanceAndSparePart");
                 });
             });
-        #endregion
     }
 }

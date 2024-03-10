@@ -251,11 +251,11 @@ $(function () {
     }
     async function populateDemandArticlesAsync() {
         await populateArticlesAsync(
-            "/adminPanel/excursion/filter?" + (
+            "/adminPanel/demand/excursion/filter?" + (
                 `pageSize=${pagingBuffer.pageSize}` +
                 `&pageNumber=${pagingBuffer.pageNumber}` +
                 `&formStatus=${formStatus}`),
-            headerKeys.excursion,
+            headerKeys.demand.excursion,
             lbl.entityQuantity,
             async (demands) => {
                 for (let index in demands) {

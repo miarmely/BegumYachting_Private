@@ -223,11 +223,11 @@ $(function () {
     }
     async function populateDemandArticlesAsync() {
         await populateArticlesAsync(
-            "/adminPanel/securityAndProtectionService/filter?" + (
+            "/adminPanel/demand/securityAndProtectionService/filter?" + (
                 `pageSize=${pagingBuffer.pageSize}` +
                 `&pageNumber=${pagingBuffer.pageNumber}` +
                 `&formStatus=${formStatus}`),
-            headerKeys.securityAndProtectionService,
+            headerKeys.demand.securityAndProtectionService,
             lbl.entityQuantity,
             async (demands) => {
                 for (let index in demands) {

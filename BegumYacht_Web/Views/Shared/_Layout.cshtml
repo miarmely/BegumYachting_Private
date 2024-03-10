@@ -133,12 +133,6 @@
 									<li>
 										<a href="#">
 											<i class="fa fa-settings"></i>
-											<span>Kumanya Siparişi</span>
-										</a>
-									</li>
-									<li>
-										<a href="#">
-											<i class="fa fa-settings"></i>
 											<span>Teknik Yardım / Yedek Parça</span>
 										</a>
 									</li>
@@ -390,13 +384,18 @@
 				accountInfos: "accountInfos",
 			}
 			const headerKeys = {
-				fuelPurchase: "Demand-FuelPurchase",
-				checkinAndCheckout: "Demand-CheckinAndCheckout",
-				berthReservation: "Demand-BerthReservation",
-				vipTransfer: "Demand-VipTransfer",
-				excursion: "Demand-Excursion",
-				conciergeService: "Demand-ConciergeService",
-				securityAndProtectionService: "Demand-SecurityAndProtectionService"
+				demand: {
+					fuelPurchase: "Demand-FuelPurchase",
+					checkinAndCheckout: "Demand-CheckinAndCheckout",
+					berthReservation: "Demand-BerthReservation",
+					vipTransfer: "Demand-VipTransfer",
+					excursion: "Demand-Excursion",
+					conciergeService: "Demand-ConciergeService",
+					securityAndProtectionService: "Demand-SecurityAndProtectionService"
+				},
+				order: {
+					
+				}
 			};
 			const langPack_partnerInfoMessages = {
 				"fileLoading": {

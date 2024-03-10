@@ -2,6 +2,7 @@
 {
     public enum FormType
     {
-        FuelPurchaseDemand = 1
+        Demand = 1, 
+        Order = 2
     }
 }

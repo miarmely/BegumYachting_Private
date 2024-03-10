@@ -248,11 +248,11 @@ $(function () {
     }
     async function populateDemandArticlesAsync() {
         await populateArticlesAsync(
-            "/adminPanel/vipTransfer/filter?" + (
+            "/adminPanel/demand/vipTransfer/filter?" + (
                 `pageSize=${pagingBuffer.pageSize}` +
                 `&pageNumber=${pagingBuffer.pageNumber}` +
                 `&formStatus=${formStatus}`),
-            headerKeys.vipTransfer,
+            headerKeys.demand.vipTransfer,
             lbl.entityQuantity,
             async (demands) => {
                 for (let index in demands) {

@@ -237,11 +237,11 @@ $(function () {
     }
     async function populateDemandArticlesAsync() {
         await populateArticlesAsync(
-            "/adminPanel/conciergeService/filter?" + (
+            "/adminPanel/demand/conciergeService/filter?" + (
                 `pageSize=${pagingBuffer.pageSize}` +
                 `&pageNumber=${pagingBuffer.pageNumber}` +
                 `&formStatus=${formStatus}`),
-            headerKeys.conciergeService,
+            headerKeys.demand.conciergeService,
             lbl.entityQuantity,
             async (demands) => {
                 for (let index in demands) {

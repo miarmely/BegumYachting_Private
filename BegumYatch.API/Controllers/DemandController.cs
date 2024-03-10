@@ -8,7 +8,8 @@ using BegumYatch.Core.DTOs.SecurityServiceDemand;
 using BegumYatch.Core.DTOs.TechnicalAssitanceandSparePartOrder;
 using BegumYatch.Core.DTOs.VipDemand.BegumYatch.Core.DTOs.VipDemand;
 using BegumYatch.Core.Enums;
-using BegumYatch.Core.Models.AdminPanel;
+using BegumYatch.Core.Enums.AdminPanel;
+using BegumYatch.Core.Models.AdminPanel.DemandModel;
 using BegumYatch.Core.Models.Demands;
 using BegumYatch.Core.QueryParameters;
 using BegumYatch.Core.Services;
@@ -28,11 +29,11 @@ namespace BegumYatch.API.Controllers
         private readonly IProvisionOrderService _provisionOrderService;
         
         #region By MERT
-        private readonly IBaseDemandService _baseDemandService;
+        private readonly IBaseDemandAndOrderService _baseDemandService;
         #endregion
 
 
-        public DemandController(IFuelPurchaseDemandService fuelPurchaseDemandService, IConciergeServiceDemandService conciergeService, IExcursionDemandService excursionDemandService, ISecurityServiceDemandService securityServiceDemandService, IFileOperationService fileOperationService, ITechnicalAssitanceandSparePartOrderService technicalAssitanceandSparePartOrderService, IProvisionOrderService provisionOrderService, IBaseDemandService baseDemandService)
+        public DemandController(IFuelPurchaseDemandService fuelPurchaseDemandService, IConciergeServiceDemandService conciergeService, IExcursionDemandService excursionDemandService, ISecurityServiceDemandService securityServiceDemandService, IFileOperationService fileOperationService, ITechnicalAssitanceandSparePartOrderService technicalAssitanceandSparePartOrderService, IProvisionOrderService provisionOrderService, IBaseDemandAndOrderService baseDemandService)
         {
             _fuelPurchaseDemandService = fuelPurchaseDemandService;
             _conciergeService = conciergeService;
@@ -214,7 +215,7 @@ namespace BegumYatch.API.Controllers
 
     public partial class DemandController  // By MERT
     {
-        [HttpGet("adminPanel/fuelPurchaseDemand/filter")]
+        [HttpGet("adminPanel/demand/fuelPurchase/filter")]
         public async Task<IActionResult> GetFuelPurchaseDemandsByFilter(
             [FromQuery] FormParamsForDisplayFormByStatus formParams)
         {
@@ -222,6 +223,7 @@ namespace BegumYatch.API.Controllers
                 .GetFormsByStatusAsync<FuelPurchaseDemandModel>(
                     formParams,
                     "Demand_FuelPurchase_GetFormsByStatus",
+                    FormType.Demand,
                     "fuelPurchase",
                     HttpContext);
 
@@ -229,7 +231,7 @@ namespace BegumYatch.API.Controllers
         }
 
 
-        [HttpGet("adminPanel/checkinAndCheckout/filter")]
+        [HttpGet("adminPanel/demand/checkinAndCheckout/filter")]
         public async Task<IActionResult> GetCheckinAndCheckoutDemandsByFilter(
             [FromQuery] FormParamsForDisplayFormByStatus formParams)
         {
@@ -237,6 +239,7 @@ namespace BegumYatch.API.Controllers
                 .GetFormsByStatusAsync<CheckinAndCheckoutDemandModel>(
                     formParams,
                     "Demand_CheckInAndOut_GetFormsByStatus",
+                    FormType.Demand,
                     "CheckinAndCheckout",
                     HttpContext);
                 
@@ -244,7 +247,7 @@ namespace BegumYatch.API.Controllers
         }
 
 
-        [HttpGet("adminPanel/berthReservation/filter")]
+        [HttpGet("adminPanel/demand/berthReservation/filter")]
         public async Task<IActionResult> GetBerthReservationDemandsByFilter(
             [FromQuery] FormParamsForDisplayFormByStatus formParams)
         {
@@ -252,6 +255,7 @@ namespace BegumYatch.API.Controllers
                 .GetFormsByStatusAsync<BerthReservationDemandModel>(
                     formParams,
                     "Demand_BerthReservation_GetFormsByStatus",
+                    FormType.Demand,
                     "BerthReservation",
                     HttpContext);
 
@@ -259,7 +263,7 @@ namespace BegumYatch.API.Controllers
         }
 
 
-        [HttpGet("adminPanel/vipTransfer/filter")]
+        [HttpGet("adminPanel/demand/vipTransfer/filter")]
         public async Task<IActionResult> GetVipTransferDemandsByFilter(
             [FromQuery] FormParamsForDisplayFormByStatus formParams)
         {
@@ -267,6 +271,7 @@ namespace BegumYatch.API.Controllers
                 .GetFormsByStatusAsync<VipTransferDemandModel>(
                     formParams,
                     "Demand_VipTransfer_GetFormsByStatus",
+                    FormType.Demand,
                     "VipTransfer",
                     HttpContext);
 
@@ -274,7 +279,7 @@ namespace BegumYatch.API.Controllers
         }
 
 
-        [HttpGet("adminPanel/excursion/filter")]
+        [HttpGet("adminPanel/demand/excursion/filter")]
         public async Task<IActionResult> GetExcursionDemandsByFilter(
             [FromQuery] FormParamsForDisplayFormByStatus formParams)
         {
@@ -282,6 +287,7 @@ namespace BegumYatch.API.Controllers
                 .GetFormsByStatusAsync<ExcursionDemandModel>(
                     formParams,
                     "Demand_Excursion_GetFormsByStatus",
+                    FormType.Demand,
                     "Excursion",
                     HttpContext);
 
@@ -289,7 +295,7 @@ namespace BegumYatch.API.Controllers
         }
 
 
-        [HttpGet("adminPanel/conciergeService/filter")]
+        [HttpGet("adminPanel/demand/conciergeService/filter")]
         public async Task<IActionResult> GetConciergeServiceDemandsByFilter(
             [FromQuery] FormParamsForDisplayFormByStatus formParams)
         {
@@ -297,6 +303,7 @@ namespace BegumYatch.API.Controllers
                 .GetFormsByStatusAsync<ConciergeServiceDemandModel>(
                     formParams,
                     "Demand_ConciergeService_GetFormsByStatus",
+                    FormType.Demand,
                     "ConciergeService",
                     HttpContext);
 
@@ -304,7 +311,7 @@ namespace BegumYatch.API.Controllers
         }
 
 
-        [HttpGet("adminPanel/securityAndProtectionService/filter")]
+        [HttpGet("adminPanel/demand/securityAndProtectionService/filter")]
         public async Task<IActionResult> GetSecurityAndProtectionServiceDemandsByFilter(
             [FromQuery] FormParamsForDisplayFormByStatus formParams)
         {
@@ -312,6 +319,7 @@ namespace BegumYatch.API.Controllers
                 .GetFormsByStatusAsync<SecurityAndProtectionServiceDemandModel>(
                     formParams,
                     "Demand_SecurityAndProtectionService_GetFormsByStatus",
+                    FormType.Demand,
                     "SecurityAndProtectionService",
                     HttpContext);
 

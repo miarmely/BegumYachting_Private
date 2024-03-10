@@ -253,11 +253,11 @@ $(function () {
     }
     async function populateDemandArticlesAsync() {
         await populateArticlesAsync(
-            "/adminPanel/berthReservation/filter?" + (
+            "/adminPanel/demand/berthReservation/filter?" + (
                 `pageSize=${pagingBuffer.pageSize}` +
                 `&pageNumber=${pagingBuffer.pageNumber}` +
                 `&formStatus=${formStatus}`),
-            headerKeys.berthReservation,
+            headerKeys.demand.berthReservation,
             lbl.entityQuantity,
             async (demands) => {
                 for (let index in demands) {

@@ -1,5 +1,7 @@
 ﻿using BegumYatch.Core.Models;
 using BegumYatch.Core.Models.AdminPanel;
+using BegumYatch.Core.Models.AdminPanel.DemandModel;
+using BegumYatch.Core.Models.AdminPanel.OrderModel;
 using BegumYatch.Core.Models.BerthRezervation;
 using BegumYatch.Core.Models.Demands;
 using BegumYatch.Core.Models.Demands.AdminPanel;
@@ -122,6 +124,11 @@ namespace BegumYatch.Repository
         public DbSet<VipTransferDemandModel> notImportant5 { get; set; }
         public DbSet<ExcursionDemandModel> notImportant6 { get; set; }
         public DbSet<ConciergeServiceDemandModel> notImportant7 { get; set; }
-        public DbSet<SecurityAndProtectionServiceDemandModel> notImportant8 { get; set; }
+        public DbSet<SecurityAndProtectionServiceDemandModel> notImportant8 
+            { get; set; }
+        public DbSet<ProvisionOrderModel> notImportant9 { get; init; }
+        public DbSet<FlowerOrderModel> notImportant10 { get; init; }
+        public DbSet<TechnicalAssistanceAndSparePartOrderModel> notImportant11 
+            { get; init; }
     }
 }

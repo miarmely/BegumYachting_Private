@@ -225,11 +225,11 @@ $(function () {
     }
     async function populateCheckinAndCheckoutArticlesAsync() {
         await populateArticlesAsync(
-            "/adminPanel/checkinAndCheckout/filter?" + (
+            "/adminPanel/demand/checkinAndCheckout/filter?" + (
                 `pageSize=${pagingBuffer.pageSize}` +
                 `&pageNumber=${pagingBuffer.pageNumber}` +
                 `&formStatus=${formStatus}`),
-            headerKeys.checkinAndCheckout,
+            headerKeys.demand.checkinAndCheckout,
             lbl.entityQuantity,
             async (demands) => {
                 for (let index in demands) {

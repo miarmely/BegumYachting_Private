@@ -236,11 +236,11 @@ $(function () {
     }
     async function populateFuelPurchaseArticlesAsync() {
         await populateArticlesAsync(
-            "/adminPanel/fuelPurchaseDemand/filter?" + (
+            "/adminPanel/demand/fuelPurchase/filter?" + (
                 `pageSize=${pagingBuffer.pageSize}` +
                 `&pageNumber=${pagingBuffer.pageNumber}` +
                 `&formStatus=${formStatus}`),
-            headerKeys.fuelPurchase,
+            headerKeys.demand.fuelPurchase,
             lbl.entityQuantity,
             async (demands) => {
                 //#region populate inside of articles

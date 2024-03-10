@@ -2,6 +2,10 @@
 using BegumYatch.Core.DTOs.FuelPurchaseDemand;
 using BegumYatch.Core.DTOs.ProvisionOrder;
 using BegumYatch.Core.DTOs.TechnicalAssitanceandSparePartOrder;
+using BegumYatch.Core.Enums.AdminPanel;
+using BegumYatch.Core.Models.AdminPanel.DemandModel;
+using BegumYatch.Core.Models.AdminPanel.OrderModel;
+using BegumYatch.Core.QueryParameters;
 using BegumYatch.Core.Services;
 using BegumYatch.Service.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -9,17 +13,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BegumYatch.API.Controllers
 {
-    [Authorize]
-    public class OrderController : Controller
+    //[Authorize]
+    public partial class OrderController : Controller
     {
         private readonly IFlowerOrderService _flowerOrderService;
         private readonly IProvisionOrderService _provisionOrderService;
+        private readonly IBaseDemandAndOrderService _baseDemandAndOrderService;
 
-        public OrderController(IFlowerOrderService flowerOrderService, IProvisionOrderService provisionOrderService)
+        public OrderController(IFlowerOrderService flowerOrderService, IProvisionOrderService provisionOrderService, IBaseDemandAndOrderService baseDemandAndOrderService)
         {
             _flowerOrderService = flowerOrderService;
             _provisionOrderService = provisionOrderService;
-            
+            _baseDemandAndOrderService = baseDemandAndOrderService;
         }
 
         [HttpPost("AddFlowerOrder")]
@@ -70,5 +75,55 @@ namespace BegumYatch.API.Controllers
         //    var technicalOrder = await _technicalAssitanceandSparePartOrderService.GetTechnicalOrderById(id, userId);
         //    return Ok(technicalOrder);
         //}
+    }
+
+    public partial class OrderController  // By MERT
+    {
+        [HttpGet("adminPanel/order/provision/filter")]
+        public async Task<IActionResult> GetProvisionOrdersByFilter(
+            [FromQuery] FormParamsForDisplayFormByStatus formParams)
+        {
+            var orders = await _baseDemandAndOrderService.GetFormsByStatusAsync
+                <ProvisionOrderModel>(
+                    formParams,
+                    "Order_Provision_GetFormsByStatus",
+                    FormType.Order,
+                    "Provision",
+                    HttpContext);
+
+            return Ok(orders);
+        }
+
+
+        [HttpGet("adminPanel/order/flower/filter")]
+        public async Task<IActionResult> GetFlowerOrdersByFilter(
+            [FromQuery] FormParamsForDisplayFormByStatus formParams)
+        {
+            var orders = await _baseDemandAndOrderService.GetFormsByStatusAsync
+                <FlowerOrderModel>(
+                    formParams,
+                    "Order_Flower_GetFormsByStatus",
+                    FormType.Order,
+                    "Flower",
+                    HttpContext);
+
+            return Ok(orders);
+        }
+
+
+        [HttpGet("adminPanel/order/TechnicalAssistanceAndSparePart/filter")]
+        public async Task<IActionResult> GetTechnicalAssistanceAndSparePartOrdersByFilter(
+            [FromQuery] FormParamsForDisplayFormByStatus formParams)
+        {
+            var orders = await _baseDemandAndOrderService.GetFormsByStatusAsync
+                <TechnicalAssistanceAndSparePartOrderModel>(
+                    formParams,
+                    "Order_TechnicalAssistanceAndSparePart_GetFormsByStatus",
+                    FormType.Order,
+                    "TechnicalAssistanceAndSparePart",
+                    HttpContext);
+
+            return Ok(orders);
+        }
     }
 }
