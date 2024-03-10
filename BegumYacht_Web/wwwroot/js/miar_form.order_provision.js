@@ -6,7 +6,7 @@ import {
     addImageToArticleAsync, beforePopulateAsync, click_articleAsync, resize_windowAsync,
     click_backButtonAsync, click_InfoDivAsync, getDefaultValueIfValueNullOrEmpty,
     populateArticlesAsync, addInputsToInfoDivsAsync
-} from "./miar_demand.js"
+} from "./miar_form.js"
 
 import {
     alignArticlesToCenterAsync, art_baseId, controlArticleWidthAsync, div_article_info_id,
@@ -35,12 +35,12 @@ $(function () {
         sidebarMenuButton: $("#div_sidebarMenuButton"),
         senderInfos: $("#div_senderInfos"),
         answererInfos: $("#div_answererInfos"),
-        demandInfos: $("#div_demandInfos"),
+        orderInfos: $("#div_orderInfos"),
         backButton: $("#div_backButton"),
         panelTitle: $("#div_panelTitle"),
         senderInfos_inputs: $("#div_senderInfos_inputs"),
         answererInfos_inputs: $("#div_answererInfos_inputs"),
-        demandInfos_inputs: $("#div_demandInfos_inputs"),
+        orderInfos_inputs: $("#div_orderInfos_inputs"),
     };
     const btn = {
         back: $("#btn_back")
@@ -51,27 +51,26 @@ $(function () {
     const slct = {
         article_submenu_display: $("#slct_article_submenu_display")
     };
-    const formType = "ConciergeServiceDemand";
+    const formType = "ProvisionOrder";
     const inputInfos = [
-        ["input", "text", "nameSurname", "Ad Soyad", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],  // type for switch/case | type for switch/case | type for input | id | label name | info message | hidden/disabled/readonly of input | place to add
-        ["input", "text", "phone", "Telefon", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "email", "Email", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "newPassportNo", "Yeni Pasaport No", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "oldPassportNo", "Eski Pasapart No", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "rank", "Rank", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "nationality", "Uyruk", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "gender", "Cinsiyet", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "answeredDate", "Cevaplanma Tarihi", false, "readonly", [div_answererInfos_inputs]],
-        ["input", "text", "yachtType", "Yat Tipi", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "yachtName", "Yat Adı", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "flag", "Bayrak", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "restaurantName", "Restaurant Adı", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "conciergeDate", "Konsiyerj Hizmeti Tarihi", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "numberOfPeople", "Yolcu Sayısı", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "transportationPreference", "Ulaşım Tercihi", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "transferCarType", "Transfer Aracı Tipi", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "createdDate", "Talep Tarihi", false, "readonly", [div_demandInfos_inputs]],
-    ];  // for add <input>s and <textarea>s to form
+        ["input", "text", "nameSurname", "Ad Soyad", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],  // type for switch/case | type for switch/case | type for input | id | label name | info message | hidden/disabled/readonly of input | place to add
+        ["input", "text", "phone", "Telefon", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
+        ["input", "text", "email", "Email", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
+        ["input", "text", "newPassportNo", "Yeni Pasaport No", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
+        ["input", "text", "oldPassportNo", "Eski Pasapart No", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
+        ["input", "text", "rank", "Rank", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
+        ["input", "text", "nationality", "Uyruk", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
+        ["input", "text", "gender", "Cinsiyet", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
+        ["input", "text", "answeredDate", "Cevaplanma Tarihi", false, "readonly", [div.answererInfos_inputs]],
+        ["input", "text", "yachtType", "Yat Tipi", false, "readonly", [div.orderInfos_inputs]],
+        ["input", "text", "yachtName", "Yat Adı", false, "readonly", [div.orderInfos_inputs]],
+        ["input", "text", "flag", "Bayrak", false, "readonly", [div.orderInfos_inputs]],
+        ["input", "text", "supplyDate", "Tedarik Tarihi", false, "readonly", [div.orderInfos_inputs]],
+        ["input", "text", "supplyPort", "Tedarik Yeri", false, "readonly", [div.orderInfos_inputs]],
+        ["input", "text", "accountOps", "Hesap Türü", true, "readonly", [div.orderInfos_inputs]],
+        ["input", "text", "createdDate", "Talep Tarihi", false, "readonly", [div.orderInfos_inputs]],
+        ["textarea", "notes", "Notlar", false, "readonly", [div.orderInfos_inputs]],
+    ];  // for add <input>s and <textarea>s
     const inputIds = {
         nameSurname: "inpt_nameSurname",
         phone: "inpt_phone",
@@ -85,13 +84,12 @@ $(function () {
         yachtName: "inpt_yachtName",
         yachtType: "inpt_yachtType",
         flag: "inpt_flag",
-        restaurantName: "inpt_restaurantName",
-        conciergeDate: "inpt_conciergeDate",
-        numberOfPeople: "inpt_numberOfPeople",
-        transportationPreference: "inpt_transportationPreference",
-        transferCarType: "inpt_transferCarType",
+        supplyDate: "inpt_supplyDate",
+        supplyPort: "inpt_supplyPort",
+        accountOps: "inpt_accountOps",
         createdDate: "inpt_createdDate",
-    };  // for populate <input>s and <texarea>s
+        notes: "txt_notes"
+    };  // for populate <input>s and <textarea>s
     let articleIdsAndInfos = {};
     let formStatus = "Unanswered";
     //#endregion
@@ -164,35 +162,34 @@ $(function () {
             formStatus,
             async (infosOfLastClickedArticle) => {
                 //#region set form infos
-                let conciergeDateInStr = getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.conciergeDate);
+                let supplyDateInStr = getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.supplyDate);
                 let createdDateInStr = getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.createdDate);
-
-                let formInfos = {
+                
+                let orderInfos = {
                     yachtName: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtName),
                     yachtType: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtType),
                     flag: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.flag),
-                    restaurantName: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.restaurantName),
-                    conciergeDate: (conciergeDateInStr == infosOfLastClickedArticle.conciergeDate ?
+                    supplyDate: (supplyDateInStr == infosOfLastClickedArticle.supplyDate ?
                         await convertDateToStrDateAsync(
-                            new Date(conciergeDateInStr),
+                            new Date(supplyDateInStr),
                             { hours: false, minutes: false, seconds: false }) // when date is not null or empty
-                        : conciergeDateInStr),  // when date is null or empty,,
-                    numberOfPeople: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.numberOfPeople),
-                    transportationPreference: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.transportationPreference),
-                    transferCarType: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.transferCarType),
+                        : supplyDateInStr),  // when date is null or empty,
+                    supplyPort: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.supplyPort),
+                    accountOps: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.accountOps),
                     createdDate: (createdDateInStr == infosOfLastClickedArticle.createdDate ?
                         await convertDateToStrDateAsync(
                             new Date(createdDateInStr),
                             { hours: true, minutes: true, seconds: false }) // when date is not null or empty
                         : createdDateInStr),  // when date is null or empty,
+                    notes: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.notes)
                 };
                 //#endregion
 
                 //#region populate inputs (DYNAMICALLY)
-                for (let elementName in formInfos) 
-                    div.demandInfos_inputs
+                for (let elementName in orderInfos)
+                    div.orderInfos_inputs
                         .find("#" + inputIds[elementName])
-                        .val(formInfos[elementName]);
+                        .val(orderInfos[elementName]);
                 //#endregion
 
             }  // populate demand inputs
@@ -213,10 +210,10 @@ $(function () {
             div.article_display,
             div.senderInfos,
             div.answererInfos,
-            div.demandInfos,
+            div.orderInfos,
             div.senderInfos_inputs,
             div.answererInfos_inputs,
-            div.demandInfos_inputs,
+            div.orderInfos_inputs,
             btn.back);
         await alignArticlesToCenterAsync();
     })
@@ -226,49 +223,52 @@ $(function () {
 
     //#region functions
     async function setupPageAsync() {
-        await beforePopulateAsync(300, 420, div.articles);
-        await populateDemandArticlesAsync();
+        await beforePopulateAsync(300, 580, div.articles);
+        await populateOrderArticlesAsync();
         await addInputsToInfoDivsAsync(inputInfos);
         await populateInfoMessagesAsync({
             div_senderInfos: ["Şeklin üzerine tıklayarak talebi gönderen personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
             div_answererInfos: ["Şeklin üzerine tıklayarak talebe cevap veren personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
-            div_demandInfos: ["Şeklin üzerine tıklayarak talep bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
+            div_orderInfos: ["Şeklin üzerine tıklayarak talep bilgilerini görüntüleyebilir veya gizleyebilirsin.",]
         });
     }
-    async function populateDemandArticlesAsync() {
+    async function populateOrderArticlesAsync() {
         await populateArticlesAsync(
-            "/adminPanel/demand/conciergeService/filter?" + (
+            "/adminPanel/order/provision/filter?" + (
                 `pageSize=${pagingBuffer.pageSize}` +
                 `&pageNumber=${pagingBuffer.pageNumber}` +
                 `&formStatus=${formStatus}`),
-            headerKeys.demand.conciergeService,
+            headerKeys.order.provision,
             lbl.entityQuantity,
-            async (demands) => {
-                for (let index in demands) {
+            async (orders) => {
+                for (let index in orders) {
                     //#region set variables
                     let articleId = art_baseId + index;
                     let article = $("#" + articleId);
-                    let demandInfos = demands[index];
+                    let orderInfos = orders[index];
 
                     // save demand infos
-                    articleIdsAndInfos[articleId] = demandInfos;
+                    articleIdsAndInfos[articleId] = orderInfos;
                     //#endregion
 
                     await addImageToArticleAsync(
                         articleId,
-                        demandInfos.yachtType,
-                        60 / 100,
-                        70 / 100);
+                        orderInfos.yachtType,
+                        65 / 100,
+                        60 / 100);
 
                     //#region set article Infos 
+                    let notes = getDefaultValueIfValueNullOrEmpty(orderInfos.notes);
+
                     let articleInfos = {
-                        restaurantName: getDefaultValueIfValueNullOrEmpty(demandInfos.restaurantName),
-                        transportationPreference: getDefaultValueIfValueNullOrEmpty(
-                            demandInfos.transportationPreference),
-                        yachtType: getDefaultValueIfValueNullOrEmpty(demandInfos.yachtType),
-                        yachtName: getDefaultValueIfValueNullOrEmpty(demandInfos.yachtName),
-                        nameSurname: getDefaultValueIfValueNullOrEmpty(demandInfos.nameSurname),
-                        passedTime: await getPassedTimeInStringAsync(null, demandInfos.createdDate)
+                        supplyPort: getDefaultValueIfValueNullOrEmpty(orderInfos.supplyPort),
+                        yachtType: getDefaultValueIfValueNullOrEmpty(orderInfos.yachtType),
+                        yachtName: getDefaultValueIfValueNullOrEmpty(orderInfos.yachtName),
+                        nameSurname: getDefaultValueIfValueNullOrEmpty(orderInfos.nameSurname),
+                        notes: (notes == orderInfos.notes ?
+                            notes.substring(0, 200) // when notes is not null or empty
+                            : notes),  // when notes is null or empty                            
+                        passedTime: await getPassedTimeInStringAsync(null, orderInfos.createdDate)
                     };
                     //#endregion
 
@@ -278,11 +278,11 @@ $(function () {
 
                     div_article_info.append(`
                         <div>
-                            <p class="p_article">${articleInfos.restaurantName}</p>
-                            <p class="p_article">${articleInfos.transportationPreference}</p>
+                            <p class="p_article">${articleInfos.supplyPort}</p>
                             <p class="p_article">${articleInfos.yachtType}</p>
                             <p class="p_article">${articleInfos.yachtName}</p>
                             <p class="p_article">${articleInfos.nameSurname}</p>
+                            <p class="p_article">${articleInfos.notes}</p>
                         </div>
                         <div id="${div_passedTime_id}">${articleInfos.passedTime}</div>
                     `);

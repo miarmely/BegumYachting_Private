@@ -81,7 +81,7 @@ export async function click_backButtonAsync(
     div_demandInfos,
     div_senderInfos_inputs,
     div_answererInfos_inputs,
-    div_demandInfos_inputs,
+    formInfos_inputs,
     btn_back
 ) {
     await resetFormAsync(lbl_result);
@@ -94,7 +94,7 @@ export async function click_backButtonAsync(
     // hide <div>s
     div_senderInfos_inputs.attr("hidden", "");
     div_answererInfos_inputs.attr("hidden", "");
-    div_demandInfos_inputs.attr("hidden", "");
+    formInfos_inputs.attr("hidden", "");
 
     // change "Gizle" text to "Görüntüle" text of <div>s
     updateElementText(
@@ -312,10 +312,10 @@ export async function addInputsToInfoDivsAsync(inputInfos) {
                 div_formGroup_id = "div_" + inputInfo[2];
                 inputId = "inpt_" + inputInfo[2];
 
-                for (let index2 in inputInfo[6]) {
+                for (let indexOfDiv in inputInfo[6]) {
                     //#region add label and <input>
-                    let divInfos = inputInfo[6][index2];
-                    let div = $("#" + divInfos.id);
+                    let divInfos = inputInfo[6][indexOfDiv];
+                    let div = $("#" + divInfos.attr("id"));
 
                     div.append(
                         `<div id="${div_formGroup_id}" class="form-group">
@@ -345,10 +345,10 @@ export async function addInputsToInfoDivsAsync(inputInfos) {
                 div_formGroup_id = "div_" + inputInfo[1];
                 inputId = "txt_" + inputInfo[1];
 
-                for (let index2 in inputInfo[5]) {
+                for (let indexOfDiv in inputInfo[5]) {
                     //#region add label and <textarea>
-                    let divInfos = inputInfo[5][index2];
-                    let div = $("#" + divInfos.id);
+                    let divInfos = inputInfo[5][indexOfDiv];
+                    let div = $("#" + divInfos.attr("id"));
 
                     div.append(`
                         <div id="${div_formGroup_id}" class="form-group">

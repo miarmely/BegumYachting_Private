@@ -67,7 +67,9 @@
     border-color: #EA7A13;
 }
 
-#div_demandInfos .div_infos_button {
+#div_demandInfos .div_infos_button,
+#div_orderInfos .div_infos_button
+{
     border-color: #00CAAD
 }
 

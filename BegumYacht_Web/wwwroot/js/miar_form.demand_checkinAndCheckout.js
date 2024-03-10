@@ -6,7 +6,7 @@ import {
     addImageToArticleAsync, beforePopulateAsync, click_articleAsync,
     click_backButtonAsync, click_InfoDivAsync, getDefaultValueIfValueNullOrEmpty,
     populateArticlesAsync, addInputsToInfoDivsAsync, resize_windowAsync
-} from "./miar_demand.js"
+} from "./miar_form.js"
 
 import {
     alignArticlesToCenterAsync, art_baseId, controlArticleWidthAsync, div_article_info_id,
@@ -53,23 +53,23 @@ $(function () {
     };
     const formType = "CheckinAndCheckoutDemand";
     const inputInfos = [
-        ["input", "text", "nameSurname", "Ad Soyad", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],  // type for switch/case | type for switch/case | type for input | id | label name | info message | hidden/disabled/readonly of input | place to add
-        ["input", "text", "phone", "Telefon", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "email", "Email", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "newPassportNo", "Yeni Pasaport No", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "oldPassportNo", "Eski Pasapart No", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "rank", "Rank", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "nationality", "Uyruk", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "gender", "Cinsiyet", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "answeredDate", "Cevaplanma Tarihi", false, "readonly", [div_answererInfos_inputs]],
-        ["input", "text", "yachtType", "Yat Tipi", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "yachtName", "Yat Adı", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "flag", "Bayrak", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "checkinDate", "Giriş Tarihi", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "arrivalPort", "Giriş Yeri", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "checkoutDate", "Çıkış Tarihi", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "departurePort", "Varış Yeri", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "createdDate", "Talep Tarihi", false, "readonly", [div_demandInfos_inputs]],
+        ["input", "text", "nameSurname", "Ad Soyad", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],  // type for switch/case | type for switch/case | type for input | id | label name | info message | hidden/disabled/readonly of input | place to add
+        ["input", "text", "phone", "Telefon", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
+        ["input", "text", "email", "Email", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
+        ["input", "text", "newPassportNo", "Yeni Pasaport No", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
+        ["input", "text", "oldPassportNo", "Eski Pasapart No", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
+        ["input", "text", "rank", "Rank", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
+        ["input", "text", "nationality", "Uyruk", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
+        ["input", "text", "gender", "Cinsiyet", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
+        ["input", "text", "answeredDate", "Cevaplanma Tarihi", false, "readonly", [div.answererInfos_inputs]],
+        ["input", "text", "yachtType", "Yat Tipi", false, "readonly", [div.demandInfos_inputs]],
+        ["input", "text", "yachtName", "Yat Adı", false, "readonly", [div.demandInfos_inputs]],
+        ["input", "text", "flag", "Bayrak", false, "readonly", [div.demandInfos_inputs]],
+        ["input", "text", "checkinDate", "Giriş Tarihi", false, "readonly", [div.demandInfos_inputs]],
+        ["input", "text", "arrivalPort", "Giriş Yeri", false, "readonly", [div.demandInfos_inputs]],
+        ["input", "text", "checkoutDate", "Çıkış Tarihi", false, "readonly", [div.demandInfos_inputs]],
+        ["input", "text", "departurePort", "Varış Yeri", false, "readonly", [div.demandInfos_inputs]],
+        ["input", "text", "createdDate", "Talep Tarihi", false, "readonly", [div.demandInfos_inputs]],
     ];
     const inpt_id = {
         nameSurname: "inpt_nameSurname",

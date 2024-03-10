@@ -6,7 +6,7 @@ import {
     addImageToArticleAsync, beforePopulateAsync, click_articleAsync, resize_windowAsync,
     click_backButtonAsync, click_InfoDivAsync, getDefaultValueIfValueNullOrEmpty,
     populateArticlesAsync, addInputsToInfoDivsAsync
-} from "./miar_demand.js"
+} from "./miar_form.js"
 
 import {
     alignArticlesToCenterAsync, art_baseId, controlArticleWidthAsync, div_article_info_id,
@@ -51,32 +51,29 @@ $(function () {
     const slct = {
         article_submenu_display: $("#slct_article_submenu_display")
     };
-    const formType = "ExcursionDemand";
+    const formType = "BerthReservationDemand";
     const inputInfos = [
-        ["input", "text", "nameSurname", "Ad Soyad", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],  // type for switch/case | type for switch/case | type for input | id | label name | info message | hidden/disabled/readonly of input | place to add
-        ["input", "text", "phone", "Telefon", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "email", "Email", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "newPassportNo", "Yeni Pasaport No", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "oldPassportNo", "Eski Pasapart No", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "rank", "Rank", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "nationality", "Uyruk", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "gender", "Cinsiyet", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "answeredDate", "Cevaplanma Tarihi", false, "readonly", [div_answererInfos_inputs]],
-        ["input", "text", "yachtType", "Yat Tipi", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "yachtName", "Yat Adı", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "flag", "Bayrak", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "vehicleType", "Araç Tipi", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "excursionDate", "Gezi Tarihi", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "from", "Nereden", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "to", "Nereye", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "numberOfPeople", "Yolcu Sayısı", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "firstLanguage", "1. Dil", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "secondLanguage", "2. Dil", true, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "accountOps", "Ücretin Ödeneceği Hesap", true, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "createdDate", "Talep Tarihi", false, "readonly", [div_demandInfos_inputs]],
-        ["textarea", "notes", "Notlar", false, "readonly", [div_demandInfos_inputs]],
+        ["input", "text", "nameSurname", "Ad Soyad", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],  // type for switch/case | type for switch/case | type for input | id | label name | info message | hidden/disabled/readonly of input | place to add
+        ["input", "text", "phone", "Telefon", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
+        ["input", "text", "email", "Email", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
+        ["input", "text", "newPassportNo", "Yeni Pasaport No", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
+        ["input", "text", "oldPassportNo", "Eski Pasapart No", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
+        ["input", "text", "rank", "Rank", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
+        ["input", "text", "nationality", "Uyruk", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
+        ["input", "text", "gender", "Cinsiyet", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
+        ["input", "text", "answeredDate", "Cevaplanma Tarihi", false, "readonly", [div.answererInfos_inputs]],
+        ["input", "text", "yachtType", "Yat Tipi", false, "readonly", [div.demandInfos_inputs]],
+        ["input", "text", "yachtName", "Yat Adı", false, "readonly", [div.demandInfos_inputs]],
+        ["input", "text", "flag", "Bayrak", false, "readonly", [div.demandInfos_inputs]],
+        ["input", "text", "marinaName", "Marina Adı", false, "readonly", [div.demandInfos_inputs]],
+        ["input", "text", "checkinDate", "Giriş Tarihi", false, "readonly", [div.demandInfos_inputs]],
+        ["input", "text", "checkoutDate", "Çıkış Tarihi", false, "readonly", [div.demandInfos_inputs]],
+        ["input", "text", "requestShorePower", "İstenen Elektrik Gücü", false, "readonly", [div.demandInfos_inputs]],
+        ["input", "text", "accountOps", "Ücretin Ödeneceği Hesap", true, "readonly", [div.demandInfos_inputs]],
+        ["input", "text", "createdDate", "Talep Tarihi", false, "readonly", [div.demandInfos_inputs]],
+        ["textarea", "notes", "Notlar", false, "readonly", [div.demandInfos_inputs]],
     ];
-    const inputIds = {
+    const inpt_id = {
         nameSurname: "inpt_nameSurname",
         phone: "inpt_phone",
         email: "inpt_email",
@@ -85,21 +82,20 @@ $(function () {
         rank: "inpt_rank",
         nationality: "inpt_nationality",
         gender: "inpt_gender",
+        createdDate: "inpt_createdDate",
         answeredDate: "inpt_answeredDate",
         yachtName: "inpt_yachtName",
         yachtType: "inpt_yachtType",
         flag: "inpt_flag",
-        vehicleType: "inpt_vehicleType",
-        excursionDate: "inpt_excursionDate",
-        from: "inpt_from",
-        to: "inpt_to",
-        numberOfPeople: "inpt_numberOfPeople",
-        firstLanguage: "inpt_firstLanguage",
-        secondLanguage: "inpt_secondLanguage",
+        marinaName: "inpt_marinaName",
+        checkinDate: "inpt_checkinDate",
+        checkoutDate: "inpt_checkoutDate",
+        requestShorePower: "inpt_requestShorePower",
         accountOps: "inpt_accountOps",
-        createdDate: "inpt_createdDate",
+    };
+    const txt_id = {
         notes: "txt_notes"
-    };  // for populate <input>s and <texarea>s
+    };
     let articleIdsAndInfos = {};
     let formStatus = "Unanswered";
     //#endregion
@@ -160,7 +156,7 @@ $(function () {
     spn_eventManager.on("click_article", async (_, event) => {
         await click_articleAsync(
             event,
-            inputIds,
+            inpt_id,
             articleIdsAndInfos,
             div.article_display,
             div.article_update,
@@ -172,24 +168,26 @@ $(function () {
             formStatus,
             async (infosOfLastClickedArticle) => {
                 //#region set form infos
-                let excursionDateInStr = getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.excursionDate);
+                let checkinDateInStr = getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.checkinDate);
+                let checkoutDateInStr = getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.checkoutDate);
                 let createdDateInStr = getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.createdDate);
-                
+
                 let formInfos = {
                     yachtName: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtName),
                     yachtType: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtType),
                     flag: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.flag),
-                    vehicleType: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.vehicleType),
-                    excursionDate: (excursionDateInStr == infosOfLastClickedArticle.excursionDate ?
+                    marinaName: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.marinaName),
+                    checkinDate: (checkinDateInStr == infosOfLastClickedArticle.checkinDate ?
                         await convertDateToStrDateAsync(
-                            new Date(excursionDateInStr),
+                            new Date(checkinDateInStr),
                             { hours: false, minutes: false, seconds: false }) // when date is not null or empty
-                        : excursionDateInStr),  // when date is null or empty
-                    from: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.from),
-                    to: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.to),
-                    numberOfPeople: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.numberOfPeople),
-                    firstLanguage: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.firstLanguage),
-                    secondLanguage: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.secondLanguage),
+                        : checkinDateInStr),  // when date is null or empty
+                    checkoutDate: (checkoutDateInStr == infosOfLastClickedArticle.checkoutDate ?
+                        await convertDateToStrDateAsync(
+                            new Date(checkoutDateInStr),
+                            { hours: false, minutes: false, seconds: false }) // when date is not null or empty
+                        : checkoutDateInStr),  // when date is null or empty
+                    requestShorePower: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.requestShorePower),
                     accountOps: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.accountOps),
                     createdDate: (createdDateInStr == infosOfLastClickedArticle.createdDate ?
                         await convertDateToStrDateAsync(
@@ -201,12 +199,17 @@ $(function () {
                 //#endregion
 
                 //#region populate inputs
-                for (let elementName in formInfos) 
-                    div.demandInfos_inputs
-                        .find("#" + inputIds[elementName])
-                        .val(formInfos[elementName]);
+                div.demandInfos_inputs.find("#" + inpt_id.yachtType).val(formInfos.yachtType);
+                div.demandInfos_inputs.find("#" + inpt_id.yachtName).val(formInfos.yachtName);
+                div.demandInfos_inputs.find("#" + inpt_id.flag).val(formInfos.flag);
+                div.demandInfos_inputs.find("#" + inpt_id.marinaName).val(formInfos.marinaName);
+                div.demandInfos_inputs.find("#" + inpt_id.checkinDate).val(formInfos.checkinDate);
+                div.demandInfos_inputs.find("#" + inpt_id.checkoutDate).val(formInfos.checkoutDate);
+                div.demandInfos_inputs.find("#" + inpt_id.requestShorePower).val(formInfos.requestShorePower);
+                div.demandInfos_inputs.find("#" + inpt_id.accountOps).val(formInfos.accountOps);
+                div.demandInfos_inputs.find("#" + inpt_id.createdDate).val(formInfos.createdDate);
+                div.demandInfos_inputs.find("#" + txt_id.notes).val(formInfos.notes);
                 //#endregion
-
             }  // populate demand inputs
         );
     })
@@ -238,24 +241,23 @@ $(function () {
 
     //#region functions
     async function setupPageAsync() {
-        await beforePopulateAsync(300, 650, div.articles);
+        await beforePopulateAsync(300, 550, div.articles);
         await populateDemandArticlesAsync();
         await addInputsToInfoDivsAsync(inputInfos);
         await populateInfoMessagesAsync({
             div_senderInfos: ["Şeklin üzerine tıklayarak talebi gönderen personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
             div_answererInfos: ["Şeklin üzerine tıklayarak talebe cevap veren personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
             div_demandInfos: ["Şeklin üzerine tıklayarak talep bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
-            div_secondLanguage: ["İlk tercih edilen dilde, rehber müsait olmaması durumuna karşı ikinci dil tercihidir."],
             div_accountOps: ["Marina ücretinin yatın hesabına mı yoksa müşterinin hesabına mı ekleneceğidir."]
         });
     }
     async function populateDemandArticlesAsync() {
         await populateArticlesAsync(
-            "/adminPanel/demand/excursion/filter?" + (
+            "/adminPanel/demand/berthReservation/filter?" + (
                 `pageSize=${pagingBuffer.pageSize}` +
                 `&pageNumber=${pagingBuffer.pageNumber}` +
                 `&formStatus=${formStatus}`),
-            headerKeys.demand.excursion,
+            headerKeys.demand.berthReservation,
             lbl.entityQuantity,
             async (demands) => {
                 for (let index in demands) {
@@ -272,15 +274,13 @@ $(function () {
                         articleId,
                         demandInfos.yachtType,
                         65 / 100,
-                        55 / 100);
+                        65 / 100);
 
                     //#region set article Infos 
                     let notes = getDefaultValueIfValueNullOrEmpty(demandInfos.notes);
 
                     let articleInfos = {
-                        vehicleType: getDefaultValueIfValueNullOrEmpty(demandInfos.vehicleType),
-                        from: getDefaultValueIfValueNullOrEmpty(demandInfos.from),
-                        to: getDefaultValueIfValueNullOrEmpty(demandInfos.to),
+                        marinaName: getDefaultValueIfValueNullOrEmpty(demandInfos.marinaName),
                         yachtType: getDefaultValueIfValueNullOrEmpty(demandInfos.yachtType),
                         yachtName: getDefaultValueIfValueNullOrEmpty(demandInfos.yachtName),
                         nameSurname: getDefaultValueIfValueNullOrEmpty(demandInfos.nameSurname),
@@ -297,12 +297,11 @@ $(function () {
 
                     div_article_info.append(`
                         <div>
-                            <p class="p_article">${articleInfos.vehicleType}</p>
-                            <p class="p_article">${articleInfos.from} -> ${articleInfos.to}</p>
-                            <p class="p_article">${articleInfos.yachtType}</p>
-                            <p class="p_article">${articleInfos.yachtName}</p>
-                            <p class="p_article">${articleInfos.nameSurname}</p>
-                            <p class="p_article">${articleInfos.notes}</p>
+                            <h2>${articleInfos.marinaName}</h2>
+                            <h3 style="margin-top:15px">${articleInfos.yachtType}</h3>
+                            <h3 style="margin-top:2px">${articleInfos.yachtName}</h3>
+                            <h4 style="margin-top:20px; font-size: 14.5px">${articleInfos.nameSurname}</h4>
+                            <h6 style="margin-top:10px">${articleInfos.notes}</h6>
                         </div>
                         <div id="${div_passedTime_id}">${articleInfos.passedTime}</div>
                     `);

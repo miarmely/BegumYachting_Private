@@ -5,8 +5,8 @@ import { addCriticalSectionAsync, shiftTheChildDivToBottomOfParentDivAsync } fro
 import {
     addImageToArticleAsync, beforePopulateAsync, click_articleAsync, resize_windowAsync,
     click_backButtonAsync, click_InfoDivAsync, getDefaultValueIfValueNullOrEmpty,
-    populateArticlesAsync, addInputsToInfoDivsAsync
-} from "./miar_demand.js"
+    populateArticlesAsync, addInputsToInfoDivsAsync,
+} from "./miar_form.js"
 
 import {
     alignArticlesToCenterAsync, art_baseId, controlArticleWidthAsync, div_article_info_id,
@@ -51,25 +51,31 @@ $(function () {
     const slct = {
         article_submenu_display: $("#slct_article_submenu_display")
     };
-    const formType = "SecurityAndProtectionServiceDemand";
+    const formType = "FuelPurchaseDemand";
     const inputInfos = [
-        ["input", "text", "nameSurname", "Ad Soyad", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],  // type for switch/case | type for switch/case | type for input | id | label name | info message | hidden/disabled/readonly of input | place to add
-        ["input", "text", "phone", "Telefon", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "email", "Email", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "newPassportNo", "Yeni Pasaport No", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "oldPassportNo", "Eski Pasapart No", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "rank", "Rank", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "nationality", "Uyruk", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "gender", "Cinsiyet", false, "readonly", [div_senderInfos_inputs, div_answererInfos_inputs]],
-        ["input", "text", "answeredDate", "Cevaplanma Tarihi", false, "readonly", [div_answererInfos_inputs]],
-        ["input", "text", "yachtType", "Yat Tipi", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "yachtName", "Yat Adı", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "flag", "Bayrak", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "requestedService", "İstenen Servis", false, "readonly", [div_demandInfos_inputs]],
-        ["input", "text", "createdDate", "Talep Tarihi", false, "readonly", [div_demandInfos_inputs]],
-        ["textarea", "notes", "Notlar", false, "readonly", [div_demandInfos_inputs]],
-    ];  // for add <input>s and <textarea>s
-    const inputIds = {
+        ["input", "text", "nameSurname", "Ad Soyad", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],  // type for switch/case | type for switch/case | type for input | id | label name | info message | hidden/disabled/readonly of input | place to add
+        ["input", "text", "phone", "Telefon", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
+        ["input", "text", "email", "Email", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
+        ["input", "text", "newPassportNo", "Yeni Pasaport No", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
+        ["input", "text", "oldPassportNo", "Eski Pasapart No", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
+        ["input", "text", "rank", "Rank", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
+        ["input", "text", "nationality", "Uyruk", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
+        ["input", "text", "gender", "Cinsiyet", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
+        ["input", "text", "answeredDate", "Cevaplanma Tarihi", false, "readonly", [div.answererInfos_inputs]],
+        ["input", "text", "yachtType", "Yat Tipi", false, "readonly", [div.demandInfos_inputs]],
+        ["input", "text", "yachtName", "Yat Adı", false, "readonly", [div.demandInfos_inputs]],
+        ["input", "text", "flag", "Bayrak", false, "readonly", [div.demandInfos_inputs]],
+        ["input", "text", "isDutyPaid", "Gümrüklü Mü", false, "readonly", [div.demandInfos_inputs]],
+        ["input", "text", "mgo", "MGO", false, "readonly", [div.demandInfos_inputs]],  // marine gas oil
+        ["input", "text", "ago", "AGO", false, "readonly", [div.demandInfos_inputs]],  // automotive gas oil
+        ["input", "text", "fuelType", "Yakıt Tipi", false, "readonly", [div.demandInfos_inputs]],
+        ["input", "text", "requestedFuel", "İstenen Yakıt Miktarı (L)", false, "readonly", [div.demandInfos_inputs]],
+        ["input", "text", "fuelSupplyPort", "Yakıt İkmal Yeri", false, "readonly", [div.demandInfos_inputs]],
+        ["input", "text", "fuelSupplyDate", "Yakıt İkmal Tarihi", false, "readonly", [div.demandInfos_inputs]],
+        ["input", "text", "createdDate", "Talep Tarihi", false, "readonly", [div.demandInfos_inputs]],
+        ["textarea", "notes", "Notlar", true, "readonly", [div.demandInfos_inputs]]  // type for switch/case | id | label name | info message | hidden/disabled/readonly of input | place to add            
+    ];
+    const inpt_id = {
         nameSurname: "inpt_nameSurname",
         phone: "inpt_phone",
         email: "inpt_email",
@@ -78,14 +84,22 @@ $(function () {
         rank: "inpt_rank",
         nationality: "inpt_nationality",
         gender: "inpt_gender",
+        createdDate: "inpt_createdDate",
         answeredDate: "inpt_answeredDate",
         yachtName: "inpt_yachtName",
         yachtType: "inpt_yachtType",
         flag: "inpt_flag",
-        requestedService: "inpt_requestedService",
-        createdDate: "inpt_createdDate",
+        isDutyPaid: "inpt_isDutyPaid",
+        mgo: "inpt_mgo",
+        ago: "inpt_ago",
+        fuelType: "inpt_fuelType",
+        requestedFuel: "inpt_requestedFuel",
+        fuelSupplyPort: "inpt_fuelSupplyPort",
+        fuelSupplyDate: "inpt_fuelSupplyDate",
+    };
+    const txt_id = {
         notes: "txt_notes"
-    };  // for populate <input>s and <textarea>s
+    }
     let articleIdsAndInfos = {};
     let formStatus = "Unanswered";
     //#endregion
@@ -120,12 +134,12 @@ $(function () {
     ul_pagination.click(async (event) => {
         await click_ul_paginationAsync(
             event,
-            populateDemandArticlesAsync);
+            populateFuelPurchaseArticlesAsync);
     })
     ul_pagination.keyup(async (event) => {
         await keyup_ul_paginationAsync(
             event,
-            populateDemandArticlesAsync);
+            populateFuelPurchaseArticlesAsync);
     })
     slct.article_submenu_display.change(async () => {
         //#region show/hide anserer infos <div>
@@ -141,12 +155,12 @@ $(function () {
             div.answererInfos.attr("hidden", "");
         //#endregion
 
-        await populateDemandArticlesAsync();
+        await populateFuelPurchaseArticlesAsync();
     })  // DISABLED
     spn_eventManager.on("click_article", async (_, event) => {
         await click_articleAsync(
             event,
-            inputIds,
+            inpt_id,
             articleIdsAndInfos,
             div.article_display,
             div.article_update,
@@ -157,30 +171,28 @@ $(function () {
             btn.back,
             formStatus,
             async (infosOfLastClickedArticle) => {
-                //#region set form infos
-                let createdDateInStr = getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.createdDate);
-                
-                let formInfos = {
-                    yachtName: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtName),
-                    yachtType: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtType),
-                    flag: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.flag),
-                    requestedService: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.requestedService),
-                    createdDate: (createdDateInStr == infosOfLastClickedArticle.createdDate ?
-                        await convertDateToStrDateAsync(
-                            new Date(createdDateInStr),
-                            { hours: true, minutes: true, seconds: false }) // when date is not null or empty
-                        : createdDateInStr),  // when date is null or empty,
-                    notes: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.notes)
-                };
-                //#endregion
-
-                //#region populate inputs (DYNAMICALLY)
-                for (let elementName in formInfos)
-                    div.demandInfos_inputs
-                        .find("#" + inputIds[elementName])
-                        .val(formInfos[elementName]);
-                //#endregion
-
+                div.demandInfos_inputs.find("#" + inpt_id.yachtName).val(
+                    getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtName));
+                div.demandInfos_inputs.find("#" + inpt_id.yachtType).val(
+                    getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtType));
+                div.demandInfos_inputs.find("#" + inpt_id.flag).val(
+                    getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.flag));
+                div.demandInfos_inputs.find("#" + inpt_id.isDutyPaid).val(infosOfLastClickedArticle.isDutyPaid);
+                div.demandInfos_inputs.find("#" + inpt_id.mgo).val(infosOfLastClickedArticle.mgo);
+                div.demandInfos_inputs.find("#" + inpt_id.ago).val(infosOfLastClickedArticle.ago);
+                div.demandInfos_inputs.find("#" + inpt_id.fuelType).val(infosOfLastClickedArticle.fuelType);
+                div.demandInfos_inputs.find("#" + inpt_id.requestedFuel).val(infosOfLastClickedArticle.requestedFuel);
+                div.demandInfos_inputs.find("#" + inpt_id.fuelSupplyPort).val(infosOfLastClickedArticle.fuelSupplyPort);
+                div.demandInfos_inputs.find("#" + inpt_id.fuelSupplyDate).val(
+                    await convertDateToStrDateAsync(
+                        new Date(infosOfLastClickedArticle.fuelSupplyDate),
+                        { hours: true, minutes: true, seconds: false }));
+                div.demandInfos_inputs.find("#" + inpt_id.createdDate).val(
+                    await convertDateToStrDateAsync(
+                        new Date(infosOfLastClickedArticle.createdDate),
+                        { hours: true, minutes: true, seconds: false }));
+                div.demandInfos_inputs.find("#" + txt_id.notes).val(
+                    getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.notes));
             }  // populate demand inputs
         );
     })
@@ -212,24 +224,26 @@ $(function () {
 
     //#region functions
     async function setupPageAsync() {
-        await beforePopulateAsync(300, 580, div.articles);
-        await populateDemandArticlesAsync();
+        await beforePopulateAsync(300, 550, div.articles);
+        await populateFuelPurchaseArticlesAsync();
         await addInputsToInfoDivsAsync(inputInfos);
         await populateInfoMessagesAsync({
             div_senderInfos: ["Şeklin üzerine tıklayarak talebi gönderen personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
             div_answererInfos: ["Şeklin üzerine tıklayarak talebe cevap veren personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
-            div_demandInfos: ["Şeklin üzerine tıklayarak talep bilgilerini görüntüleyebilir veya gizleyebilirsin.",]
+            div_demandInfos: ["Şeklin üzerine tıklayarak talep bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
+            div_notes: ["şekli, sağ alt ucundan aşağı doğru çekerek uzatabilirsin.",]
         });
     }
-    async function populateDemandArticlesAsync() {
+    async function populateFuelPurchaseArticlesAsync() {
         await populateArticlesAsync(
-            "/adminPanel/demand/securityAndProtectionService/filter?" + (
+            "/adminPanel/demand/fuelPurchase/filter?" + (
                 `pageSize=${pagingBuffer.pageSize}` +
                 `&pageNumber=${pagingBuffer.pageNumber}` +
                 `&formStatus=${formStatus}`),
-            headerKeys.demand.securityAndProtectionService,
+            headerKeys.demand.fuelPurchase,
             lbl.entityQuantity,
             async (demands) => {
+                //#region populate inside of articles
                 for (let index in demands) {
                     //#region set variables
                     let articleId = art_baseId + index;
@@ -244,49 +258,37 @@ $(function () {
                         articleId,
                         demandInfos.yachtType,
                         65 / 100,
-                        60 / 100);
-
-                    //#region set article Infos 
-                    let notes = getDefaultValueIfValueNullOrEmpty(demandInfos.notes);
-
-                    let articleInfos = {
-                        requestedService: getDefaultValueIfValueNullOrEmpty(demandInfos.requestedService),
-                        yachtType: getDefaultValueIfValueNullOrEmpty(demandInfos.yachtType),
-                        yachtName: getDefaultValueIfValueNullOrEmpty(demandInfos.yachtName),
-                        nameSurname: getDefaultValueIfValueNullOrEmpty(demandInfos.nameSurname),
-                        notes: (notes == demandInfos.notes ?
-                            notes.substring(0, 200) // when notes is not null or empty
-                            : notes),  // when notes is null or empty                            
-                        passedTime: await getPassedTimeInStringAsync(null, demandInfos.createdDate)
-                    };
-                    //#endregion
+                        65 / 100
+                    );
 
                     //#region add article infos 
                     let div_article_info = article.children("#" + div_article_info_id);
-                    let div_passedTime_id = "div_passedTime";
 
                     div_article_info.append(`
                         <div>
-                            <p class="p_article">${articleInfos.requestedService}</p>
-                            <p class="p_article">${articleInfos.yachtType}</p>
-                            <p class="p_article">${articleInfos.yachtName}</p>
-                            <p class="p_article">${articleInfos.nameSurname}</p>
-                            <p class="p_article">${articleInfos.notes}</p>
+                            <h2>${getDefaultValueIfValueNullOrEmpty(demandInfos.flag)}</h2>
+                            <h3 style="margin-top:3px">${getDefaultValueIfValueNullOrEmpty(demandInfos.yachtType)}</h3 >
+                            <h4 style="margin-top:2px">${getDefaultValueIfValueNullOrEmpty(demandInfos.yachtName)}</h4>
+                            <h4 style="margin-top:20px">${demandInfos.nameSurname}</h4>
+                            <h6 style="margin-top:10px">${demandInfos.notes.substring(0, 200)}...</h6>
                         </div>
-                        <div id="${div_passedTime_id}">${articleInfos.passedTime}</div>
+                        <div id="div_passedTime">${await getPassedTimeInStringAsync(null, demandInfos.createdDate)}</div>
                     `);
                     //#endregion
 
                     await shiftTheChildDivToBottomOfParentDivAsync(
                         div_article_info,
-                        div_passedTime_id);  // shift the passed time to bottom
+                        "div_passedTime");  // shift the passed time to bottom
                 }
-            },  // populate inside of articles
+                //#endregion
+            },
             async () => {
+                //#region declare events
                 $(".article").click(event => {
                     spn_eventManager.trigger("click_article", [event]);
                 })
-            }  // declare events
+                //#endregion
+            }
         );
     }
     //#endregion
