@@ -77,6 +77,10 @@
       "PackagePath": "staticwebassets\\css\\miar_form.order_provision.css"
     },
     {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\css\\miar_form.order_technicalAssistanceAndSparePart.css",
+      "PackagePath": "staticwebassets\\css\\miar_form.order_technicalAssistanceAndSparePart.css"
+    },
+    {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\css\\miar_login.css",
       "PackagePath": "staticwebassets\\css\\miar_login.css"
     },
@@ -327,6 +331,10 @@
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\js\\miar_form.order_provision.js",
       "PackagePath": "staticwebassets\\js\\miar_form.order_provision.js"
+    },
+    {
+      "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\js\\miar_form.order_technicalAssistanceAndSparePart.js",
+      "PackagePath": "staticwebassets\\js\\miar_form.order_technicalAssistanceAndSparePart.js"
     },
     {
       "Id": "C:\\Users\\Mac\\Desktop\\SOFTWARE\\1__Software_Languages\\1__C#\\2__API\\1__Projects\\4__BegumYachting\\BegumYacht_Web\\wwwroot\\js\\miar_homePage.js",

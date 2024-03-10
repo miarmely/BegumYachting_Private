@@ -124,12 +124,12 @@ $(function () {
     ul_pagination.click(async (event) => {
         await click_ul_paginationAsync(
             event,
-            populateDemandArticlesAsync);
+            populateOrderArticlesAsync);
     })
     ul_pagination.keyup(async (event) => {
         await keyup_ul_paginationAsync(
             event,
-            populateDemandArticlesAsync);
+            populateOrderArticlesAsync);
     })
     slct.article_submenu_display.change(async () => {
         //#region show/hide anserer infos <div>
@@ -145,7 +145,7 @@ $(function () {
             div.answererInfos.attr("hidden", "");
         //#endregion
 
-        await populateDemandArticlesAsync();
+        await populateOrderArticlesAsync();
     })  // DISABLED
     spn_eventManager.on("click_article", async (_, event) => {
         await click_articleAsync(

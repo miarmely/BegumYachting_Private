@@ -65,10 +65,9 @@ $(function () {
         ["input", "text", "yachtType", "Yat Tipi", false, "readonly", [div.orderInfos_inputs]],
         ["input", "text", "yachtName", "Yat Adı", false, "readonly", [div.orderInfos_inputs]],
         ["input", "text", "flag", "Bayrak", false, "readonly", [div.orderInfos_inputs]],
-        ["input", "text", "supplyDate", "Tedarik Tarihi", false, "readonly", [div.orderInfos_inputs]],
-        ["input", "text", "supplyPort", "Tedarik Yeri", false, "readonly", [div.orderInfos_inputs]],
-        ["input", "text", "accountTypes", "Hesap Türü", true, "readonly", [div.orderInfos_inputs]],
-        ["textarea", "flowerAndArrangementsInfo", "Çiçek/Başvuru Bilgileri", false, "readonly", [div.orderInfos_inputs]],
+        ["input", "text", "requestedService", "İstenen Servis", true, "readonly", [div.orderInfos_inputs]],
+        ["input", "text", "sparePart", "Yedek Parça", true, "readonly", [div.orderInfos_inputs]],
+        ["textarea", "notes", "Notlar", false, "readonly", [div.orderInfos_inputs]],
         
     ];  // for add <input>s and <textarea>s
     const inputIds = {
@@ -84,12 +83,11 @@ $(function () {
         yachtName: "inpt_yachtName",
         yachtType: "inpt_yachtType",
         flag: "inpt_flag",
-        supplyDate: "inpt_supplyDate",
-        supplyPort: "inpt_supplyPort",
-        accountTypes: "inpt_accountTypes",
+        requestedService: "inpt_requestedService",
+        sparePart: "inpt_sparePart",
         createdDate: "inpt_createdDate",
-        flowerAndArrangementsInfo: "txt_flowerAndArrangementsInfo",
-    };  // for populate <input>s and <textarea>s
+        notes: "txt_notes"
+    };  // for populate <input>s and <textarea>s  (keys for ajax data; values for elements)
     let articleIdsAndInfos = {};
     let formStatus = "Unanswered";
     //#endregion
@@ -162,26 +160,20 @@ $(function () {
             formStatus,
             async (infosOfLastClickedArticle) => {
                 //#region set form infos
-                let supplyDateInStr = getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.supplyDate);
                 let createdDateInStr = getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.createdDate);
                 
                 let orderInfos = {
                     yachtName: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtName),
                     yachtType: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtType),
                     flag: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.flag),
-                    supplyDate: (supplyDateInStr == infosOfLastClickedArticle.supplyDate ?
-                        await convertDateToStrDateAsync(
-                            new Date(supplyDateInStr),
-                            { hours: false, minutes: false, seconds: false }) // when date is not null or empty
-                        : supplyDateInStr),  // when date is null or empty,
-                    supplyPort: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.supplyPort),
-                    flowerAndArrangementsInfo: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.flowerAndArrangementsInfo),
-                    accountTypes: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.accountTypes),
+                    requestedService: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.requestedService),
+                    sparePart: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.sparePart),
                     createdDate: (createdDateInStr == infosOfLastClickedArticle.createdDate ?
                         await convertDateToStrDateAsync(
                             new Date(createdDateInStr),
                             { hours: true, minutes: true, seconds: false }) // when date is not null or empty
                         : createdDateInStr),  // when date is null or empty,
+                    notes: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.notes)
                 };
                 //#endregion
 
@@ -223,23 +215,24 @@ $(function () {
 
     //#region functions
     async function setupPageAsync() {
-        await beforePopulateAsync(300, 400, div.articles);
+        await beforePopulateAsync(300, 650, div.articles);
         await populateOrderArticlesAsync();
         await addInputsToInfoDivsAsync(inputInfos);
         await populateInfoMessagesAsync({
             div_senderInfos: ["Şeklin üzerine tıklayarak talebi gönderen personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
             div_answererInfos: ["Şeklin üzerine tıklayarak talebe cevap veren personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
             div_orderInfos: ["Şeklin üzerine tıklayarak talep bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
-            div_accountTypes: ["Marina ücretinin yatın hesabına mı yoksa müşterinin hesabına mı ekleneceğidir.",]
+            div_requestesService: ["Talep edilen teknik servis bilgisidir.",],
+            div_sparePart: ["Talep edilen yedek parça bilgisidir.",]
         });
     }
     async function populateOrderArticlesAsync() {
         await populateArticlesAsync(
-            "/adminPanel/order/flower/filter?" + (
+            "/adminPanel/order/technicalAssistanceAndSparePart/filter?" + (
                 `pageSize=${pagingBuffer.pageSize}` +
                 `&pageNumber=${pagingBuffer.pageNumber}` +
                 `&formStatus=${formStatus}`),
-            headerKeys.order.flower,
+            headerKeys.order.technicalAssistanceAndSparePart,
             lbl.entityQuantity,
             async (orders) => {
                 for (let index in orders) {
@@ -255,15 +248,21 @@ $(function () {
                     await addImageToArticleAsync(
                         articleId,
                         orderInfos.yachtType,
-                        55 / 100,
-                        75 / 100);
+                        65 / 100,
+                        55 / 100);
 
                     //#region set article Infos
+                    let notes = getDefaultValueIfValueNullOrEmpty(orderInfos.notes);
+
                     let articleInfos = {
-                        supplyPort: getDefaultValueIfValueNullOrEmpty(orderInfos.supplyPort),
+                        requestedService: getDefaultValueIfValueNullOrEmpty(orderInfos.requestedService),
+                        sparePart: getDefaultValueIfValueNullOrEmpty(orderInfos.sparePart),
                         yachtType: getDefaultValueIfValueNullOrEmpty(orderInfos.yachtType),
                         yachtName: getDefaultValueIfValueNullOrEmpty(orderInfos.yachtName),
                         nameSurname: getDefaultValueIfValueNullOrEmpty(orderInfos.nameSurname),
+                        notes: (notes == orderInfos.notes ?
+                            notes.substring(0, 200)  // when notes is not null or empty
+                            : notes),  // when it is null or empty
                         passedTime: await getPassedTimeInStringAsync(null, orderInfos.createdDate)
                     };
                     //#endregion
@@ -274,10 +273,12 @@ $(function () {
 
                     div_article_info.append(`
                         <div>
-                            <p class="p_article">${articleInfos.supplyPort}</p>
+                            <p class="p_article">${articleInfos.requestedService}</p>
+                            <p class="p_article">${articleInfos.sparePart}</p>
                             <p class="p_article">${articleInfos.yachtType}</p>
                             <p class="p_article">${articleInfos.yachtName}</p>
                             <p class="p_article">${articleInfos.nameSurname}</p>
+                            <p class="p_article">${articleInfos.notes}</p>
                         </div>
                         <div id="${div_passedTime_id}">${articleInfos.passedTime}</div>
                     `);
