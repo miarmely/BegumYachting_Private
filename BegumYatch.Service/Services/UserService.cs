@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using BegumYatch.Core.Configs;
 using BegumYatch.Core.DTOs.Error;
 using BegumYatch.Core.DTOs.User;
+using BegumYatch.Core.DTOs.UserLogin;
 using BegumYatch.Core.DTOs.UserRegister;
 using BegumYatch.Core.Enums;
 using BegumYatch.Core.Models.User;
@@ -12,10 +14,15 @@ using BegumYatch.Core.ViewModels;
 using BegumYatch.Repository.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Buffers.Text;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json.Nodes;
@@ -31,8 +38,11 @@ namespace BegumYatch.Service.Services
         private readonly IEmailService _emailService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly JwtSettingsConfig _jwtSettingsConfig;
 
-        public UserService(IGenericRepository<AppUser> userRepository, IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService, UserManager<AppUser> userManager, IGenericRepository<MailOtp> mailOtpRepository) : base(userRepository, unitOfWork)
+        public UserService(IGenericRepository<AppUser> userRepository, IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService, UserManager<AppUser> userManager, IGenericRepository<MailOtp> mailOtpRepository, 
+             IOptions<JwtSettingsConfig> jwtSettingsConfig) 
+            : base(userRepository, unitOfWork)
         {
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
@@ -40,6 +50,7 @@ namespace BegumYatch.Service.Services
             _emailService = emailService;
             _userManager = userManager;
             _mailOtpRepository = mailOtpRepository;
+            _jwtSettingsConfig = jwtSettingsConfig.Value;
         }
 
         public async Task<List<ReturnResponseModel>> VerifyConfirmCode(VerifyConfirmCode verifyConfirmCode)
@@ -225,49 +236,38 @@ namespace BegumYatch.Service.Services
             else
                 return null;
         }
-
-        // BELONG TO RUMEYSA (REMOVED SERVICES) (By MERT)
-        //public async Task<int> UpdateCrewAndPassenger(
-        //    CrewAndPassengerUpdateDto crewAndPassengerUpdateDto)
-        //{
-        //    var distanceMonth = crewAndPassengerUpdateDto.PassPortExpiry.Month - DateTime.Now.Month;
-
-        //    var currentUser = _userRepository
-        //        .Where(x => x.Id == crewAndPassengerUpdateDto.Id)
-        //        .FirstOrDefault();
-
-        //    if (currentUser == null)
-        //        throw new Exception("There is no user with this information.");
-
-        //    if (crewAndPassengerUpdateDto.IsPersonel)
-        //    {
-        //        currentUser.IsPersonel = true;
-        //        currentUser.Rank = crewAndPassengerUpdateDto.Rank;
-        //    }
-
-        //    else
-        //    {
-        //        currentUser.IsPersonel = false;
-        //        currentUser.Rank = null;
-        //    }
-        //    //pasaportun bitiş tarihi bilgilendirme maili, 6 ay / 180 gün önce atılması sağlanmalıdır.
-
-        //    if (distanceMonth < 0)
-        //        distanceMonth = (-1) * distanceMonth;
-
-        //    if (distanceMonth == 6)
-        //        await _emailService.SendEmailAsync("Information about passport expiry date", "Dear " + $"{currentUser.NameSurname}" + " , there are 6 months until the expiry date of your passport. For your information.", currentUser.Email);
-        //    //yeni ve eski pasaport doluluğunu kontrol et. ve bunu yukarıdaki kontrol kısmına oturt
-
-        //    _userRepository.Update(currentUser);
-        //    await _unitOfWork.CommitAsync();
-
-        //    return crewAndPassengerUpdateDto.Id;
-        //}
     }
 
     public partial class UserService  // By MERT
     {
+        public async Task<string> LoginAsync(UserLoginDto userDto)
+        {
+            #region when email is wrong (THROW)
+            var user = await _userManager.FindByEmailAsync(userDto.Email);
+
+            if (user == null)
+                throw new MiarException(
+                    404,
+                    "AE",
+                    "Authentication Error",
+                    "email veya şifre yanlış");
+            #endregion
+
+            #region when password is wrong (THROW)
+            var isPasswordTrue = await _userManager
+                .CheckPasswordAsync(user, userDto.Password);
+
+            if (!isPasswordTrue)
+                throw new MiarException(
+                    404,
+                    "AE",
+                    "Authentication Error",
+                    "email veya şifre yanlış");
+            #endregion
+
+            return await GenerateTokenForUserAsync(user);
+        }
+
         public async Task CreateUserAsync(UserDtoForCreate userDto)
         {
             await ControlConflictForUserAsync(
@@ -459,6 +459,39 @@ namespace BegumYatch.Service.Services
                 #endregion
             }
             #endregion
+        }
+    }
+
+    public partial class UserService  // By MERT (PRIVATE)
+    {
+        private async Task<string> GenerateTokenForUserAsync(AppUser user)
+        {
+            #region set claims
+            var claims = new Collection<Claim>
+            {
+                new (ClaimTypes.NameIdentifier, user.Id.ToString()),
+            };
+            #endregion
+
+            #region set signingCredentials
+            var secretKeyInBytes = Encoding.UTF8
+                .GetBytes(_jwtSettingsConfig.SecretKey);
+
+            var signingCredentials = new SigningCredentials(
+                new SymmetricSecurityKey(secretKeyInBytes),
+                SecurityAlgorithms.HmacSha256);
+            #endregion
+
+            #region set jwt token
+            var token = new JwtSecurityToken(
+                _jwtSettingsConfig.ValidIssuer,
+                _jwtSettingsConfig.ValidAudience1,
+                claims,
+                signingCredentials: signingCredentials);
+            #endregion
+
+            return new JwtSecurityTokenHandler()
+                .WriteToken(token);
         }
     }
 }

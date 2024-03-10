@@ -469,3 +469,5 @@ C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\4__
 C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\4__BegumYachting\BegumYatch.API\obj\Debug\net6.0\BegumYatch.API.pdb
 C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\4__BegumYachting\BegumYatch.API\obj\Debug\net6.0\BegumYatch.API.genruntimeconfig.cache
 C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\4__BegumYachting\BegumYatch.API\obj\Debug\net6.0\ref\BegumYatch.API.dll
+C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\4__BegumYachting\BegumYatch.API\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\Mac\Desktop\SOFTWARE\1__Software_Languages\1__C#\2__API\1__Projects\4__BegumYachting\BegumYatch.API\bin\Debug\net6.0\Microsoft.IdentityModel.Abstractions.dll

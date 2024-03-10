@@ -1,8 +1,11 @@
-﻿using BegumYatch.Core.Models.Role;
+﻿using BegumYatch.Core.Configs;
+using BegumYatch.Core.Models.Role;
 using BegumYatch.Core.Models.User;
 using BegumYatch.Repository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace BegumYatch.API.Extensions
 {
@@ -57,5 +60,40 @@ namespace BegumYatch.API.Extensions
                             "Order-TechnicalAssistanceAndSparePart");
                 });
             });
+
+        public static void ConfigureJwt(
+            this IServiceCollection services,
+            IConfiguration configuration) =>
+            services
+                .AddAuthentication(opt =>
+                {
+                    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(opt =>
+                {
+                    var section = configuration.GetSection(nameof(JwtSettingsConfig));
+
+                    opt.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = section["ValidIssuer"],
+                        ValidateAudience = true,
+                        ValidAudience = section["ValidAudience1"],
+                        ValidateLifetime = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding
+                            .UTF8
+                            .GetBytes(section["SecretKey"])),
+                        ValidateIssuerSigningKey = true
+                    };
+                });
+
+        public static void ConfigureConfigModels(
+            this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            services.Configure<JwtSettingsConfig>(configuration
+                .GetSection(nameof(JwtSettingsConfig)));
+        }
     }
 }

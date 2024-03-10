@@ -1,4 +1,5 @@
 ﻿using BegumYatch.Core.DTOs.User;
+using BegumYatch.Core.DTOs.UserLogin;
 using BegumYatch.Core.DTOs.UserRegister;
 using BegumYatch.Core.Models.User;
 using BegumYatch.Core.QueryParameters;
@@ -17,6 +18,7 @@ namespace BegumYatch.Core.Services
 
     public partial interface IUserService  // By MERT
     {
+        Task<string> LoginAsync(UserLoginDto userDto);
         Task CreateUserAsync(UserDtoForCreate userDto);
         Task UpdateUserAsync(string email, UserDtoForUpdate userDto);
         Task DeleteUsersAsync(UserDtoForDelete userDto);

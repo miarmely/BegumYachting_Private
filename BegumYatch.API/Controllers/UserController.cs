@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-
+using System.Security.Cryptography;
 
 namespace BegumYatch.API.Controllers
 {
@@ -87,7 +87,7 @@ namespace BegumYatch.API.Controllers
                 return BadRequest(ModelState);
             else
             {
-                #region control user whether exists
+                #region control user whether exists (By MERT)
                 var user = await _userManager.FindByEmailAsync(userLoginDto.Email);
 
                 if (user == null)
@@ -190,7 +190,7 @@ namespace BegumYatch.API.Controllers
         [Authorize]
         public async Task<IActionResult> UserLogOut()
         {
-            //çıkış yaptıktan sonra nereye return olacağını frontend mi belirleyecek ?
+            //çıkış yaptıktan sonra nereye return olacağını frontend mi belirleyecek ? (By RÜMEYSA)
             await _signInManager.SignOutAsync();
             return Ok();
         }
@@ -279,6 +279,19 @@ namespace BegumYatch.API.Controllers
     public partial class UserController // By MERT
     {
         #region writed by mert 
+        [HttpPost("adminPanel/login")]
+        public async Task<IActionResult> Login(
+            [FromBody] UserLoginDto userDto)
+        {
+            var token = await _userService.LoginAsync(userDto);
+
+            return Ok(new
+            {
+                Token = token
+            });
+        }
+
+
         [HttpPost("adminPanel/userCreate")]
         public async Task<IActionResult> CreateUser(
             [FromBody] UserDtoForCreate userDto)
@@ -297,7 +310,7 @@ namespace BegumYatch.API.Controllers
                 .GetUsersByFilteringAsync(
                     userParams.UserId,
                     CheckIsDeleted: userParams.CheckIsDeleted);
-                
+
             return Ok(users
                 .FirstOrDefault());
         }
