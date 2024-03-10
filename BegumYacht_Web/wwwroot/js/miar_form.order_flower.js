@@ -35,12 +35,12 @@ $(function () {
         sidebarMenuButton: $("#div_sidebarMenuButton"),
         senderInfos: $("#div_senderInfos"),
         answererInfos: $("#div_answererInfos"),
-        demandInfos: $("#div_demandInfos"),
+        orderInfos: $("#div_orderInfos"),
         backButton: $("#div_backButton"),
         panelTitle: $("#div_panelTitle"),
         senderInfos_inputs: $("#div_senderInfos_inputs"),
         answererInfos_inputs: $("#div_answererInfos_inputs"),
-        demandInfos_inputs: $("#div_demandInfos_inputs"),
+        orderInfos_inputs: $("#div_orderInfos_inputs"),
     };
     const btn = {
         back: $("#btn_back")
@@ -51,7 +51,7 @@ $(function () {
     const slct = {
         article_submenu_display: $("#slct_article_submenu_display")
     };
-    const formType = "VipTransferDemand";
+    const formType = "FlowerOrder";
     const inputInfos = [
         ["input", "text", "nameSurname", "Ad Soyad", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],  // type for switch/case | type for switch/case | type for input | id | label name | info message | hidden/disabled/readonly of input | place to add
         ["input", "text", "phone", "Telefon", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
@@ -62,19 +62,15 @@ $(function () {
         ["input", "text", "nationality", "Uyruk", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
         ["input", "text", "gender", "Cinsiyet", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
         ["input", "text", "answeredDate", "Cevaplanma Tarihi", false, "readonly", [div.answererInfos_inputs]],
-        ["input", "text", "yachtType", "Yat Tipi", false, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "yachtName", "Yat Adı", false, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "flag", "Bayrak", false, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "vehicleType", "Araç Tipi", false, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "transferDate", "Transfer Tarihi", false, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "from", "Nereden", false, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "to", "Nereye", false, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "numberOfPeople", "Yolcu Sayısı", false, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "luggage", "Ek Bagaj Arabası", true, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "accountOps", "Ücretin Ödeneceği Hesap", true, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "createdDate", "Talep Tarihi", false, "readonly", [div.demandInfos_inputs]],
-        ["textarea", "notes", "Notlar", false, "readonly", [div.demandInfos_inputs]],
-    ];
+        ["input", "text", "yachtType", "Yat Tipi", false, "readonly", [div.orderInfos_inputs]],
+        ["input", "text", "yachtName", "Yat Adı", false, "readonly", [div.orderInfos_inputs]],
+        ["input", "text", "flag", "Bayrak", false, "readonly", [div.orderInfos_inputs]],
+        ["input", "text", "supplyDate", "Tedarik Tarihi", false, "readonly", [div.orderInfos_inputs]],
+        ["input", "text", "supplyPort", "Tedarik Yeri", false, "readonly", [div.orderInfos_inputs]],
+        ["input", "text", "accountTypes", "Hesap Türü", true, "readonly", [div.orderInfos_inputs]],
+        ["textarea", "flowerAndArrangementsInfo", "Çiçek/Başvuru Bilgileri", false, "readonly", [div.orderInfos_inputs]],
+        
+    ];  // for add <input>s and <textarea>s
     const inputIds = {
         nameSurname: "inpt_nameSurname",
         phone: "inpt_phone",
@@ -88,16 +84,12 @@ $(function () {
         yachtName: "inpt_yachtName",
         yachtType: "inpt_yachtType",
         flag: "inpt_flag",
-        vehicleType: "inpt_vehicleType",
-        transferDate: "inpt_transferDate",
-        from: "inpt_from",
-        to: "inpt_to",
-        numberOfPeople: "inpt_numberOfPeople",
-        luggage: "inpt_luggage",
-        accountOps: "inpt_accountOps",
+        supplyDate: "inpt_supplyDate",
+        supplyPort: "inpt_supplyPort",
+        accountTypes: "inpt_accountTypes",
         createdDate: "inpt_createdDate",
-        notes: "txt_notes"
-    };  // for populate <input>s and <texarea>s
+        flowerAndArrangementsInfo: "txt_flowerAndArrangementsInfo",
+    };  // for populate <input>s and <textarea>s
     let articleIdsAndInfos = {};
     let formStatus = "Unanswered";
     //#endregion
@@ -170,38 +162,34 @@ $(function () {
             formStatus,
             async (infosOfLastClickedArticle) => {
                 //#region set form infos
-                let transferDateInStr = getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.transferDate);
+                let supplyDateInStr = getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.supplyDate);
                 let createdDateInStr = getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.createdDate);
-
-                let formInfos = {
+                
+                let orderInfos = {
                     yachtName: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtName),
                     yachtType: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtType),
                     flag: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.flag),
-                    vehicleType: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.vehicleType),
-                    transferDate: (transferDateInStr == infosOfLastClickedArticle.transferDate ?
+                    supplyDate: (supplyDateInStr == infosOfLastClickedArticle.supplyDate ?
                         await convertDateToStrDateAsync(
-                            new Date(transferDateInStr),
+                            new Date(supplyDateInStr),
                             { hours: false, minutes: false, seconds: false }) // when date is not null or empty
-                        : transferDateInStr),  // when date is null or empty
-                    from: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.from),
-                    to: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.to),
-                    numberOfPeople: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.numberOfPeople),
-                    luggage: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.luggage),
-                    accountOps: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.accountOps),
+                        : supplyDateInStr),  // when date is null or empty,
+                    supplyPort: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.supplyPort),
+                    flowerAndArrangementsInfo: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.flowerAndArrangementsInfo),
+                    accountTypes: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.accountTypes),
                     createdDate: (createdDateInStr == infosOfLastClickedArticle.createdDate ?
                         await convertDateToStrDateAsync(
                             new Date(createdDateInStr),
                             { hours: true, minutes: true, seconds: false }) // when date is not null or empty
                         : createdDateInStr),  // when date is null or empty,
-                    notes: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.notes)
                 };
                 //#endregion
 
-                //#region populate inputs
-                for (let elementName in formInfos) 
-                    div.demandInfos_inputs
+                //#region populate inputs (DYNAMICALLY)
+                for (let elementName in orderInfos)
+                    div.orderInfos_inputs
                         .find("#" + inputIds[elementName])
-                        .val(formInfos[elementName]);
+                        .val(orderInfos[elementName]);
                 //#endregion
 
             }  // populate demand inputs
@@ -222,10 +210,10 @@ $(function () {
             div.article_display,
             div.senderInfos,
             div.answererInfos,
-            div.demandInfos,
+            div.orderInfos,
             div.senderInfos_inputs,
             div.answererInfos_inputs,
-            div.demandInfos_inputs,
+            div.orderInfos_inputs,
             btn.back);
         await alignArticlesToCenterAsync();
     })
@@ -235,56 +223,48 @@ $(function () {
 
     //#region functions
     async function setupPageAsync() {
-        await beforePopulateAsync(300, 650, div.articles);
-        await populateDemandArticlesAsync();
+        await beforePopulateAsync(300, 580, div.articles);
+        await populateOrderArticlesAsync();
         await addInputsToInfoDivsAsync(inputInfos);
         await populateInfoMessagesAsync({
             div_senderInfos: ["Şeklin üzerine tıklayarak talebi gönderen personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
             div_answererInfos: ["Şeklin üzerine tıklayarak talebe cevap veren personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
-            div_demandInfos: ["Şeklin üzerine tıklayarak talep bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
-            div_luggage: ["Ek bagaj arabasının istenip istenmediğidir."],
-            div_accountOps: ["Marina ücretinin yatın hesabına mı yoksa müşterinin hesabına mı ekleneceğidir.",]
+            div_orderInfos: ["Şeklin üzerine tıklayarak talep bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
+            div_accountTypes: ["Marina ücretinin yatın hesabına mı yoksa müşterinin hesabına mı ekleneceğidir.",]
         });
     }
-    async function populateDemandArticlesAsync() {
+    async function populateOrderArticlesAsync() {
         await populateArticlesAsync(
-            "/adminPanel/demand/vipTransfer/filter?" + (
+            "/adminPanel/order/flower/filter?" + (
                 `pageSize=${pagingBuffer.pageSize}` +
                 `&pageNumber=${pagingBuffer.pageNumber}` +
                 `&formStatus=${formStatus}`),
-            headerKeys.demand.vipTransfer,
+            headerKeys.order.flower,
             lbl.entityQuantity,
-            async (demands) => {
-                for (let index in demands) {
+            async (orders) => {
+                for (let index in orders) {
                     //#region set variables
                     let articleId = art_baseId + index;
                     let article = $("#" + articleId);
-                    let demandInfos = demands[index];
+                    let orderInfos = orders[index];
 
                     // save demand infos
-                    articleIdsAndInfos[articleId] = demandInfos;
+                    articleIdsAndInfos[articleId] = orderInfos;
                     //#endregion
 
                     await addImageToArticleAsync(
                         articleId,
-                        demandInfos.yachtType,
+                        orderInfos.yachtType,
                         65 / 100,
-                        55 / 100);
+                        60 / 100);
 
-                    //#region set article Infos 
-                    let notes = getDefaultValueIfValueNullOrEmpty(demandInfos.notes);
-
+                    //#region set article Infos
                     let articleInfos = {
-                        vehicleType: getDefaultValueIfValueNullOrEmpty(demandInfos.vehicleType),
-                        from: getDefaultValueIfValueNullOrEmpty(demandInfos.from),
-                        to: getDefaultValueIfValueNullOrEmpty(demandInfos.to),
-                        yachtType: getDefaultValueIfValueNullOrEmpty(demandInfos.yachtType),
-                        yachtName: getDefaultValueIfValueNullOrEmpty(demandInfos.yachtName),
-                        nameSurname: getDefaultValueIfValueNullOrEmpty(demandInfos.nameSurname),
-                        notes: (notes == demandInfos.notes ?
-                            notes.substring(0, 200) // when notes is not null or empty
-                            : notes),  // when notes is null or empty                            
-                        passedTime: await getPassedTimeInStringAsync(null, demandInfos.createdDate)
+                        supplyPort: getDefaultValueIfValueNullOrEmpty(orderInfos.supplyPort),
+                        yachtType: getDefaultValueIfValueNullOrEmpty(orderInfos.yachtType),
+                        yachtName: getDefaultValueIfValueNullOrEmpty(orderInfos.yachtName),
+                        nameSurname: getDefaultValueIfValueNullOrEmpty(orderInfos.nameSurname),
+                        passedTime: await getPassedTimeInStringAsync(null, orderInfos.createdDate)
                     };
                     //#endregion
 
@@ -294,12 +274,10 @@ $(function () {
 
                     div_article_info.append(`
                         <div>
-                            <p class="p_article">${articleInfos.vehicleType}</p>
-                            <p class="p_article">${articleInfos.from} -> ${articleInfos.to}</p>
+                            <p class="p_article">${articleInfos.supplyPort}</p>
                             <p class="p_article">${articleInfos.yachtType}</p>
                             <p class="p_article">${articleInfos.yachtName}</p>
                             <p class="p_article">${articleInfos.nameSurname}</p>
-                            <p class="p_article">${articleInfos.notes}</p>
                         </div>
                         <div id="${div_passedTime_id}">${articleInfos.passedTime}</div>
                     `);
