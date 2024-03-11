@@ -21,13 +21,15 @@ namespace BegumYatch.Core.Services
     public partial interface IUserService  // By MERT
     {
         Task<object> LoginAsync(UserLoginDto userDto);
-        Task ForgetPasswordAsync(ForgetPasswordDto forgetPasswordDto);
         Task<object> VerifyCodeForResetPasswordAsync(LoginParamsForVerifyCode loginParams);
         Task ResetPasswordAsync(LoginDtoForResetPassword loginDto);
         Task<List<GetUsersDto>> GetAllUsers(int accountId);
         Task CreateUserAsync(UserDtoForCreate userDto);
         Task UpdateUserAsync(string email, UserDtoForUpdate userDto);
         Task DeleteUsersAsync(UserDtoForDelete userDto);
+
+        Task SendCodeToMailForResetPasswordAsync(
+            LoginParamsForSendCodeToMail loginParams);
 
         Task<List<MiarUser>> GetUsersByFilteringAsync(
         int? UserId = null,

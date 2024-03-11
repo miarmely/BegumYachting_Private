@@ -24,14 +24,19 @@ namespace BegumYatch.Service.Services
             _emailSettings = options.Value;
         }
 
-        public async Task SendEmailAsync(string subject, string body, string toEmail)
+        public async Task SendEmailAsync(
+            string subject, 
+            string body, 
+            string toEmail)
         {
             var smptClient = new SmtpClient();
             smptClient.Host = _emailSettings.Host;
             smptClient.DeliveryMethod = SmtpDeliveryMethod.Network;
             smptClient.UseDefaultCredentials = false;
             smptClient.Port = 587;
-            smptClient.Credentials = new NetworkCredential(_emailSettings.Email, _emailSettings.Password);
+            smptClient.Credentials = new NetworkCredential(
+                _emailSettings.Email, 
+                _emailSettings.Password);
             smptClient.EnableSsl = true;
 
             var mailMessage = new MailMessage();

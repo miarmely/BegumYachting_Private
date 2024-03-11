@@ -3,12 +3,12 @@
     height: 80px;
 }
 
-#btn_show {
+.btn_show {
     border-style: none;
     width: 50px;
 }
 
-    #btn_show img {
+    .btn_show img {
         width: 25px
     }
 
@@ -24,6 +24,11 @@
         color: #170065
     }
 
-#btn_login :disabled {
-    cursor: no-drop
+
+#div_signinOrSignupMessage {
+    text-align: center
+}
+
+#btn_submit:disabled {
+    cursor: no-drop;
 }

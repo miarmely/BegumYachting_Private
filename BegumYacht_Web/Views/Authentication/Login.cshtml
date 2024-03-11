@@ -27,20 +27,19 @@
 					</div>*@
 
 					<form action="#" class="login-form" style="margin-top:40px">
-						<div id="div_login" >
+						<div id="div_login">
 							@*email*@
 		      				<div class="form-group">
-		      					<input id="inpt_email" type="text" class="form-control rounded-left" placeholder="Email" required>
+		      					<input type="text" class="form-control rounded-left  inpt_email" placeholder="Email" required>
 		      				</div>
 
 							@*password*@
 							<div class="form-group d-flex">
-								<input id="inpt_password" type="password" class="form-control rounded-left" placeholder="Şifre" required>
-								<button id="btn_show" type="button">
+								<input type="password" class="form-control rounded-left  inpt_password" placeholder="Şifre" required>
+								<button type="button" class="btn_show">
 									<img src="~/images/showPassword.png"/>
 								</button>
 							</div>
-
 							<div class="form-group d-md-flex">
 	            				@*remember me*@
 								<div class="w-50">
@@ -56,108 +55,60 @@
 									<a id="a_forgotPassword" href="/authentication/forgotPassword">Şifremi Unuttum?</a>
 								</div>
 							</div>
-
-							@*create account message*@
-							<div id="div_createAccount" class="form-group">
-								<span>Hesabın yok mu? <a href="/authentication/register">Oluştur</a></span>
-							</div>
-
-							@*error message*@ 
-							<div class="form-group" style="text-align:center">
-								<img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px; margin-top:30px" hidden/>
-								<p id="p_resultLabel"></p>
-							</div>
-
-							@*login button*@
-							<div class="form-group">
-	            				<button id="btn_login" type="button" class="btn btn-primary rounded submit p-3 px-5">Giriş Yap</button>
-							</div>
 						</div>
-						<div id="div_chooseValidationType" hidden>
-							@*phone and email dropdown*@
+						<div id="div_validationType" hidden>
+							@*validation type dropdown*@
 							<div class="form-group">
 								<select id="slct_chooseValidationType" class="form-control">
 									<option value="info" selected>Doğrulama Tipi</option>
 									<option value="email">Email</option>
-									@*<option value="phone">Telefon Numarası</option>*@
 								</select>
 							</div>
-						
-							@*email/phone*@
+
+							@*email input*@
 		      				<div class="form-group">
-		      					<input id="inpt_validation" type="text" class="form-control rounded-left" placeholder="" required>
+		      					<input type="text" class="form-control rounded-left  inpt_email" placeholder="" required>
 		      				</div>
-
-							@*login message*@
-							<div class="form-group" id="div_login">
-								<span>Hesabın var mı? <a href="/">Giriş Yap</a></span>
-		      				</div>
-
-							@*error message*@ 
-							<div class="form-group" style="text-align:center">
-								<img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px; margin-top:30px" hidden/>
-								<p id="p_resultLabel"></p>
-							</div>
-
-							@*send button*@
-							<div class="form-group">
-	            				<button id="btn_send" type="submit" class="btn btn-primary rounded submit p-3 px-5" disabled>Gönder</button>
-							</div>
 						</div>
 						<div id="div_validationCode" hidden>
-							@*validation code*@
+							@*validation code input*@
 		      				<div class="form-group">
 		      					<input id="inpt_validationCode" type="text" class="form-control rounded-left" placeholder="" required>
 		      				</div>
-
-							@*login message*@
-							<div class="form-group" id="div_login">
-								<span>Hesabın var mı? <a href="/">Giriş Yap</a></span>
-		      				</div>
-
-							@*error message*@ 
-							<div class="form-group" style="text-align:center">
-								<img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px; margin-top:30px" hidden/>
-								<p id="p_resultLabel"></p>
-							</div>
-
-							@*login button*@
-							<div class="form-group">
-	            				<button id="btn_send" type="button" class="btn btn-primary rounded submit p-3 px-5" disabled>Gönder</button>
-							</div>
 						</div>
 						<div id="div_newPassword" hidden>
-							@*new password*@
-							 <div class="form-group d-flex">
-								<input id="inpt_password" type="password" class="form-control rounded-left" placeholder="Yeni Şifre" required>
-								<button id="btn_show" type="button">
+							@*new password input*@
+								<div class="form-group d-flex">
+								<input type="password" class="form-control rounded-left  inpt_password" placeholder="Yeni Şifre" required>
+								<button type="button" class="btn_show">
 									<img src="~/images/showPassword.png"/>
 								</button>
 							</div>
 
-							 @*new password confirm*@
-		      				 <div class="form-group d-flex">
-								<input id="inpt_passwordConfirm" type="password" class="form-control rounded-left" placeholder="Yeni Şifre Tekrar" required>
-								<button id="btn_show" type="button">
+							@*new password confirm input*@
+		      				<div class="form-group d-flex">
+								<input type="password" class="form-control rounded-left  inpt_password" placeholder="Yeni Şifre Tekrar" required>
+								<button type="button" class="btn_show">
 									<img src="~/images/showPassword.png"/>
 								</button>
 							</div>
+						</div>
+							
+						@*signup message*@
+						<div id="div_signinOrSignupMessage" class="form-group">
+							<span>Hesabın yok mu?</span> 
+							<a href="#">Kayıt Ol</a>
+		      			</div>
 
-							@*login message*@
-							<div class="form-group" id="div_login">
-								<span>Hesabın var mı? <a href="/">Giriş Yap</a></span>
-		      				</div>
+						@*error message*@ 
+						<div class="form-group" style="text-align:center">
+							<img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px; margin-top:30px" hidden/>
+							<p id="p_resultLabel"></p>
+						</div>
 
-							@*error message*@ 
-							<div class="form-group" style="text-align:center">
-								<img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px; margin-top:30px" hidden/>
-								<p id="p_resultLabel"></p>
-							</div>
-
-							@*login button*@
-							<div class="form-group">
-	            				<button id="btn_send" type="button" class="btn btn-primary rounded submit p-3 px-5" disabled>Gönder</button>
-							</div>
+						@*submit button*@
+						<div class="form-group">
+	            			<button id="btn_submit" type="button" class="btn btn-primary rounded submit p-3 px-5">GÖNDER</button>
 						</div>
 					</form>
 				</div>
@@ -165,6 +116,7 @@
 		</div>
 	</div>
 </section>
+
 
 <script></script>
 <script type="module" src="~/js/miar_login.js"></script>

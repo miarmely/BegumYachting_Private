@@ -242,7 +242,7 @@ namespace BegumYatch.Service.Services
         }
     }
 
-    public partial class UserService  // By MERT
+    public partial class UserService  // By MERT (PUBLIC)
     {
         public async Task<object> LoginAsync(UserLoginDto userDto)
         {
@@ -276,13 +276,14 @@ namespace BegumYatch.Service.Services
             };
         }
 
-        public async Task ForgetPasswordAsync(
-            [FromBody] ForgetPasswordDto forgetPasswordDto)
+        public async Task SendCodeToMailForResetPasswordAsync(
+            [FromBody] LoginParamsForSendCodeToMail loginParams)
         {
             #region when user not found (THROW)
-            var hasUser = await _userManager.FindByEmailAsync(forgetPasswordDto.Email);
+            var user = await _userManager
+                .FindByEmailAsync(loginParams.Email);
 
-            if (hasUser == null)
+            if (user == null)
                 throw new MiarException(
                     404,
                     "NF-U",
@@ -303,24 +304,24 @@ namespace BegumYatch.Service.Services
             }
             #endregion
 
-            #region set otp model
-            string passwordResestToken = await _userManager
-                .GeneratePasswordResetTokenAsync(hasUser);
+            #region set mail otp
+            string tokenForResetPassword = await _userManager
+                .GeneratePasswordResetTokenAsync(user);
 
             var model = new MailOtp
             {
-                UserId = hasUser.Id,
-                Email = hasUser.Email,
+                UserId = user.Id,
+                Email = user.Email,
                 Code = verifyCode,
                 DateAdded = DateTime.Now,
-                Token = passwordResestToken
+                Token = tokenForResetPassword
             };
             #endregion
 
             #region send mail
             var mailMessage = $@"Şifrenizi resetlemek için lütfen bu doğrulama kodunu kullanın:
                 <br><br>
-                        <b style='text-align:center; font-size:20px;'>{verifyCode}</b>
+                    <b style='text-align:center; font-size:20px;'>{verifyCode}</b>
                 <br><br>
               MostIdea";
 
@@ -328,9 +329,9 @@ namespace BegumYatch.Service.Services
             {
                 await SendOtp(model);
                 await _emailService.SendEmailAsync(
-                    "Forget Password",
+                    "MostIdea - Forget Password",
                     mailMessage,
-                    hasUser.Email!);
+                    user.Email);
             }
             catch (Exception ex)
             {
@@ -354,7 +355,7 @@ namespace BegumYatch.Service.Services
             #endregion
 
             #region verify the code (THROW)
-            var token = await VerifyOtp(loginParams.Code, user.Id);
+            var token = await VerifyOtp(loginParams.VerificationCode, user.Id);
 
             // when code is wrog
             if (token == "")

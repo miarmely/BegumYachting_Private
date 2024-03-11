@@ -5,12 +5,11 @@ namespace BegumYatch.Core.QueryParameters
 {
     public record LoginParamsForVerifyCode
     {
-        [Required]
-        [MiarEmail]
+        [Required] 
         public string Email { get; init; }
 
         [Required]
-        [MiarLength(6, 6, "Doğrulama Codu", "Verify Code")]
-        public string Code { get; init; }
+        [MiarLength(6, 6, "Doğrulama Codu", "Verification Code")]
+        public string VerificationCode { get; init; }
     }
 }

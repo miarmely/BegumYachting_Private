@@ -289,17 +289,18 @@ namespace BegumYatch.API.Controllers
         }
 
 
-        [HttpPost("adminPanel/forgetPassword")]  // MODIFIED
-        public async Task<IActionResult> MiarForgetPassword(
-            [FromBody] ForgetPasswordDto forgetPasswordDto)
+        [HttpGet("adminPanel/forgotPassword/sendCodeToMail")]  // MODIFIED
+        public async Task<IActionResult> SendCodeToMailForResetPassword(
+            [FromQuery] LoginParamsForSendCodeToMail loginParams)
         {
-            await _userService.ForgetPasswordAsync(forgetPasswordDto);
+            await _userService.SendCodeToMailForResetPasswordAsync(
+                loginParams);
 
             return NoContent();
         }
 
 
-        [HttpGet("adminPanel/verifyCode")]
+        [HttpGet("adminPanel/forgotPassword/verifyCode")]
         public async Task<IActionResult> VerifyCodeForResetPassword(
             [FromQuery] LoginParamsForVerifyCode loginParams)
         {
@@ -309,7 +310,7 @@ namespace BegumYatch.API.Controllers
         }
 
 
-        [HttpPost("adminPanel/resetPassword")]  // MODIFIED
+        [HttpPost("adminPanel/forgotPassword/resetPassword")]  // MODIFIED
         public async Task<IActionResult> MiarResetPassword(
             [FromBody] LoginDtoForResetPassword loginDto)
         {

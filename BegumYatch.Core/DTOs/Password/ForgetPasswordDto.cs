@@ -10,8 +10,7 @@ namespace BegumYatch.Core.DTOs.Password
 {
     public class ForgetPasswordDto
     {
-
-        [Required(ErrorMessage = "Email alanı boş bırakılamaz.")]
+        [Required]
         [EmailAddress(ErrorMessage = "Email formatı yanlıştır.")]
         public string Email { get; set; } = null!;
     }

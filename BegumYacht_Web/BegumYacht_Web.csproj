@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\js\miar_forgotPassword.js" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Models\" />
   </ItemGroup>
 
@@ -32,7 +28,6 @@
     <None Include="wwwroot\js\miar_module.sidebarMenu.js" />
     <None Include="wwwroot\js\miar_module.table.js" />
     <None Include="wwwroot\js\miar_module.userForm.js" />
-    <None Include="wwwroot\js\miar_forgotPassword.js" />
     <None Include="wwwroot\js\miar_register.js" />
     <None Include="wwwroot\js\miar_user.js" />
     <None Include="wwwroot\js\miar_user.display.js" />
