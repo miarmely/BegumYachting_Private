@@ -1,18 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using BegumYacht_Web.Filters;
 
 
 namespace BegumYacht_Web.Controllers
 {
-	public class UserController : Controller
-	{
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        public IActionResult Display()
-		{
-			return View();
-		}
-	}
+    [MiarAuthorize]
+    public class UserController : Controller
+    {
+        public IActionResult Create() => View();
+        public IActionResult Display() => View();
+    }
 }

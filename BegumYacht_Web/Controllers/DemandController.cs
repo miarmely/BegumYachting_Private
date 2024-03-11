@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BegumYacht_Web.Filters;
+using Microsoft.AspNetCore.Mvc;
+
 
 namespace BegumYacht_Web.Controllers
 {
+    [MiarAuthorize]
     public class DemandController : Controller
     {
         public IActionResult FuelPurchase() => View();

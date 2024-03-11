@@ -241,7 +241,7 @@ $(function () {
     async function populateTableAsync(addUserOnly = false) {
         $.ajax({
             method: "GET",
-            url: baseApiUrl + "/getAllUsers",
+            url: baseApiUrl + `/adminPanel/userDisplay/all?accountId=${accountInfos.id}`,
             headers: {
                 authorization: jwtToken
             },

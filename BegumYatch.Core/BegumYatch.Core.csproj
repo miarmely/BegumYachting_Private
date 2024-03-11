@@ -11,8 +11,4 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.16" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DTOs\AdminPanel\Orders\" />
-  </ItemGroup>
-
 </Project>

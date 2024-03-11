@@ -1,15 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using BegumYacht_Web.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 
 namespace BegumYacht_Web.Controllers
 {
-    [Authorize]
+    [MiarAuthorize]
     public class HomePageController : Controller
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        public IActionResult Index() => View();
     }
 }

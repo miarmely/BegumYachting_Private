@@ -273,7 +273,6 @@ namespace BegumYatch.Service.Services
             };
         }
 
-        [Authorize]
         public async Task CreateUserAsync(UserDtoForCreate userDto)
         {
             await ControlConflictForUserAsync(
@@ -299,7 +298,63 @@ namespace BegumYatch.Service.Services
             #endregion
         }
 
-        [Authorize]
+        public async Task<List<GetUsersDto>> MiarGetAllUsers(int accountId)
+        {
+            #region get users except account owner (THROW)
+            var users = await _userRepository
+                .GetAll()
+                .Where(u => u.Id != accountId)
+                .AsNoTracking()
+                .ToListAsync();
+
+            // when any user not found
+            if (users.Count == 0)
+                throw new MiarException(
+                    404,
+                    "NF-U",
+                    "Not Found - User",
+                    "kullanıcı bulunamadı");
+
+            var usersDtoList = _mapper.Map<List<GetUsersDto>>(users);
+            #endregion
+
+            return usersDtoList;
+        }
+
+        public async Task<List<MiarUser>> GetUsersByFilteringAsync(
+            int? UserId = null,
+            string? Email = null,
+            string? Phone = null,
+            bool CheckIsDeleted = true)
+        {
+            #region get users by filtering
+            var sql = "EXEC User_GetUsersByFiltering " +
+                "@UserId = {0}, " +
+                "@Email = {1}, " +
+                "@Phone = {2}, " +
+                "@CheckIsDeleted = {3}";
+
+            var users = await _userRepository
+                .FromSqlRawAsync<MiarUser>(
+                    sql,
+                    UserId,
+                    Email,
+                    Phone,
+                    CheckIsDeleted);
+            #endregion
+
+            #region when any user not found (THROW)
+            if (users.Count == 0)
+                throw new MiarException(
+                    404,
+                    "NF-U",
+                    "Not Found - User",
+                    "kullanıcı bulunamadı");
+            #endregion
+
+            return users;
+        }
+
         public async Task UpdateUserAsync(string email, UserDtoForUpdate userDto)
         {
             await ControlConflictForUserAsync(
@@ -373,7 +428,6 @@ namespace BegumYatch.Service.Services
             #endregion
         }
 
-        [Authorize]
         public async Task DeleteUsersAsync(UserDtoForDelete userDto)
         {
             #region delete users by email
@@ -383,41 +437,6 @@ namespace BegumYatch.Service.Services
                 await _userManager.DeleteAsync(user);
             }
             #endregion
-        }
-
-        [Authorize]
-        public async Task<List<MiarUser>> GetUsersByFilteringAsync(
-            int? UserId = null,
-            string? Email = null,
-            string? Phone = null,
-            bool CheckIsDeleted = true)
-        {
-            #region get users by filtering
-            var sql = "EXEC User_GetUsersByFiltering " +
-                "@UserId = {0}, " +
-                "@Email = {1}, " +
-                "@Phone = {2}, " +
-                "@CheckIsDeleted = {3}";
-
-            var users = await _userRepository
-                .FromSqlRawAsync<MiarUser>(
-                    sql,
-                    UserId,
-                    Email,
-                    Phone,
-                    CheckIsDeleted);
-            #endregion
-
-            #region when any user not found (THROW)
-            if (users.Count == 0)
-                throw new MiarException(
-                    404,
-                    "NF-U",
-                    "Not Found - User",
-                    "kullanıcı bulunamadı");
-            #endregion
-
-            return users;
         }
     }
 

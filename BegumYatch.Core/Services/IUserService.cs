@@ -19,14 +19,16 @@ namespace BegumYatch.Core.Services
     public partial interface IUserService  // By MERT
     {
         Task<object> LoginAsync(UserLoginDto userDto);
+        Task<List<GetUsersDto>> MiarGetAllUsers(int accountId);
+
+        Task<List<MiarUser>> GetUsersByFilteringAsync(
+        int? UserId = null,
+        string? Email = null,
+        string? Phone = null,
+        bool CheckIsDeleted = true);
+
         Task CreateUserAsync(UserDtoForCreate userDto);
         Task UpdateUserAsync(string email, UserDtoForUpdate userDto);
         Task DeleteUsersAsync(UserDtoForDelete userDto);
-
-        Task<List<MiarUser>> GetUsersByFilteringAsync(
-            int? UserId = null,
-            string? Email = null,
-            string? Phone = null,
-            bool CheckIsDeleted = true);
     }
 }

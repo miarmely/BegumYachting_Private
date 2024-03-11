@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BegumYatch.Core.DTOs.AdminPanel.Login;
 using BegumYatch.Core.DTOs.Error;
 using BegumYatch.Core.DTOs.Password;
 using BegumYatch.Core.DTOs.User;
@@ -16,6 +17,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Security.Cryptography;
 
@@ -235,8 +238,6 @@ namespace BegumYatch.API.Controllers
             }
 
 
-
-
             await _emailService.SendEmailAsync("Forget Password", result, hasUser.Email!);
 
             return Ok();
@@ -288,6 +289,116 @@ namespace BegumYatch.API.Controllers
         }
 
 
+        [HttpPost("adminPanel/forgetPassword")]  // MODIFIED
+        public async Task<IActionResult> MiarForgetPassword(
+            [FromBody] ForgetPasswordDto forgetPasswordDto)
+        {
+            #region when user not found
+            var hasUser = await _userManager.FindByEmailAsync(forgetPasswordDto.Email);
+
+            if (hasUser == null)
+                return BadRequest(ModelState);
+            #endregion
+
+            #region set verify code with 6 digit
+            var random = new Random();
+            var digitCount = 6;
+            var verifyCode = "";
+
+            for (int repeat = 0; repeat < digitCount; repeat++)
+            {
+                verifyCode += random
+                    .Next(10)  // numbers smaller than 10
+                    .ToString();
+            }
+            #endregion
+
+            #region set otp model
+            string passwordResestToken = await _userManager
+                .GeneratePasswordResetTokenAsync(hasUser);
+
+            var model = new MailOtp
+            {
+                UserId = hasUser.Id,
+                Email = hasUser.Email,
+                Code = verifyCode,
+                DateAdded = DateTime.Now,
+                Token = passwordResestToken
+            };
+            #endregion
+
+            #region send mail
+            var mailMessage = $"Şifrenizi resetlemek için bu doğrulama kodunu kullanın: <br><br><b>{verifyCode}</b> <br><br>MostIdea";
+
+            try
+            {
+                await _userService.SendOtp(model);
+                await _emailService.SendEmailAsync(
+                    "Forget Password",
+                    mailMessage,
+                    hasUser.Email!);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            #endregion
+
+            return NoContent();
+        }
+
+        [HttpGet("adminPanel/verifyCode")]
+        public async Task<IActionResult> VerifyCodeForResetPassword(
+            [FromQuery] LoginParamsForVerifyCode loginParams)
+        {
+            #region when user not found (THROW)
+            var user = await _userManager.FindByEmailAsync(loginParams.Email);
+
+            if (user == null)
+                throw new MiarException(
+                    400,
+                    "NF-U",
+                    "Not Found - User",
+                    "kullanıcı bulunamadı");
+            #endregion
+
+            #region verify the code (THROW)
+            var token = await _userService.VerifyOtp(loginParams.Code, user.Id);
+
+            // when code is wrog
+            if (token == "")
+                throw new MiarException(
+                    404,
+                    "FP-VC",
+                    "Forgot Password - Verify Code",
+                    "doğrulama kodu yanlış");
+            #endregion
+
+            return Ok(new
+            {
+                UserId = user.Id,
+                TokenForResetPassword = token
+            });
+        }
+
+
+        [HttpPost("adminPanel/resetPassword")]  // MODIFIED
+        public async Task<IActionResult> MiarResetPassword(
+            [FromBody] LoginDtoForResetPassword loginDto)
+        {
+            #region reset password of user
+            var user = await _userManager.FindByIdAsync(loginDto.UserId);
+
+            var result = await _userManager.ResetPasswordAsync(
+                user,
+                loginDto.TokenForResetPassword,
+                loginDto.NewPassword);
+            #endregion
+
+            return Ok(result);
+        }
+
+
         [HttpPost("adminPanel/userCreate")]
         public async Task<IActionResult> CreateUser(
             [FromBody] UserDtoForCreate userDto)
@@ -295,6 +406,16 @@ namespace BegumYatch.API.Controllers
             await _userService.CreateUserAsync(userDto);
 
             return NoContent();
+        }
+
+
+        [HttpGet("adminPanel/userDisplay/all")]
+        public async Task<IActionResult> MiarGetAllUsers(
+            [FromQuery(Name = "accountId")] int accountId)
+        {
+            var users = await _userService.MiarGetAllUsers(accountId);
+
+            return Ok(users);
         }
 
 
@@ -313,7 +434,7 @@ namespace BegumYatch.API.Controllers
 
 
         [HttpGet("adminPanel/userDisplay/filter")]
-        public async Task<IActionResult> GetUserInfos(
+        public async Task<IActionResult> GetUserInfosFilter(
             [FromQuery] UserParamsForDisplayByFiltering userParams)
         {
             var users = await _userService.GetUsersByFilteringAsync(
