@@ -293,92 +293,19 @@ namespace BegumYatch.API.Controllers
         public async Task<IActionResult> MiarForgetPassword(
             [FromBody] ForgetPasswordDto forgetPasswordDto)
         {
-            #region when user not found
-            var hasUser = await _userManager.FindByEmailAsync(forgetPasswordDto.Email);
-
-            if (hasUser == null)
-                return BadRequest(ModelState);
-            #endregion
-
-            #region set verify code with 6 digit
-            var random = new Random();
-            var digitCount = 6;
-            var verifyCode = "";
-
-            for (int repeat = 0; repeat < digitCount; repeat++)
-            {
-                verifyCode += random
-                    .Next(10)  // numbers smaller than 10
-                    .ToString();
-            }
-            #endregion
-
-            #region set otp model
-            string passwordResestToken = await _userManager
-                .GeneratePasswordResetTokenAsync(hasUser);
-
-            var model = new MailOtp
-            {
-                UserId = hasUser.Id,
-                Email = hasUser.Email,
-                Code = verifyCode,
-                DateAdded = DateTime.Now,
-                Token = passwordResestToken
-            };
-            #endregion
-
-            #region send mail
-            var mailMessage = $"Şifrenizi resetlemek için bu doğrulama kodunu kullanın: <br><br><b>{verifyCode}</b> <br><br>MostIdea";
-
-            try
-            {
-                await _userService.SendOtp(model);
-                await _emailService.SendEmailAsync(
-                    "Forget Password",
-                    mailMessage,
-                    hasUser.Email!);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-            #endregion
+            await _userService.ForgetPasswordAsync(forgetPasswordDto);
 
             return NoContent();
         }
+
 
         [HttpGet("adminPanel/verifyCode")]
         public async Task<IActionResult> VerifyCodeForResetPassword(
             [FromQuery] LoginParamsForVerifyCode loginParams)
         {
-            #region when user not found (THROW)
-            var user = await _userManager.FindByEmailAsync(loginParams.Email);
+            var response = await _userService.VerifyCodeForResetPasswordAsync(loginParams);
 
-            if (user == null)
-                throw new MiarException(
-                    400,
-                    "NF-U",
-                    "Not Found - User",
-                    "kullanıcı bulunamadı");
-            #endregion
-
-            #region verify the code (THROW)
-            var token = await _userService.VerifyOtp(loginParams.Code, user.Id);
-
-            // when code is wrog
-            if (token == "")
-                throw new MiarException(
-                    404,
-                    "FP-VC",
-                    "Forgot Password - Verify Code",
-                    "doğrulama kodu yanlış");
-            #endregion
-
-            return Ok(new
-            {
-                UserId = user.Id,
-                TokenForResetPassword = token
-            });
+            return Ok(response);  // "userId" and "token" is exists in response.
         }
 
 
@@ -386,16 +313,9 @@ namespace BegumYatch.API.Controllers
         public async Task<IActionResult> MiarResetPassword(
             [FromBody] LoginDtoForResetPassword loginDto)
         {
-            #region reset password of user
-            var user = await _userManager.FindByIdAsync(loginDto.UserId);
+            await _userService.ResetPasswordAsync(loginDto);
 
-            var result = await _userManager.ResetPasswordAsync(
-                user,
-                loginDto.TokenForResetPassword,
-                loginDto.NewPassword);
-            #endregion
-
-            return Ok(result);
+            return NoContent();
         }
 
 
@@ -413,7 +333,7 @@ namespace BegumYatch.API.Controllers
         public async Task<IActionResult> MiarGetAllUsers(
             [FromQuery(Name = "accountId")] int accountId)
         {
-            var users = await _userService.MiarGetAllUsers(accountId);
+            var users = await _userService.GetAllUsers(accountId);
 
             return Ok(users);
         }

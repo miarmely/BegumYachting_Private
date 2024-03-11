@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using BegumYatch.Core.Configs;
+using BegumYatch.Core.DTOs.AdminPanel.Login;
 using BegumYatch.Core.DTOs.Error;
+using BegumYatch.Core.DTOs.Password;
 using BegumYatch.Core.DTOs.User;
 using BegumYatch.Core.DTOs.UserLogin;
 using BegumYatch.Core.DTOs.UserRegister;
@@ -14,6 +16,7 @@ using BegumYatch.Core.ViewModels;
 using BegumYatch.Repository.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -273,6 +276,114 @@ namespace BegumYatch.Service.Services
             };
         }
 
+        public async Task ForgetPasswordAsync(
+            [FromBody] ForgetPasswordDto forgetPasswordDto)
+        {
+            #region when user not found (THROW)
+            var hasUser = await _userManager.FindByEmailAsync(forgetPasswordDto.Email);
+
+            if (hasUser == null)
+                throw new MiarException(
+                    404,
+                    "NF-U",
+                    "Not Found - User",
+                    "kullanıcı bulunamadı");
+            #endregion
+
+            #region set verify code with 6 digit
+            var random = new Random();
+            var digitCount = 6;
+            var verifyCode = "";
+
+            for (int repeat = 0; repeat < digitCount; repeat++)
+            {
+                verifyCode += random
+                    .Next(10)  // numbers smaller than 10
+                    .ToString();
+            }
+            #endregion
+
+            #region set otp model
+            string passwordResestToken = await _userManager
+                .GeneratePasswordResetTokenAsync(hasUser);
+
+            var model = new MailOtp
+            {
+                UserId = hasUser.Id,
+                Email = hasUser.Email,
+                Code = verifyCode,
+                DateAdded = DateTime.Now,
+                Token = passwordResestToken
+            };
+            #endregion
+
+            #region send mail
+            var mailMessage = $@"Şifrenizi resetlemek için lütfen bu doğrulama kodunu kullanın:
+                <br><br>
+                        <b style='text-align:center; font-size:20px;'>{verifyCode}</b>
+                <br><br>
+              MostIdea";
+
+            try
+            {
+                await SendOtp(model);
+                await _emailService.SendEmailAsync(
+                    "Forget Password",
+                    mailMessage,
+                    hasUser.Email!);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            #endregion
+        }
+
+        public async Task<object> VerifyCodeForResetPasswordAsync(
+            LoginParamsForVerifyCode loginParams)
+        {
+            #region when user not found (THROW)
+            var user = await _userManager.FindByEmailAsync(loginParams.Email);
+
+            if (user == null)
+                throw new MiarException(
+                    400,
+                    "NF-U",
+                    "Not Found - User",
+                    "kullanıcı bulunamadı");
+            #endregion
+
+            #region verify the code (THROW)
+            var token = await VerifyOtp(loginParams.Code, user.Id);
+
+            // when code is wrog
+            if (token == "")
+                throw new MiarException(
+                    404,
+                    "FP-VC",
+                    "Forgot Password - Verify Code",
+                    "doğrulama kodu yanlış");
+            #endregion
+
+            return new
+            {
+                UserId = user.Id,
+                TokenForResetPassword = token
+            };
+        }
+
+        public async Task ResetPasswordAsync(LoginDtoForResetPassword loginDto)
+        {
+            #region reset password of user
+            var user = await _userManager.FindByIdAsync(loginDto.UserId);
+
+            var result = await _userManager.ResetPasswordAsync(
+                user,
+                loginDto.TokenForResetPassword,
+                loginDto.NewPassword);
+            #endregion
+        }
+
         public async Task CreateUserAsync(UserDtoForCreate userDto)
         {
             await ControlConflictForUserAsync(
@@ -298,7 +409,7 @@ namespace BegumYatch.Service.Services
             #endregion
         }
 
-        public async Task<List<GetUsersDto>> MiarGetAllUsers(int accountId)
+        public async Task<List<GetUsersDto>> GetAllUsers(int accountId)
         {
             #region get users except account owner (THROW)
             var users = await _userRepository

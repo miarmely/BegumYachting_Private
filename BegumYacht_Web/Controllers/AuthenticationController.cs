@@ -12,23 +12,48 @@ using System.Text;
 
 namespace BegumYacht_Web.Controllers
 {
-	public partial class AuthenticationController : Controller
-	{
+    public partial class AuthenticationController : Controller  // main
+    {
         private readonly JwtSettingsConfig _jwtSettingsConfig;
 
         public AuthenticationController(
-            IOptions<JwtSettingsConfig >jwtSettingsConfig) =>
+            IOptions<JwtSettingsConfig> jwtSettingsConfig) =>
                 _jwtSettingsConfig = jwtSettingsConfig.Value;
 
-        public IActionResult Login()
-		{
-			return View();
-		}
+        private async Task<bool> IsTokenInvalidAsync(string token)
+        {
+            #region validate token
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var securityKeyInBytes = Encoding.UTF8
+                .GetBytes(_jwtSettingsConfig.SecretKey);
 
-		public IActionResult Register()
-		{
-			return View();
-		}
+            var result = await tokenHandler.ValidateTokenAsync(token,
+                new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = _jwtSettingsConfig.ValidIssuer,
+                    ValidateAudience = true,
+                    ValidAudience = _jwtSettingsConfig.ValidAudience1,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(securityKeyInBytes),
+                    ValidateLifetime = false
+                });
+            #endregion
+
+            #region when token is invalid
+            if (!result.IsValid)
+                return true;
+            #endregion
+
+            return false;
+        }
+    }
+
+    public partial class AuthenticationController  // actions
+    {
+        public IActionResult Login() => View();
+        public IActionResult ForgotPassword() => View();
+        public IActionResult Register() => View();
 
         public async Task<IActionResult> AfterLogin(
             [FromQuery(Name = "token")] string token)
@@ -60,7 +85,7 @@ namespace BegumYacht_Web.Controllers
             #region save claim infos to ViewBag
             ViewBag.ClaimInfos = new Dictionary<string, string>();
 
-            foreach(var claim in jwtTokenClaims)
+            foreach (var claim in jwtTokenClaims)
             {
                 ViewBag.ClaimInfos[claim.Type] = claim.Value;
             }
@@ -69,7 +94,6 @@ namespace BegumYacht_Web.Controllers
             return RedirectToAction("Display", "User");
         }
 
-
         [Authorize]
         public async Task<IActionResult> Logout()
         {
@@ -77,37 +101,6 @@ namespace BegumYacht_Web.Controllers
                 CookieAuthenticationDefaults.AuthenticationScheme);
 
             return RedirectToAction("Login");
-        }
-    }
-
-	public partial class AuthenticationController  // private
-	{
-        private async Task<bool> IsTokenInvalidAsync(string token)
-        {
-            #region validate token
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var securityKeyInBytes = Encoding.UTF8
-                .GetBytes(_jwtSettingsConfig.SecretKey);
-
-            var result = await tokenHandler.ValidateTokenAsync(token,
-                new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidIssuer = _jwtSettingsConfig.ValidIssuer,
-                    ValidateAudience = true,
-                    ValidAudience = _jwtSettingsConfig.ValidAudience1,
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(securityKeyInBytes),
-                    ValidateLifetime = false
-                });
-            #endregion
-
-            #region when token is invalid
-            if (!result.IsValid)
-                return true;
-            #endregion
-
-            return false;
         }
     }
 }
