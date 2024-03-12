@@ -32,3 +32,8 @@
 #btn_submit:disabled {
     cursor: no-drop;
 }
+
+.help-block {
+    color: red;
+    text-align: center;
+}

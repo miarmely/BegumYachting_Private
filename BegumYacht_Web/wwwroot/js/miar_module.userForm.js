@@ -1,4 +1,7 @@
-﻿//#region variables
+﻿import { updateElementText } from "./miar_module.js";
+
+
+//#region variables
 export let div_form;
 const div_form_id = "div_form";
 const div_form_css = {
@@ -145,7 +148,7 @@ export async function checkValueOfNumberInputAsync(inpt, minValue, maxValue) {
         inpt.val(maxValue);
     //#endregion
 }
-export async function checkInputsWhetherBlankAsync(inputList) {
+export async function checkInputsWhetherBlankAsync(inputList = []) {
     //#region check inputs whether is blank 
     let isAnyInputBlank = false;
    
@@ -174,10 +177,10 @@ export async function writeErrorToBelowOfInputAsync(input, error) {
         "border-width": "1.4px"
     });
 
-    // write error to "span_help"
-    let spn_help = input.siblings("span[class= help-block]");
-    spn_help.empty();
-    spn_help.append(error);
+    // write error to "spn_help"
+    updateElementText(
+        input.siblings("span[class= help-block]"),
+        error);
 }
 export async function showOrHideBackButtonAsync(
     div_backButton,

@@ -373,7 +373,8 @@ namespace BegumYatch.Service.Services
             };
         }
 
-        public async Task ResetPasswordAsync(LoginDtoForResetPassword loginDto)
+        public async Task ResetPasswordAsync(
+            LoginDtoForResetPassword loginDto)
         {
             #region reset password of user
             var user = await _userManager.FindByIdAsync(loginDto.UserId);
@@ -382,6 +383,15 @@ namespace BegumYatch.Service.Services
                 user,
                 loginDto.TokenForResetPassword,
                 loginDto.NewPassword);
+            #endregion
+
+            #region when any error is occured (THROW)
+            if (!result.Succeeded)
+                throw new MiarException(
+                    500,
+                    "ISE",
+                    "Internal Server Error",
+                    "şifre resetlenirken bir hata oluştu");
             #endregion
         }
 

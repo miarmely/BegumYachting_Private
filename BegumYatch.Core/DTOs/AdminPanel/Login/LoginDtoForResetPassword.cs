@@ -3,12 +3,16 @@ using Entities.Attributes;
 using MiarServices.Attributes;
 using System.ComponentModel.DataAnnotations;
 
+
 namespace BegumYatch.Core.DTOs.AdminPanel.Login
 {
     public record LoginDtoForResetPassword
     {
-        [Required] public string UserId { get; init; }
-        [Required] public string TokenForResetPassword { get; init; }
+        [Required] 
+        public string UserId { get; init; }
+
+        [Required] 
+        public string TokenForResetPassword { get; init; }
 
         [Required]
         [MiarLength(6, 16, "Şifre", "Password")]
