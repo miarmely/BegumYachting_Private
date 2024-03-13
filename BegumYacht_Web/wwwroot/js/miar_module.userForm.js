@@ -33,7 +33,7 @@ export async function click_showPasswordButtonAsync(inpt_password, btn_showPassw
 }
 export async function click_inputAsync(event, lbl_result) {
     //#region remove "red" color from border of input
-    let input = $("#" + event.target.id);
+    let input = $(event.target);
     input.removeAttr("style");
     //#endregion
 
@@ -207,16 +207,26 @@ export async function showOrHideBackButtonAsync(
     }
     //#endregion
 }
-export async function resetFormAsync(lbl_result) {
-    // reset inputs and result label
-    $("form")[0].reset();
+export async function resetFormAsync(lbl_result, reset = {
+    formValues: true,
+    helpBlocks: true,
+}) {
+    //#region reset result label and inputs
     lbl_result.empty();
 
-    // remove error message
-    $("form .help-block").empty();
+    if (reset.formValues)
+        $("form")[0].reset();
+    //#endregion
 
-    // reset "red" border color of input or select
-    $("form input").css("border-color", "");
-    $("form select").css("border-color", "");
+    //#region remove error message
+    if (reset.helpBlocks) {
+        $("form .help-block").empty();
+
+        // reset "red" border color of input or select
+        $("form input").css("border-color", "");
+        $("form select").css("border-color", "");
+    }
+    //#endregion
 }
+
 //#endregion

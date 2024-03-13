@@ -1,5 +1,7 @@
 ﻿import { updateElementText, updateResultLabel } from "./miar_module.js"
-import { checkInputsWhetherBlankAsync } from "./miar_module.userForm.js";
+import {
+    checkInputsWhetherBlankAsync, click_inputAsync, keyup_inputAsync, resetFormAsync
+} from "./miar_module.userForm.js";
 
 import {
     click_showPasswordAsync, keyup_enterKeyAsync, saveOrRemoveUsernameFromLocalAsync
@@ -14,17 +16,20 @@ $(function () {
     const div = {
         signinOrSignupMessage: $("#div_signinOrSignupMessage"),
         login: $("#div_login"),
-        register: $("#div_register"),
         validationType: $("#div_validationType"),
-        validationCode: $("#validationCode"),
+        validationCode: $("#div_validationCode"),
         newPassword: $("#div_newPassword"),
     };
     const inpt = {
         email_login: div.login.find(".inpt_email"),
         email_validationType: div.validationType.find(".inpt_email"),
         password_login: div.login.find(".inpt_password"),
-        password_newPassword: div.newPassword.find(".inpt_password:nth-child(1)"),
-        password_newPassword_confirm: div.newPassword.find(".inpt_password:nth-child(2)"),
+        password_newPassword: (div.newPassword
+            .children("div:nth-child(1)")
+            .children(".inpt_password")),
+        password_newPassword_confirm: (div.newPassword
+            .children("div:nth-child(2)")
+            .children(".inpt_password")),
         validationCode: $("#inpt_validationCode")
     };
     const btn = {
@@ -41,6 +46,9 @@ $(function () {
         forgotPassword: $("#a_forgotPassword"),
         signinOrSignupMessage: div.signinOrSignupMessage.children("a")
     }
+    const slct = {
+        validationType: $("#slct_validationType")
+    };
     const p_resultLabel = $("#p_resultLabel");
     const img_loading = $("#img_loading");
     const localKeys_username = "username";
@@ -79,32 +87,52 @@ $(function () {
         await keyup_enterKeyAsync(event, btn.submit);
     })
     btn.submit.click(async () => {
-        //#region when any input is blank (ERROR)
-        resetResultLabelAndInputBorderColors();
-
-        if (await checkInputsWhetherBlankAsync([
-            inpt.email_login,
-            inpt.password_login
-        ]))
-            // write error
-            updateResultLabel(
-                p_resultLabel,
-                "doldurmadığın alanlar var",
-                resultLabel_errorColor,
-                "30px");
-            return;
-        //#endregion
+        await resetFormAsync(p_resultLabel, {
+            formValues: false,
+            helpBlocks: true,
+        });
         
         //#region submit actions by form types
-        img_loading.removeAttr("hidden");
+        let isAnyInputBlank = false;
         
         switch (currentPage) {
             case "login":
+                //#region when any input is blank
+                if (await checkInputsWhetherBlankAsync([
+                    inpt.email_login,
+                    inpt.password_login])) {
+                    isAnyInputBlank = true;
+                    break;
+                }
+                //#endregion
+
+                //#region login
                 if (await loginAsync())
                     await afterLoginAsync();
+                //#endregion
 
                 break;
             case "validationType":
+                //#region when validation type is not selected (ERROR)
+                if (slct.validationType.val() == "info") {
+                    updateResultLabel(
+                        p_resultLabel,
+                        "doğrulama tipini seçmediniz",
+                        resultLabel_errorColor,
+                        "30px");
+
+                    return;
+                }
+                //#endregion
+
+                //#region when any input is blank
+                if (await checkInputsWhetherBlankAsync([inpt.email_validationType])
+                ) {
+                    isAnyInputBlank = true;
+                    break;
+                }
+                //#endregion
+
                 //#region show validation code form
                 forgotPasswordBuffer.email = inpt.email_validationType.val();
 
@@ -114,6 +142,13 @@ $(function () {
 
                 break;
             case "validationCode":
+                //#region when any input is blan
+                if (await checkInputsWhetherBlankAsync([inpt.validationCode])) {
+                    isAnyInputBlank = true;
+                    break;
+                }
+                //#endregion
+
                 //#region show new password form
                 forgotPasswordBuffer.verificationCode = inpt.validationCode.val();
 
@@ -123,46 +158,83 @@ $(function () {
 
                 break;
             case "newPassword":
+                //#region when password inputs is blank (RETURN)
+                if (await checkInputsWhetherBlankAsync([
+                    inpt.password_newPassword,
+                    inpt.password_newPassword_confirm
+                ])) {
+                    isAnyInputBlank = true;
+                    break;
+                }
+                //#endregion
+
+                //#region when passwords is not equal to each other (ERROR)
+                var newPassword = inpt.password_newPassword.val()
+                var newPasswordConfirm = inpt.password_newPassword_confirm.val();
+
+                if (newPassword != newPasswordConfirm) {
+                    // write error
+                    updateResultLabel(
+                        p_resultLabel,
+                        "şifreler eşleşmiyor",
+                        resultLabel_errorColor,
+                        "30px",
+                        img_loading);
+
+                    return;
+                }
+                //#endregion
+
                 await resetPasswordAsync();
                 break;
-        }
+    }
+        //#endregion
+
+        //#region when any input is blank (ERROR)
+        if (isAnyInputBlank)
+            updateResultLabel(
+                p_resultLabel,
+                "doldurmadığın alanlar var",
+                resultLabel_errorColor,
+                "30px");
         //#endregion
     })
-    $(".btn_show").click(async (event) => {
-        let btn_show = $(event.currentTarget);
-
-        await click_showPasswordAsync(
-            btn_show.siblings("input"),
-            btn_show.children("img"),
-            path.showPasswordImage,
-            path.hidePasswordImage);
-    })
     a.forgotPassword.click(async () => {
+        currentPage = "validationType";
+
+        await resetFormAsync(p_resultLabel, {
+            formValues: false,
+            helpBlocks: true
+        });
         await showValidationTypeFormAsync();
     })
-    a.signinOrSignupMessage.click(() => {
-        p_resultLabel.empty();
+    a.signinOrSignupMessage.click(async () => {
+        await resetFormAsync(p_resultLabel, {
+            formValues: false,
+            helpBlocks: true
+        });
 
         switch (currentPage) {
             case "validationType":
                 //#region show login form
-                // show form
                 div.validationType.attr("hidden", "");
                 div.login.removeAttr("hidden");
-                currentPage = "login";
 
-                // update signin or signup message  
+                currentPage = "login";
+                //#endregion
+
+                //#region remove signin or signup message
                 updateElementText(
                     spn_signinOrSignupMessage,
-                    signinOrsignupMessage.login.spn);  // span
+                    "");
                 updateElementText(
                     a.signinOrSignupMessage,
-                    signinOrsignupMessage.login.a);  // a
+                    "");
                 //#endregion
 
                 break;
             case "validationCode":
-
+                await sendVerificationCodeToMailAsync();
                 break;
             case "newPassword":
                 //#region show login form
@@ -183,13 +255,25 @@ $(function () {
                 break;
         }
     })
+    $(".btn_show").click(async (event) => {
+        let btn_show = $(event.currentTarget);
+
+        await click_showPasswordAsync(
+            btn_show.siblings("input"),
+            btn_show.children("img"),
+            path.showPasswordImage,
+            path.hidePasswordImage);
+    })
+    $("input").click(async (event) => {
+        await click_inputAsync(event, p_resultLabel);
+    })
+    $("input").keyup(async (event) => {
+        await keyup_inputAsync(event, p_resultLabel)
+    })
     //#endregion
 
     //#region functions
     async function setFormAsync() {
-        // hide signin or signup message
-        div.signinOrSignupMessage.attr("hidden", "");
-
         //#region populate email input if saved previous
         let username = localStorage.getItem(localKeys_username);
 
@@ -289,9 +373,11 @@ $(function () {
                 },
                 contentType: "application/json",
                 dataType: "json",
-                success: (response) => {
+                beforeSend: () => {
+                    img_loading.removeAttr("hidden");  // show
+                },
+                success: () => {
                     img_loading.attr("hidden", "");
-
                     resolve(true);
                 },
                 error: (response) => {
@@ -320,6 +406,9 @@ $(function () {
                 },
                 contentType: "application/json",
                 dataType: "json",
+                beforeSend: () => {
+                    img_loading.removeAttr("hidden");
+                },
                 success: (response) => {
                     //#region update buffer
                     forgotPasswordBuffer.userId = response.userId;
@@ -344,35 +433,7 @@ $(function () {
             })
         })
     }
-    async function resetPasswordAsync() {
-        //#region when password inputs is blank (RETURN)
-        if (await checkInputsWhetherBlankAsync([
-            inpt.password_newPassword,
-            inpt.password_newPassword_confirm
-        ])) {
-            img_loading.attr("hidden", "");
-            return;
-        }
-        //#endregion
-
-        //#region when passwords is not equal to each other (ERROR)
-        var newPassword = inpt.password_newPassword.val()
-        var newPasswordConfirm = inpt.password_newPassword_confirm.val();
-
-        if (newPassword != newPasswordConfirm) {
-            // write error
-            updateResultLabel(
-                p_resultLabel,
-                "şifreler eşleşmiyor",
-                resultLabel_errorColor,
-                "30px",
-                img_loading);
-
-            return;
-        }
-        //#endregion
-
-        // reset password
+    async function resetPasswordAsync() { 
         $.ajax({
             method: "POST",
             url: baseApiUrl + "/adminPanel/forgotPassword/resetPassword",
@@ -380,11 +441,19 @@ $(function () {
                 authorization: jwtToken,
             },
             data: JSON.stringify({
-                userId: forgotPasswordBuffer.userId,
+                userId: forgotPasswordBuffer.userId.toString(),
                 tokenForResetPassword: forgotPasswordBuffer.token,
-                newPassword: newPassword
+                newPassword: inpt.password_newPassword.val()
             }),
+            contentType: "application/Json",
+            dataType: "json",
+            beforeSend: () => {
+                img_loading.removeAttr("hidden");
+            },
             success: () => {
+                // hide password inputs
+                div.newPassword.attr("hidden", "");
+
                 // write success color
                 updateResultLabel(
                     p_resultLabel,
@@ -408,6 +477,7 @@ $(function () {
         //#region show validation type form
         div.login.attr("hidden", "");
         div.validationType.removeAttr("hidden");
+
         currentPage = "validationType";
         //#endregion
 
@@ -455,12 +525,6 @@ $(function () {
             a.signinOrSignupMessage,
             signinOrsignupMessage.newPassword.a);  // for <a>
         //#endregion
-    }
-    function resetResultLabelAndInputBorderColors() {
-        // reset "red" border-color of inputs
-        $("input").removeAttr("style");
-
-        p_resultLabel.empty();
     }
     //#endregion
 

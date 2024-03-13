@@ -9,7 +9,7 @@ namespace BegumYatch.Core.QueryParameters
         public string Email { get; init; }
 
         [Required]
-        [MiarLength(6, 6, "Doğrulama Codu", "Verification Code")]
+        [MiarLength(6, 6, "Doğrulama Kodu", "Verification Code")]
         public string VerificationCode { get; init; }
     }
 }

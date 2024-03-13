@@ -27,7 +27,7 @@
 					</div>*@
 
 					<form action="#" class="login-form" style="margin-top:40px">
-						<div id="div_login">
+						<div id="div_login"<>
 							@*email*@
 		      				<div class="form-group">
 		      					<input type="text" class="form-control rounded-left  inpt_email" placeholder="Email">
@@ -59,7 +59,7 @@
 						<div id="div_validationType" hidden>
 							@*validation type dropdown*@
 							<div class="form-group">
-								<select id="slct_chooseValidationType" class="form-control">
+								<select id="slct_validationType" class="form-control">
 									<option value="info" selected>Doğrulama Tipi</option>
 									<option value="email">Email</option>
 								</select>
@@ -73,7 +73,7 @@
 						<div id="div_validationCode" hidden>
 							@*validation code input*@
 		      				<div class="form-group">
-		      					<input id="inpt_validationCode" type="text" class="form-control rounded-left" placeholder="">
+		      					<input id="inpt_validationCode" type="text" class="form-control rounded-left" placeholder="Doğrulama Kodunu Giriniz">
 		      				</div>
 						</div>
 						<div id="div_newPassword" hidden>
@@ -108,7 +108,7 @@
 
 						@*submit button*@
 						<div class="form-group">
-	            			<button id="btn_submit" type="button" class="btn btn-primary rounded submit p-3 px-5">GÖNDER</button>
+	            			<button id="btn_submit" type="button" class="btn btn-primary rounded submit p-3 px-5" autofocus>GÖNDER</button>
 						</div>
 					</form>
 				</div>

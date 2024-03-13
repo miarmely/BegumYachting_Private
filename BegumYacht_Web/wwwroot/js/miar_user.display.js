@@ -475,10 +475,16 @@ $(function () {
                         inputValues.newPassportNo,
                         inputValues.oldPassportNo,
                         inputValues.rank,
-                        await convertDateToStrDateAsync(inputValues.dateOfIssue),
-                        await convertDateToStrDateAsync(inputValues.passPortExpiry),
+                        await convertDateToStrDateAsync(
+                            inputValues.dateOfIssue,
+                            { hours: true, minutes: true, seconds: false }),
+                        await convertDateToStrDateAsync(
+                            inputValues.passPortExpiry,
+                            { hours: true, minutes: true, seconds: false }),
                         inputValues.nationality,
-                        await convertDateToStrDateAsync(inputValues.birthDate),
+                        await convertDateToStrDateAsync(
+                            inputValues.birthDate,
+                            { hours: false, minutes: false, seconds: false }),
                         inputValues.birthPlace,
                         inputValues.gender,
                         inputValues.yachtType,
