@@ -118,6 +118,7 @@ namespace BegumYatch.Repository
     {
         public DbSet<Temp> Temp { get; set; }
         public DbSet<MiarUser> notImportant1 { get; set; }
+        public DbSet<MiarRole> notImportant12 { get; set; }
         public DbSet<FuelPurchaseDemandModel> notImportant2 { get; set; }
         public DbSet<CheckinAndCheckoutDemandModel> notImportant3 { get; set; }
         public DbSet<BerthReservationDemandModel> notImportant4 { get; set; }

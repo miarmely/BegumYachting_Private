@@ -221,6 +221,7 @@
 		</section>
 
 		<script>
+			const language = "TR";
 			const jwtToken = "Bearer " + localStorage.getItem("token");
 			const baseApiUrl = "https://localhost:7272";  // for local
 			const searchBarPlaceHolderByLanguages = {
@@ -383,7 +384,8 @@
 			const spn_eventManager = $("#spn_eventManager");
 			const localKeys = {
 				accountInfos: "accountInfos",
-				username: "username"
+				username: "username",
+				roleNames: "roleNames"
 			}
 			const headerKeys = {
 				demand: {

@@ -1,4 +1,4 @@
-﻿import { showOrHideLoadingImageAsync, updateElementText, updateResultLabel } from "./miar_module.js";
+﻿import { getDataByAjaxOrLocalAsync, populateSelectAsync, showOrHideLoadingImageAsync, updateElementText, updateResultLabel } from "./miar_module.js";
 import {
     checkInputsWhetherBlankAsync, click_inputAsync, click_showPasswordButtonAsync,
     keyup_inputAsync, populateInfoMessagesAsync, resetFormAsync
@@ -31,6 +31,7 @@ const inpt = {
 };
 const slct = {
     yachtType: $("#div_yachtType select"),
+    roles: $("#slct_roles")
 };
 const p_resultLabel = $("#p_resultLabel");
 const infoMessages = {
@@ -82,7 +83,7 @@ $("form").submit(async (event) => {
 
     $.ajax({
         method: "POST",
-        url: baseApiUrl + "/adminPanel/userCreate",
+        url: baseApiUrl + `/adminPanel/userCreate?role=${slct.roles.val()}`,
         headers: {
             authorization: jwtToken
         },
@@ -151,6 +152,15 @@ btn.showPassword.click(async () => {
 
 //#region functions
 async function populateFormAsync() {
+    //#region populate role <select>
+    var roleNames = await getDataByAjaxOrLocalAsync(
+        localKeys.roleNames,
+        "/adminPanel/roleDisplay");
+    await populateSelectAsync(
+        slct.roles,
+        roleNames);
+    //#endregion
+
     await populateInfoMessagesAsync(infoMessages);
 }
 //#endregion

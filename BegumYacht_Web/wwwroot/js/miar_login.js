@@ -344,6 +344,7 @@ $(function () {
             inpt.email_login,
             localKeys_username);  // by "remember me" checkbox
 
+        // get infos of signed account
         $.ajax({
             method: "GET",
             url: baseApiUrl + `/adminPanel/userDisplay/id?userId=${accountId}`,

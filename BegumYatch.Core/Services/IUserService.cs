@@ -1,8 +1,9 @@
 ﻿using BegumYatch.Core.DTOs.AdminPanel.Login;
-using BegumYatch.Core.DTOs.Password;
 using BegumYatch.Core.DTOs.User;
 using BegumYatch.Core.DTOs.UserLogin;
 using BegumYatch.Core.DTOs.UserRegister;
+using BegumYatch.Core.Enums.AdminPanel;
+using BegumYatch.Core.Models.Role;
 using BegumYatch.Core.Models.User;
 using BegumYatch.Core.QueryParameters;
 
@@ -21,20 +22,23 @@ namespace BegumYatch.Core.Services
     public partial interface IUserService  // By MERT
     {
         Task<object> LoginAsync(UserLoginDto userDto);
-        Task<object> VerifyCodeForResetPasswordAsync(LoginParamsForVerifyCode loginParams);
         Task ResetPasswordAsync(LoginDtoForResetPassword loginDto);
-        Task<List<GetUsersDto>> GetAllUsers(int accountId);
-        Task CreateUserAsync(UserDtoForCreate userDto);
+        Task<List<MiarUser>> GetAllUsers(int accountId);
+        Task CreateUserAsync(UserDtoForCreate userDto, Roles role);
         Task UpdateUserAsync(string email, UserDtoForUpdate userDto);
         Task DeleteUsersAsync(UserDtoForDelete userDto);
+        Task<IEnumerable<string>> GetAllRoleNamesAsync();
 
         Task SendCodeToMailForResetPasswordAsync(
             LoginParamsForSendCodeToMail loginParams);
 
+        Task<object> VerifyCodeForResetPasswordAsync(
+            LoginParamsForVerifyCode loginParams);
+
         Task<List<MiarUser>> GetUsersByFilteringAsync(
-        int? UserId = null,
-        string? Email = null,
-        string? Phone = null,
-        bool CheckIsDeleted = true);
+            int? UserId = null,
+            string? Email = null,
+            string? Phone = null,
+            bool CheckIsDeleted = true);
     }
 }

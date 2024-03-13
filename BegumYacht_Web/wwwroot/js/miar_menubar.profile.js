@@ -8,7 +8,7 @@ import {
 } from "./miar_module.date.js";
 
 import {
-    autoObjectMapperAsync, updateResultLabel, isAllObjectValuesNullAsync
+    autoObjectMapperAsync, updateResultLabel, isAllObjectValuesNullAsync, getDataByAjaxOrLocalAsync, populateSelectAsync
 } from "./miar_module.js";
 
 
@@ -38,27 +38,9 @@ const inpt = {
 };
 const slct = {
     yachtType: $("#div_yachtType select"),
+    roles: $("#slct_roles")
 };
 const p_resultLabel = $("#p_resultLabel");
-const infoMessages = {
-    "div_firstnameLastname": ["Bu alan doldurulacak."],
-    "div_phone": ["bu alan doldurulacak"],
-    "div_email": ["bu alan doldurulacak"],
-    "div_flag": ["bu alan doldurulacak"],
-    "div_newPassportNo": ["bu alan doldurulacak"],
-    "div_oldPassportNo": ["bu alan doldurulacak"],
-    "div_rank": ["bu alan doldurulacak"],
-    "div_issueDate": ["bu alan doldurulacak"],
-    "div_passportExpiration": ["bu alan doldurulacak"],
-    "div_nationality": ["bu alan doldurulacak"],
-    //"div_birthDate": ["bu alan doldurulacak"],
-    "div_birthPlace": ["bu alan doldurulacak"],
-    "div_gender": ["bu alan doldurulacak"],
-    "div_yachtType": ["bu alan doldurulacak"],
-    "div_yachtName": ["bu alan doldurulacak"],
-    //"div_isPersonal": ["bu alan doldurulacak"],
-    "div_password": ["bu alan doldurulacak"]
-}
 //#endregion
 
 //#region events
@@ -106,12 +88,17 @@ btn.showPassword.click(async () => {
 //#endregion
 
 //#region functions
-async function populateFormAsync() {
-    await populateInfoMessagesAsync(infoMessages);
+async function setupPageAsync() {
     await addDefaultValuesToFormAsync();
+
+    //#region populate role <select>
+    var roleNames = await getDataByAjaxOrLocalAsync(
+        localKeys.roleNames,
+        "/adminPanel/roleDisplay");
+    await populateSelectAsync(slct.roles, roleNames, accountInfos.roleName);
+    //#endregion
 }
 async function addDefaultValuesToFormAsync() {
-    // normal inputs
     inpt.firstnameLastname.val(accountInfos.nameSurname);
     inpt.phone.val(accountInfos.phoneNumber);
     inpt.email.val(accountInfos.email);
@@ -139,6 +126,7 @@ async function addDefaultValuesToFormAsync() {
     inpt.gender.val(accountInfos.gender);
     slct.yachtType.val(accountInfos.yacthType);
     inpt.yachtName.val(accountInfos.yacthName);
+    slct.roles.val(accountInfos.roleName);
     //#region set "isPersonal"
     if (accountInfos.isPersonel == true)
         $("#rad_yes").prop("checked", true);
@@ -236,7 +224,7 @@ async function updateUserAsync() {
                     localKeys.accountInfos,
                     JSON.stringify(accountInfos));
                 //#endregion
-                
+
                 //#region write success messsage
                 updateResultLabel(
                     p_resultLabel,
@@ -262,4 +250,4 @@ async function updateUserAsync() {
 }
 //#endregion
 
-populateFormAsync();
+setupPageAsync();

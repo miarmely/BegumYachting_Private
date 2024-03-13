@@ -23,5 +23,6 @@ namespace BegumYatch.Core.Models.User
         public string? PlaceOfBirth { get; init; }
         public bool? IsPersonel { get; init; }
         public bool? IsDeleted { get; init; }
+        public string RoleName { get; init; }
     }
 }

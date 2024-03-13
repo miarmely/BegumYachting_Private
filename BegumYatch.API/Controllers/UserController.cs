@@ -6,6 +6,7 @@ using BegumYatch.Core.DTOs.User;
 using BegumYatch.Core.DTOs.UserLogin;
 using BegumYatch.Core.DTOs.UserRegister;
 using BegumYatch.Core.Enums;
+using BegumYatch.Core.Enums.AdminPanel;
 using BegumYatch.Core.Models.User;
 using BegumYatch.Core.QueryParameters;
 using BegumYatch.Core.Repositories;
@@ -322,9 +323,20 @@ namespace BegumYatch.API.Controllers
 
         [HttpPost("adminPanel/userCreate")]
         public async Task<IActionResult> CreateUser(
+            [FromQuery(Name = "role")] Roles role,
             [FromBody] UserDtoForCreate userDto)
         {
-            await _userService.CreateUserAsync(userDto);
+            await _userService.CreateUserAsync(userDto, role);
+
+            return NoContent();
+        }
+
+
+        [HttpPost("mobile/userCreate")]
+        public async Task<IActionResult> CreateUser(
+            [FromBody] UserDtoForCreate userDto)
+        {
+            await _userService.CreateUserAsync(userDto, Roles.User);
 
             return NoContent();
         }
@@ -385,6 +397,15 @@ namespace BegumYatch.API.Controllers
             await _userService.DeleteUsersAsync(userDto);
 
             return NoContent();
+        }
+
+
+        [HttpGet("adminPanel/roleDisplay")]
+        public async Task<IActionResult> GetAllRoleNames()
+        {
+            var roles = await _userService.GetAllRoleNamesAsync();
+
+            return Ok(roles);
         }
 
 

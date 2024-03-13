@@ -7,6 +7,9 @@ using BegumYatch.Core.DTOs.User;
 using BegumYatch.Core.DTOs.UserLogin;
 using BegumYatch.Core.DTOs.UserRegister;
 using BegumYatch.Core.Enums;
+using BegumYatch.Core.Enums.AdminPanel;
+using BegumYatch.Core.Models.AdminPanel;
+using BegumYatch.Core.Models.Role;
 using BegumYatch.Core.Models.User;
 using BegumYatch.Core.QueryParameters;
 using BegumYatch.Core.Repositories;
@@ -276,126 +279,10 @@ namespace BegumYatch.Service.Services
             };
         }
 
-        public async Task SendCodeToMailForResetPasswordAsync(
-            [FromBody] LoginParamsForSendCodeToMail loginParams)
-        {
-            #region when user not found (THROW)
-            var user = await _userManager
-                .FindByEmailAsync(loginParams.Email);
-
-            if (user == null)
-                throw new MiarException(
-                    404,
-                    "NF-U",
-                    "Not Found - User",
-                    "kullanıcı bulunamadı");
-            #endregion
-
-            #region set verify code with 6 digit
-            var random = new Random();
-            var digitCount = 6;
-            var verifyCode = "";
-
-            for (int repeat = 0; repeat < digitCount; repeat++)
-            {
-                verifyCode += random
-                    .Next(10)  // numbers smaller than 10
-                    .ToString();
-            }
-            #endregion
-
-            #region set mail otp
-            string tokenForResetPassword = await _userManager
-                .GeneratePasswordResetTokenAsync(user);
-
-            var model = new MailOtp
-            {
-                UserId = user.Id,
-                Email = user.Email,
-                Code = verifyCode,
-                DateAdded = DateTime.Now,
-                Token = tokenForResetPassword
-            };
-            #endregion
-
-            #region send mail
-            var mailMessage = $@"Şifrenizi resetlemek için lütfen bu doğrulama kodunu kullanın:
-                <br><br>
-                    <b style='text-align:center; font-size:20px;'>{verifyCode}</b>
-                <br><br>
-              MostIdea";
-
-            try
-            {
-                await SendOtp(model);
-                await _emailService.SendEmailAsync(
-                    "MostIdea - Forget Password",
-                    mailMessage,
-                    user.Email);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-            #endregion
-        }
-
-        public async Task<object> VerifyCodeForResetPasswordAsync(
-            LoginParamsForVerifyCode loginParams)
-        {
-            #region when user not found (THROW)
-            var user = await _userManager.FindByEmailAsync(loginParams.Email);
-
-            if (user == null)
-                throw new MiarException(
-                    400,
-                    "NF-U",
-                    "Not Found - User",
-                    "kullanıcı bulunamadı");
-            #endregion
-
-            #region verify the code (THROW)
-            var token = await VerifyOtp(loginParams.VerificationCode, user.Id);
-
-            // when code is wrog
-            if (token == "")
-                throw new MiarException(
-                    404,
-                    "FP-VC",
-                    "Forgot Password - Verify Code",
-                    "doğrulama kodu yanlış");
-            #endregion
-
-            return new
-            {
-                UserId = user.Id,
-                TokenForResetPassword = token
-            };
-        }
-
-        public async Task ResetPasswordAsync(
-            LoginDtoForResetPassword loginDto)
-        {
-            #region reset password of user
-            var user = await _userManager.FindByIdAsync(loginDto.UserId);
-
-            var result = await _userManager.ResetPasswordAsync(
-                user,
-                loginDto.TokenForResetPassword,
-                loginDto.NewPassword);
-            #endregion
-
-            #region when any error is occured (THROW)
-            if (!result.Succeeded)
-                throw new MiarException(
-                    500,
-                    "ISE",
-                    "Internal Server Error",
-                    "şifre resetlenirken bir hata oluştu");
-            #endregion
-        }
-
-        public async Task CreateUserAsync(UserDtoForCreate userDto)
+        #region CRUD
+        public async Task CreateUserAsync(
+            UserDtoForCreate userDto,
+            Roles role)
         {
             await ControlConflictForUserAsync(
                 userDto.Email,
@@ -410,6 +297,19 @@ namespace BegumYatch.Service.Services
                 userDto.Password);
             #endregion
 
+            #region save user role
+            var sqlCommand = 
+                @"  INSERT INTO UsersAndRoles
+                                (UserId,
+                                RoleId)
+                    VALUES      ({0},
+                                {1})";
+
+            await _userRepository
+                .FromSqlRawAsync<Temp>(sqlCommand, user.Id, role);
+            #endregion
+
+
             #region when any error occured (error)
             if (!result.Succeeded)
                 throw new MiarException(
@@ -420,15 +320,13 @@ namespace BegumYatch.Service.Services
             #endregion
         }
 
-        public async Task<List<GetUsersDto>> GetAllUsers(int accountId)
+        public async Task<List<MiarUser>> GetAllUsers(int accountId)
         {
             #region get users except account owner (THROW)
             var users = await _userRepository
-                .GetAll()
-                .Where(u => u.Id != accountId)
-                .AsNoTracking()
-                .ToListAsync();
-
+                .FromSqlRawAsync<MiarUser>(
+                    "EXEC User_GetAll @AccountId={0}", accountId);
+                
             // when any user not found
             if (users.Count == 0)
                 throw new MiarException(
@@ -436,11 +334,9 @@ namespace BegumYatch.Service.Services
                     "NF-U",
                     "Not Found - User",
                     "kullanıcı bulunamadı");
-
-            var usersDtoList = _mapper.Map<List<GetUsersDto>>(users);
             #endregion
 
-            return usersDtoList;
+            return users;
         }
 
         public async Task<List<MiarUser>> GetUsersByFilteringAsync(
@@ -559,6 +455,140 @@ namespace BegumYatch.Service.Services
                 await _userManager.DeleteAsync(user);
             }
             #endregion
+        }
+        #endregion
+
+        #region forgot password
+        public async Task SendCodeToMailForResetPasswordAsync(
+            [FromBody] LoginParamsForSendCodeToMail loginParams)
+        {
+            #region when user not found (THROW)
+            var user = await _userManager
+                .FindByEmailAsync(loginParams.Email);
+
+            if (user == null)
+                throw new MiarException(
+                    404,
+                    "NF-U",
+                    "Not Found - User",
+                    "kullanıcı bulunamadı");
+            #endregion
+
+            #region set verify code with 6 digit
+            var random = new Random();
+            var digitCount = 6;
+            var verifyCode = "";
+
+            for (int repeat = 0; repeat < digitCount; repeat++)
+            {
+                verifyCode += random
+                    .Next(10)  // numbers smaller than 10
+                    .ToString();
+            }
+            #endregion
+
+            #region set mail otp
+            string tokenForResetPassword = await _userManager
+                .GeneratePasswordResetTokenAsync(user);
+
+            var model = new MailOtp
+            {
+                UserId = user.Id,
+                Email = user.Email,
+                Code = verifyCode,
+                DateAdded = DateTime.Now,
+                Token = tokenForResetPassword
+            };
+            #endregion
+
+            #region send mail
+            var mailMessage = $@"<p>Şifrenizi resetlemek için lütfen bu doğrulama kodunu kullanın</p>:
+                <br><br>
+                    <b style='font-size:20px'>{verifyCode}</b>
+                <br><br>
+              <b style='font-size:15px'>MostIdea</b>";
+
+            try
+            {
+                await SendOtp(model);
+                await _emailService.SendEmailAsync(
+                    "MostIdea - Forget Password",
+                    mailMessage,
+                    user.Email);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            #endregion
+        }
+
+        public async Task<object> VerifyCodeForResetPasswordAsync(
+            LoginParamsForVerifyCode loginParams)
+        {
+            #region when user not found (THROW)
+            var user = await _userManager.FindByEmailAsync(loginParams.Email);
+
+            if (user == null)
+                throw new MiarException(
+                    400,
+                    "NF-U",
+                    "Not Found - User",
+                    "kullanıcı bulunamadı");
+            #endregion
+
+            #region verify the code (THROW)
+            var token = await VerifyOtp(loginParams.VerificationCode, user.Id);
+
+            // when code is wrog
+            if (token == "")
+                throw new MiarException(
+                    404,
+                    "FP-VC",
+                    "Forgot Password - Verify Code",
+                    "doğrulama kodu yanlış");
+            #endregion
+
+            return new
+            {
+                UserId = user.Id,
+                TokenForResetPassword = token
+            };
+        }
+
+        public async Task ResetPasswordAsync(
+            LoginDtoForResetPassword loginDto)
+        {
+            #region reset password of user
+            var user = await _userManager.FindByIdAsync(loginDto.UserId);
+
+            var result = await _userManager.ResetPasswordAsync(
+                user,
+                loginDto.TokenForResetPassword,
+                loginDto.NewPassword);
+            #endregion
+
+            #region when any error is occured (THROW)
+            if (!result.Succeeded)
+                throw new MiarException(
+                    500,
+                    "ISE",
+                    "Internal Server Error",
+                    "şifre resetlenirken bir hata oluştu");
+            #endregion
+        }
+        #endregion
+
+        public async Task<IEnumerable<string>> GetAllRoleNamesAsync()
+        {
+            #region get role names
+            var roles = await _userRepository
+                .FromSqlRawAsync<MiarRole>("SELECT * FROM Roles");
+
+            var roleNames = roles.Select(r => r.RoleName);
+            #endregion
+
+            return roleNames;
         }
     }
 
