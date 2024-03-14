@@ -2,7 +2,6 @@
 {
     public record Temp
     {
-        // i am using this class for use generic repository. So its not important class.
-        public int Id { get; init; }
+        // i am using this class for use "FromSqlRawAsync" func in generic repository. So its not important class.
     }
 }

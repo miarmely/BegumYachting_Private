@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace BegumYatch.API.Extensions
 {
-    public static class GlobalExceptionHandlerExtensions
+    public static class GlobalExceptionHandlerExtensions  // By MERT
     {
         public static void ConfigureGlobalExceptionHandler(
             this WebApplication app)
@@ -45,7 +45,7 @@ namespace BegumYatch.API.Extensions
                                 StatusCode = context.Response.StatusCode,
                                 ErrorCode = "ISE",
                                 ErrorDescription = "Internal Server Error",
-                                ErrorMessage = exceptionMsg
+                                ErrorMessage = "sunucu tarafında bir sorun oluştu"
                             };
                             #endregion
                         }
@@ -57,5 +57,5 @@ namespace BegumYatch.API.Extensions
                 });
             });
         }
-    } // By MERT
+    }
 }

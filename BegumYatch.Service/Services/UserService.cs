@@ -299,14 +299,10 @@ namespace BegumYatch.Service.Services
 
             #region save user role
             var sqlCommand = 
-                @"  INSERT INTO UsersAndRoles
-                                (UserId,
-                                RoleId)
-                    VALUES      ({0},
-                                {1})";
+                "INSERT INTO UsersAndRoles (UserId, RoleId) VALUES ({0}, {1})";
 
             await _userRepository
-                .FromSqlRawAsync<Temp>(sqlCommand, user.Id, role);
+                .FromSqlRawAsync<Temp>(sqlCommand, user.Id, (int)role);
             #endregion
 
 

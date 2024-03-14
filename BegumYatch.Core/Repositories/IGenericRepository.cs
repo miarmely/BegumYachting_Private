@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BegumYatch.Core.Repositories
 {
-    public interface IGenericRepository<T> where T : class
+    public partial interface IGenericRepository<T> where T : class
     {
         Task<T> GetByIdAsync(int id);
         IQueryable<T> GetAll();
@@ -21,12 +21,13 @@ namespace BegumYatch.Core.Repositories
         void Update(T updateEntity);
         void Remove(T entity);
         void RemoveRange(IEnumerable<T> entities);
+    }
 
-        #region By MERT
+    public partial interface IGenericRepository<T>  // By Mert
+    {
         Task<List<TEntity>> FromSqlRawAsync<TEntity>(
             string sql,
-            params object[] parameters) 
+            params object[] parameters)
             where TEntity : class;
-        #endregion
     }
 }

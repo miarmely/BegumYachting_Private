@@ -10,7 +10,8 @@ using System.Threading.Tasks;
 
 namespace BegumYatch.Repository.Repositories
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : class
+    public partial class GenericRepository<T> 
+        : IGenericRepository<T> where T : class
     {
         protected readonly AppDbContext _context;
         private readonly DbSet<T> _dbSet;
@@ -77,17 +78,17 @@ namespace BegumYatch.Repository.Repositories
         {
             return _dbSet.Where(expression);
         }
+    }
 
-
-        #region By MERT
+    public partial class GenericRepository<T>  // By MERT
+    {
         public async Task<List<TEntity>> FromSqlRawAsync<TEntity>(
-            string sql, 
-            params object[] parameters) 
-            where TEntity : class => 
+            string sql,
+            params object[] parameters)
+            where TEntity : class =>
                 await _context
                     .Set<TEntity>()
                     .FromSqlRaw(sql, parameters)
-                    .ToListAsync();        
-        #endregion
+                    .ToListAsync();
     }
 }
