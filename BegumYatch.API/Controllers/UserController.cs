@@ -323,7 +323,7 @@ namespace BegumYatch.API.Controllers
 
         [HttpPost("adminPanel/userCreate")]
         public async Task<IActionResult> CreateUser(
-            [FromQuery(Name = "role")] Roles role,
+            [FromQuery(Name = "roleName")] Roles role,
             [FromBody] UserDtoForCreate userDto)
         {
             await _userService.CreateUserAsync(userDto, role);

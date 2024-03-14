@@ -45,7 +45,8 @@ namespace BegumYatch.API.Extensions
                                 StatusCode = context.Response.StatusCode,
                                 ErrorCode = "ISE",
                                 ErrorDescription = "Internal Server Error",
-                                ErrorMessage = "sunucu tarafında bir sorun oluştu"
+                                ErrorMessage = exceptionMsg
+                                //ErrorMessage = "sunucu tarafında bir sorun oluştu"
                             };
                             #endregion
                         }

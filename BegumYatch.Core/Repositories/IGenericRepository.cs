@@ -29,5 +29,9 @@ namespace BegumYatch.Core.Repositories
             string sql,
             params object[] parameters)
             where TEntity : class;
+
+        Task ExecuteSqlRawAsync(
+            string sql,
+            params object[] parameters);
     }
 }

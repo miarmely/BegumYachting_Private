@@ -1,12 +1,7 @@
 ﻿using BegumYatch.Core.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace BegumYatch.Repository.Repositories
 {
@@ -90,5 +85,11 @@ namespace BegumYatch.Repository.Repositories
                     .Set<TEntity>()
                     .FromSqlRaw(sql, parameters)
                     .ToListAsync();
+
+        public async Task ExecuteSqlRawAsync(
+            string sql,
+            params object[] parameters) =>
+                await _context.Database
+                    .ExecuteSqlRawAsync(sql, parameters);
     }
 }
