@@ -1,4 +1,5 @@
 ﻿using BegumYatch.Core.Enums;
+using BegumYatch.Core.Enums.AdminPanel;
 using BegumYatch.Core.Models.Attributes;
 using Entities.Attributes;
 using MiarServices.Attributes;
@@ -31,6 +32,7 @@ namespace BegumYatch.Core.DTOs.User
         public YacthType? YacthType { get; init; }
         public string? YacthName { get; init; }
         public bool? IsPersonel { get; init; }
+        public Roles? RoleName { get; init; }
 
         [MiarLength(6, 16, "Şifre", "Password")]
         [MiarEnglishChars(

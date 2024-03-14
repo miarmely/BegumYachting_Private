@@ -1,5 +1,6 @@
 ﻿import {
-    isAllObjectValuesNullAsync, isExistsOnArray, updateElementText, updateResultLabel
+    getDataByAjaxOrLocalAsync,
+    isAllObjectValuesNullAsync, isExistsOnArray, populateSelectAsync, updateElementText, updateResultLabel
 } from "./miar_module.js"
 
 import {
@@ -52,6 +53,7 @@ $(function () {
     };
     const slct = {
         yachtType: $("#div_yachtType select"),
+        roleNames: $("#slct_roles")
     };
     const img_loading = $("#img_loading");
     let tr_lastClicked;
@@ -86,7 +88,8 @@ $(function () {
             inpt.birthPlace,
             inpt.gender,
             slct.yachtType,
-            inpt.yachtName
+            inpt.yachtName,
+            slct.roleNames
         ]))
             return;
         //#endregion
@@ -239,99 +242,118 @@ $(function () {
 
     //#region functions
     async function populateTableAsync(addUserOnly = false) {
-        $.ajax({
-            method: "GET",
-            url: baseApiUrl + `/adminPanel/userDisplay/all?accountId=${accountInfos.id}`,
-            headers: {
-                authorization: jwtToken
-            },
-            dataType: "json",
-            success: (users) => {
-                new Promise(async resolve => {
-                    //#region set data for add to table
-                    let modifiedData = []
+        //#region add users to datatable
+        let users = await new Promise(resolve => {
+            $.ajax({
+                method: "GET",
+                url: baseApiUrl + `/adminPanel/userDisplay/all?accountId=${accountInfos.id}`,
+                headers: {
+                    authorization: jwtToken
+                },
+                dataType: "json",
+                success: (users) => {
+                    //#region set user data for add table
+                    new Promise(async () => {
+                        //#region set "modifiedUsers"
+                        let modifiedUsers = [];
 
-                    for (let index in users) {
-                        let userInfo = users[index];
+                        for (let index in users) {
+                            let userInfo = users[index];
 
-                        modifiedData.push({
-                            nameSurname: userInfo.nameSurname,
-                            phoneNumber: userInfo.phoneNumber,
-                            email: userInfo.email,
-                            flag: userInfo.flag,
-                            email: userInfo.email,
-                            newPassportNo: userInfo.newPassportNo,
-                            oldPassportNo: userInfo.oldPassportNo,
-                            rank: userInfo.rank,
-                            dateOfIssue: await convertStrUtcDateToStrLocalDateAsync(
-                                userInfo.dateOfIssue,
-                                { hours: true, minutes: true, seconds: false }),
-                            passPortExpiry: await convertStrUtcDateToStrLocalDateAsync(
-                                userInfo.passPortExpiry,
-                                { hours: true, minutes: true, seconds: false }),
-                            nationality: userInfo.nationality,
-                            dateOfBirth: await convertStrUtcDateToStrLocalDateAsync(
-                                userInfo.dateOfBirth,
-                                { hours: false, minutes: false, seconds: false }),
-                            placeOfBirth: userInfo.placeOfBirth,
-                            gender: userInfo.gender,
-                            yacthType: userInfo.yacthType,
-                            yacthName: userInfo.yacthName,
-                            isPersonel: userInfo.isPersonel == null ? null : userInfo.isPersonel.toString(),
-                        })
-                    }
-                    //#endregion
-
-                    tbl_user.DataTable({
-                        data: modifiedData,
-                        columns: [
-                            { data: "nameSurname" },
-                            { data: "phoneNumber" },
-                            { data: "email" },
-                            { data: "flag" },
-                            { data: "newPassportNo" },
-                            { data: "oldPassportNo" },
-                            { data: "rank" },
-                            { data: "dateOfIssue" },
-                            { data: "passPortExpiry" },
-                            { data: "nationality" },
-                            { data: "dateOfBirth" },
-                            { data: "placeOfBirth" },
-                            { data: "gender" },
-                            { data: "yacthType" },
-                            { data: "yacthName" },
-                            { data: "isPersonel" }
-                        ],
-                        ordering: true,
-                        paging: true,
-                        info: true,
-                        language: {
-                            lengthMenu: "_MENU_ kullanıcı ",
-                            search: "Ara",
-                            info: "Sayfa: _PAGE_ / _PAGES_ ~ Toplam: _MAX_",
-                            infoEmpty: "kullanıcı bulunamadı",
-                            infoFiltered: "",
-                            paginate: {
-                                previous: "Önceki",
-                                next: "Sonraki",
-                                first: "İlk",
-                                last: "Son"
-                            },
-                            zeroRecords: "eşleşen kişi bulunamadı",
-                            emptyTable: "kullanıcı bulunamadı",
-
+                            modifiedUsers.push({
+                                nameSurname: userInfo.nameSurname,
+                                phoneNumber: userInfo.phoneNumber,
+                                email: userInfo.email,
+                                flag: userInfo.flag,
+                                email: userInfo.email,
+                                newPassportNo: userInfo.newPassportNo,
+                                oldPassportNo: userInfo.oldPassportNo,
+                                rank: userInfo.rank,
+                                dateOfIssue: await convertStrUtcDateToStrLocalDateAsync(
+                                    userInfo.dateOfIssue,
+                                    { hours: true, minutes: true, seconds: false }),
+                                passPortExpiry: await convertStrUtcDateToStrLocalDateAsync(
+                                    userInfo.passPortExpiry,
+                                    { hours: true, minutes: true, seconds: false }),
+                                nationality: userInfo.nationality,
+                                dateOfBirth: await convertStrUtcDateToStrLocalDateAsync(
+                                    userInfo.dateOfBirth,
+                                    { hours: false, minutes: false, seconds: false }),
+                                placeOfBirth: userInfo.placeOfBirth,
+                                gender: userInfo.gender,
+                                yacthType: userInfo.yacthType,
+                                yacthName: userInfo.yacthName,
+                                isPersonel: userInfo.isPersonel == null ? null : userInfo.isPersonel.toString(),
+                                roleName: userInfo.roleName,
+                            });
                         }
-                    });
+                        //#endregion
 
-                    //#region add table mode dropdown if desired
-                    if (!addUserOnly)
-                        await addDropdownOfTableModeAsync();
+                        resolve(modifiedUsers);
+                    })
                     //#endregion
+                },
+                error: () => {
+                    resolve(null);
+                }
+            })
+        });
 
-                    resolve();
-                })
+        tbl_user.DataTable({
+            data: users,
+            columns: [
+                { data: "nameSurname" },
+                { data: "phoneNumber" },
+                { data: "email" },
+                { data: "flag" },
+                { data: "newPassportNo" },
+                { data: "oldPassportNo" },
+                { data: "rank" },
+                { data: "dateOfIssue" },
+                { data: "passPortExpiry" },
+                { data: "nationality" },
+                { data: "dateOfBirth" },
+                { data: "placeOfBirth" },
+                { data: "gender" },
+                { data: "yacthType" },
+                { data: "yacthName" },
+                { data: "isPersonel" },
+                { data: "roleName" },
+            ],
+            ordering: true,
+            paging: true,
+            info: true,
+            language: {
+                lengthMenu: "_MENU_ kullanıcı ",
+                search: "Ara",
+                info: "Sayfa: _PAGE_ / _PAGES_ ~ Toplam: _MAX_",
+                infoEmpty: "kullanıcı bulunamadı",
+                infoFiltered: "",
+                paginate: {
+                    previous: "Önceki",
+                    next: "Sonraki",
+                    first: "İlk",
+                    last: "Son"
+                },
+                zeroRecords: "eşleşen kişi bulunamadı",
+                emptyTable: "kullanıcı bulunamadı",
+
             }
-        })
+        });
+        //#endregion
+
+        //#region add dropdown of table mode if desired
+        if (!addUserOnly)
+            await addDropdownOfTableModeAsync();
+        //#endregion
+
+        //#region populate roleNames <select> in update page
+        var roleNames = await getDataByAjaxOrLocalAsync(
+            localKeys.roleNames,
+            "/adminPanel/roleDisplay");
+
+        await populateSelectAsync(slct.roleNames, roleNames);
+        //#endregion
     }
     async function openUpdatePageAsync() {
         //#region show user update page
@@ -380,6 +402,7 @@ $(function () {
         else
             $("#rad_no").prop("checked", true);
         //#endregion
+        slct.roleNames.val(userInfosOfLastClickedRow[16]);
     }
     async function updateUserAsync() {
         //#region set data
@@ -400,6 +423,7 @@ $(function () {
             yachtType: slct.yachtType.val(),
             yachtName: inpt.yachtName.val(),
             isPersonel: $("input[type= radio][name= isPersonal]:checked").attr("id") == "rad_yes" ? "true" : "false",
+            roleName: slct.roleNames.val(),
             password: inpt.password.val()
         };
         let data = {
@@ -434,6 +458,7 @@ $(function () {
             yacthType: inputValues.yachtType == userInfosOfLastClickedRow[13] ? null : inputValues.yachtType,
             yacthName: inputValues.yachtName == userInfosOfLastClickedRow[14] ? null : inputValues.yachtName,
             isPersonel: inputValues.isPersonel == userInfosOfLastClickedRow[15] ? null : inputValues.isPersonel == "true" ? true : false,
+            roleName: inputValues.roleName == userInfosOfLastClickedRow[16] ? null : inputValues.roleName,
             password: inputValues.password == "" ? null : inputValues.password
         }
         //#endregion
@@ -489,7 +514,8 @@ $(function () {
                         inputValues.gender,
                         inputValues.yachtType,
                         inputValues.yachtName,
-                        inputValues.isPersonel
+                        inputValues.isPersonel,
+                        inputValues.roleName
                     ];
                     userInfosOfLastClickedRow = newCellInfos;
 

@@ -47,8 +47,8 @@ namespace BegumYatch.Service.Services
         private readonly IMapper _mapper;
         private readonly JwtSettingsConfig _jwtSettingsConfig;
 
-        public UserService(IGenericRepository<AppUser> userRepository, IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService, UserManager<AppUser> userManager, IGenericRepository<MailOtp> mailOtpRepository, 
-             IOptions<JwtSettingsConfig> jwtSettingsConfig) 
+        public UserService(IGenericRepository<AppUser> userRepository, IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService, UserManager<AppUser> userManager, IGenericRepository<MailOtp> mailOtpRepository,
+             IOptions<JwtSettingsConfig> jwtSettingsConfig)
             : base(userRepository, unitOfWork)
         {
             _userRepository = userRepository;
@@ -299,8 +299,8 @@ namespace BegumYatch.Service.Services
 
             #region save user role
             await _userRepository.ExecuteSqlRawAsync(
-                "INSERT INTO UsersAndRoles VALUES ({0}, {1})", 
-                user.Id, 
+                "INSERT INTO UsersAndRoles VALUES ({0}, {1})",
+                user.Id,
                 role);
             #endregion
 
@@ -321,7 +321,7 @@ namespace BegumYatch.Service.Services
             var users = await _userRepository
                 .FromSqlRawAsync<MiarUser>(
                     "EXEC User_GetAll @AccountId={0}", accountId);
-                
+
             // when any user not found
             if (users.Count == 0)
                 throw new MiarException(
@@ -436,8 +436,22 @@ namespace BegumYatch.Service.Services
                     await _userManager.GeneratePasswordResetTokenAsync(user),
                     userDto.Password);
             #endregion
+
             await _userManager.UpdateAsync(user);
-            //await _unitOfWork.CommitAsync();
+            #endregion
+
+            #region update role of user
+            if (userDto.RoleName != null)
+            {
+                var sql = "EXEC Role_Update " +
+                    "@UserId = {0}, " +
+                    "@RoleId = {1}";
+
+                await _userRepository.ExecuteSqlRawAsync(
+                    sql,
+                    user.Id,
+                    userDto.RoleName);
+            }
             #endregion
         }
 
@@ -681,7 +695,7 @@ namespace BegumYatch.Service.Services
                 claims,
                 signingCredentials: signingCredentials);
             #endregion
-            
+
             return new JwtSecurityTokenHandler()
                 .WriteToken(token);
         }

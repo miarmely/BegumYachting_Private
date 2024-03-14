@@ -38,7 +38,7 @@ const inpt = {
 };
 const slct = {
     yachtType: $("#div_yachtType select"),
-    roles: $("#slct_roles")
+    roleName: $("#slct_roles")
 };
 const p_resultLabel = $("#p_resultLabel");
 //#endregion
@@ -63,7 +63,8 @@ $("form").submit(async (event) => {
         inpt.birthPlace,
         inpt.gender,
         slct.yachtType,
-        inpt.yachtName
+        inpt.yachtName,
+        slct.roleName
     ]))
         return;
     //#endregion
@@ -95,7 +96,7 @@ async function setupPageAsync() {
     var roleNames = await getDataByAjaxOrLocalAsync(
         localKeys.roleNames,
         "/adminPanel/roleDisplay");
-    await populateSelectAsync(slct.roles, roleNames, accountInfos.roleName);
+    await populateSelectAsync(slct.roleName, roleNames, accountInfos.roleName);
     //#endregion
 }
 async function addDefaultValuesToFormAsync() {
@@ -126,7 +127,7 @@ async function addDefaultValuesToFormAsync() {
     inpt.gender.val(accountInfos.gender);
     slct.yachtType.val(accountInfos.yacthType);
     inpt.yachtName.val(accountInfos.yacthName);
-    slct.roles.val(accountInfos.roleName);
+    slct.roleName.val(accountInfos.roleName);
     //#region set "isPersonal"
     if (accountInfos.isPersonel == true)
         $("#rad_yes").prop("checked", true);
@@ -154,6 +155,7 @@ async function updateUserAsync() {
         yachtType: slct.yachtType.val(),
         yachtName: inpt.yachtName.val(),
         isPersonel: $("input[type= radio][name= isPersonal]:checked").attr("id") == "rad_yes" ? "true" : "false",
+        roleName: slct.roleName.val(),
         password: inpt.password.val()
     };
     let data = {
@@ -188,6 +190,7 @@ async function updateUserAsync() {
         yacthType: inputValues.yachtType == accountInfos.yacthType ? null : inputValues.yachtType,
         yacthName: inputValues.yachtName == accountInfos.yacthName ? null : inputValues.yachtName,
         isPersonel: inputValues.isPersonel == accountInfos.isPersonel ? null : inputValues.isPersonel == "true" ? true : false,
+        roleName: inputValues.roleName == accountInfos.roleName ? null : inputValues.roleName,
         password: inputValues.password == "" ? null : inputValues.password
     }
     //#endregion
