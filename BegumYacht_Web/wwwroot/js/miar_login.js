@@ -344,24 +344,22 @@ $(function () {
             inpt.email_login,
             localKeys_username);  // by "remember me" checkbox
 
-        // get infos of signed account
+        // sign in
         $.ajax({
             method: "GET",
-            url: baseApiUrl + `/adminPanel/userDisplay/id?userId=${accountId}`,
-            headers: {
-                authorization: jwtToken
-            },
+            url: `/authentication/afterLogin?token=${token}`,
             contentType: "application/json",
             dataType: "json",
-            success: (accountInfos) => {
-                // save account infos to local
-                localStorage.setItem(
-                    "accountInfos",
-                    JSON.stringify(accountInfos));
-
-                // sign in 
-                window.location.replace(`/authentication/afterLogin?token=${token}`);
+            success: () => {
+                window.location.replace("/authentication/openHomepage");
             },
+            error: () => {
+                updateResultLabel(
+                    p_resultLabel,
+                    "email veya şifre yanlış",
+                    resultLabel_errorColor,
+                    "30px");
+            }
         })
     }
     async function sendVerificationCodeToMailAsync() {

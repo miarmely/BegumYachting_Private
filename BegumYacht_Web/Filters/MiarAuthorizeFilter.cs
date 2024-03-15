@@ -11,8 +11,7 @@ namespace BegumYacht_Web.Filters
 	{
 		private readonly List<string> _roleNamesOnAttribute;
 		private readonly string _webProjectName = "BegumYacht_Web";
-		private readonly string _apiProjectName = "BegumYatch.API";
-
+		
 		public MiarAuthorizeFilter(List<string> roleNamesOnAttribute) =>
 			_roleNamesOnAttribute = roleNamesOnAttribute;
 

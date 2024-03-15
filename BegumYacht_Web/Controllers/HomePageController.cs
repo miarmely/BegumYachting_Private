@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BegumYacht_Web.Controllers
 {
-    [MiarAuthorize]
+    [MiarAuthorize("Admin")]
     public class HomePageController : Controller
     {
         public IActionResult Index() => View();

@@ -384,7 +384,7 @@ namespace BegumYatch.API.Controllers
             [FromQuery(Name = "email")] string email,
             [FromBody] UserDtoForUpdate userDto)
         {
-            await _userService.UpdateUserAsync(email, userDto);
+            await _userService.UpdateUserAsync(email, userDto, HttpContext);
 
             return NoContent();
         }

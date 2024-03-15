@@ -6,6 +6,7 @@ using BegumYatch.Core.Enums.AdminPanel;
 using BegumYatch.Core.Models.Role;
 using BegumYatch.Core.Models.User;
 using BegumYatch.Core.QueryParameters;
+using Microsoft.AspNetCore.Http;
 
 namespace BegumYatch.Core.Services
 {
@@ -19,15 +20,10 @@ namespace BegumYatch.Core.Services
         Task<List<TDto>> GetAllUsers<TDto>();
     }
 
+
     public partial interface IUserService  // By MERT
     {
         Task<object> LoginAsync(UserLoginDto userDto);
-        Task ResetPasswordAsync(LoginDtoForResetPassword loginDto);
-        Task<List<MiarUser>> GetAllUsers(int accountId);
-        Task CreateUserAsync(UserDtoForCreate userDto, Roles role);
-        Task UpdateUserAsync(string email, UserDtoForUpdate userDto);
-        Task DeleteUsersAsync(UserDtoForDelete userDto);
-        Task<IEnumerable<string>> GetAllRoleNamesAsync();
 
         Task SendCodeToMailForResetPasswordAsync(
             LoginParamsForSendCodeToMail loginParams);
@@ -35,10 +31,23 @@ namespace BegumYatch.Core.Services
         Task<object> VerifyCodeForResetPasswordAsync(
             LoginParamsForVerifyCode loginParams);
 
+        Task ResetPasswordAsync(LoginDtoForResetPassword loginDto);
+        Task<List<MiarUser>> GetAllUsers(int accountId);
+
         Task<List<MiarUser>> GetUsersByFilteringAsync(
             int? UserId = null,
             string? Email = null,
             string? Phone = null,
             bool CheckIsDeleted = true);
+
+        Task CreateUserAsync(UserDtoForCreate userDto, Roles role);
+
+        Task UpdateUserAsync(
+            string email,
+            UserDtoForUpdate userDto,
+            HttpContext context);
+
+        Task DeleteUsersAsync(UserDtoForDelete userDto);
+        Task<IEnumerable<string>> GetAllRoleNamesAsync();
     }
 }

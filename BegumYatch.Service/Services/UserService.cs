@@ -17,7 +17,10 @@ using BegumYatch.Core.Services;
 using BegumYatch.Core.UnitOfWorks;
 using BegumYatch.Core.ViewModels;
 using BegumYatch.Repository.Repositories;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -243,7 +246,8 @@ namespace BegumYatch.Service.Services
             else
                 return null;
         }
-    }
+    }  // By RUMEYSA
+
 
     public partial class UserService  // By MERT (PUBLIC)
     {
@@ -272,14 +276,26 @@ namespace BegumYatch.Service.Services
                     "email veya şifre yanlış");
             #endregion
 
+            #region generate token
+            var userRole = (await _userRepository
+                .FromSqlRawAsync<MiarRole>(
+                    "EXEC Role_GetRolesOfUser @UserId = {0}",
+                    user.Id))
+                .FirstOrDefault();
+
+            var token = await GenerateTokenForUserAsync(
+                user,
+                userRole == null ? "null" : userRole.RoleName);
+            #endregion
+
             return new
             {
                 user.Id,
-                Token = await GenerateTokenForUserAsync(user)
+                Token = token
             };
         }
 
-        #region CRUD
+        #region User CRUD
         public async Task CreateUserAsync(
             UserDtoForCreate userDto,
             Roles role)
@@ -368,7 +384,10 @@ namespace BegumYatch.Service.Services
             return users;
         }
 
-        public async Task UpdateUserAsync(string email, UserDtoForUpdate userDto)
+        public async Task UpdateUserAsync(
+            string email, 
+            UserDtoForUpdate userDto,
+            HttpContext context)
         {
             await ControlConflictForUserAsync(
                 userDto.Email,
@@ -453,6 +472,8 @@ namespace BegumYatch.Service.Services
                     userDto.RoleName);
             }
             #endregion
+
+            await UpdateClaimsAsync(user, userDto.RoleName.ToString(), context);
         }
 
         public async Task DeleteUsersAsync(UserDtoForDelete userDto)
@@ -601,6 +622,7 @@ namespace BegumYatch.Service.Services
         }
     }
 
+
     public partial class UserService  // By MERT (PRIVATE)
     {
         private async Task ControlConflictForUserAsync(
@@ -653,32 +675,11 @@ namespace BegumYatch.Service.Services
             #endregion
         }
 
-        private async Task<string> GenerateTokenForUserAsync(AppUser user)
-        {
-            #region set claims
-            var claims = new Collection<Claim>
-            {
-                new ("Id", user.Id.ToString()),
-                //new ("NameSurname", user.NameSurname),
-                //new ("PhoneNumber", user.PhoneNumber),
-                //new ("Email", user.Email),
-                //new ("Gender", user.Gender),
-                //new ("Nationality", user.Nationality),
-                //new ("YachtType", user.YacthType.ToString()),
-                //new ("YachtName", user.YacthName),
-                //new ("Flag", user.Flag),
-                //new ("NewPassportNo", user.NewPassportNo),
-                //new ("OldPassportNo", user.OldPassportNo),
-                //new ("Rank", user.Rank),
-                //new ("DateOfIssue", user.DateOfIssue.ToString()),
-                //new ("PassPortExpiry", user.PassPortExpiry.ToString()),
-                //new ("DateOfBirth", user.DateOfBirth.ToString()),
-                //new ("PlaceOfBirth", user.PlaceOfBirth),
-                //new ("IsPersonel", user.IsPersonel.ToString()),
-                //new ("IsDeleted", user.IsDeleted.ToString()),
-            };
-            #endregion
 
+        private async Task<string> GenerateTokenForUserAsync(
+            AppUser user,
+            string? roleName)
+        {
             #region set signingCredentials
             var secretKeyInBytes = Encoding.UTF8
                 .GetBytes(_jwtSettingsConfig.SecretKey);
@@ -692,12 +693,71 @@ namespace BegumYatch.Service.Services
             var token = new JwtSecurityToken(
                 _jwtSettingsConfig.ValidIssuer,
                 _jwtSettingsConfig.ValidAudience1,
-                claims,
+                await CreateClaimsAsync(user, roleName),
                 signingCredentials: signingCredentials);
             #endregion
 
             return new JwtSecurityTokenHandler()
                 .WriteToken(token);
+        }
+
+        private async Task<IEnumerable<Claim>> CreateClaimsAsync(
+            AppUser user,
+            string roleName)
+        {
+            var claims = new Collection<Claim>
+            {
+                new (MiarClaimTypes.Id, user.Id.ToString()),
+                new (MiarClaimTypes.NameSurname, user.NameSurname),
+                new (MiarClaimTypes.PhoneNumber, user.PhoneNumber),
+                new (MiarClaimTypes.Email, user.Email),
+                new (MiarClaimTypes.Gender, user.Gender),
+                new (MiarClaimTypes.Nationality, user.Nationality),
+                new (MiarClaimTypes.YachtType, user.YacthType.ToString()),
+                new (MiarClaimTypes.YachtName, user.YacthName),
+                new (MiarClaimTypes.Flag, user.Flag),
+                new (MiarClaimTypes.NewPassportNo, user.NewPassportNo),
+                new (MiarClaimTypes.OldPassportNo, user.OldPassportNo),
+                new (MiarClaimTypes.Rank, user.Rank),
+                new (MiarClaimTypes.DateOfIssue, user.DateOfIssue.ToString()),
+                new (MiarClaimTypes.PassPortExpiry, user.PassPortExpiry.ToString()),
+                new (MiarClaimTypes.DateOfBirth, user.DateOfBirth.ToString()),
+                new (MiarClaimTypes.PlaceOfBirth, user.PlaceOfBirth),
+                new (MiarClaimTypes.IsPersonel, user.IsPersonel.ToString()),
+                new (MiarClaimTypes.IsDeleted, user.IsDeleted.ToString()),
+                new (MiarClaimTypes.Role, roleName)
+            };
+
+            return claims;
+        }
+
+        private async Task UpdateClaimsAsync(
+            AppUser user,
+            string roleName,
+            HttpContext context)
+        {
+            #region set claim principle
+            var newClaims = await CreateClaimsAsync(user, roleName);
+
+            var claimsIdentity = new ClaimsIdentity(
+                newClaims,
+                CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+            #endregion
+
+            #region re-signin for update new claims
+            var properties = new AuthenticationProperties()
+            {
+                AllowRefresh = true,
+                IsPersistent = true
+            };
+
+            await context.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                claimsPrincipal,
+                properties);
+            #endregion
         }
     }
 }

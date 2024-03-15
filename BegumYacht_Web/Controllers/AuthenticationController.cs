@@ -1,4 +1,5 @@
 ﻿using BegumYatch.Core.Configs;
+using BegumYatch.Core.Enums.AdminPanel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using System.Text;
 
@@ -15,6 +17,10 @@ namespace BegumYacht_Web.Controllers
     public partial class AuthenticationController : Controller  // main
     {
         private readonly JwtSettingsConfig _jwtSettingsConfig;
+        private readonly string[] _validRoles = new string[]
+        {
+           "Admin"
+        };  // for login panel
 
         public AuthenticationController(
             IOptions<JwtSettingsConfig> jwtSettingsConfig) =>
@@ -47,6 +53,22 @@ namespace BegumYacht_Web.Controllers
 
             return false;
         }
+
+        private async Task<bool> isUserRoleValidAsync(IEnumerable<Claim> claims)
+        {
+            var roleName = await GetClaimValueAsync(
+                claims,
+                MiarClaimTypes.Role.ToString());
+
+            return _validRoles.Any(r => r.Equals(roleName));
+        }
+
+        private async Task<string> GetClaimValueAsync(
+            IEnumerable<Claim> claims,
+            string claimType) =>
+                claims
+                    .FirstOrDefault(c => c.Type.Equals(claimType))
+                    .Value;
     }
 
     public partial class AuthenticationController  // actions
@@ -59,39 +81,47 @@ namespace BegumYacht_Web.Controllers
             [FromQuery(Name = "token")] string token)
         {
             // i took token for block the direct access to "afterLogin" with url
+            // and check the user role
 
-            #region when token invalid (REDIRECT)
-            if (await IsTokenInvalidAsync(token))
-                return RedirectToAction(
-                    "Login",
-                    "Authentication");
+            #region security control (DISABLED)
+
+            //#region when token invalid (REDIRECT) 
+            //if (await IsTokenInvalidAsync(token))
+            //    return RedirectToAction("Login", "Authentication");
+            //#endregion
+
             #endregion
 
-            #region set claimsIdentity
-            var jwtTokenClaims = new JwtSecurityToken(token)
-                  .Claims;
+            #region check user role whether valid
+            var jwtTokenClaims = new JwtSecurityToken(token).Claims;
 
-            var claimsIdentity = new ClaimsIdentity(
-                jwtTokenClaims,
-                CookieAuthenticationDefaults.AuthenticationScheme);
+            if (!await isUserRoleValidAsync(jwtTokenClaims))
+                return NotFound();
             #endregion
 
             #region sign in
+            var claimsIdentity = new ClaimsIdentity(
+                jwtTokenClaims,
+                CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var properties = new AuthenticationProperties()
+            {
+                AllowRefresh = true,
+                IsPersistent = true
+            };
+
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity));
+                new ClaimsPrincipal(claimsIdentity),
+                properties);
             #endregion
 
-            #region save claim infos to ViewBag
-            ViewBag.ClaimInfos = new Dictionary<string, string>();
+            return NoContent();
+        }
 
-            foreach (var claim in jwtTokenClaims)
-            {
-                ViewBag.ClaimInfos[claim.Type] = claim.Value;
-            }
-            #endregion
-
-            return RedirectToAction("Display", "User");
+        public async Task<IActionResult> OpenHomepage()
+        {
+            return RedirectToAction("Index", "HomePage");
         }
 
         [Authorize]
