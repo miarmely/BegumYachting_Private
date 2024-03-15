@@ -106,7 +106,7 @@ builder.Services.ConfigureApplicationCookie(opt =>
     });
 
 #region By MERT
-builder.Services.AddScoped<IBaseDemandAndOrderService, BaseDemandAndOrderService>();
+builder.Services.ConfigureServices();
 builder.Services.ConfigureConfigModels(builder.Configuration);
 builder.Services.ConfigureJwt(builder.Configuration);
 builder.Services.ConfigureCors();

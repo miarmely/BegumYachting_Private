@@ -1,4 +1,5 @@
-﻿using BegumYatch.Core.Configs;
+﻿using BegumYatch.API.Filters.AdminPanel.Attributes;
+using BegumYatch.Core.Configs;
 using BegumYatch.Core.Enums.AdminPanel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -76,22 +77,10 @@ namespace BegumYacht_Web.Controllers
         public IActionResult Login() => View();
         public IActionResult ForgotPassword() => View();
         public IActionResult Register() => View();
-
+        
         public async Task<IActionResult> AfterLogin(
             [FromQuery(Name = "token")] string token)
         {
-            // i took token for block the direct access to "afterLogin" with url
-            // and check the user role
-
-            #region security control (DISABLED)
-
-            //#region when token invalid (REDIRECT) 
-            //if (await IsTokenInvalidAsync(token))
-            //    return RedirectToAction("Login", "Authentication");
-            //#endregion
-
-            #endregion
-
             #region check user role whether valid
             var jwtTokenClaims = new JwtSecurityToken(token).Claims;
 
@@ -124,7 +113,8 @@ namespace BegumYacht_Web.Controllers
             return RedirectToAction("Index", "HomePage");
         }
 
-        [Authorize]
+
+        [MiarWebAuthorize("Admin")]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(

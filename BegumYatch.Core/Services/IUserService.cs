@@ -48,6 +48,5 @@ namespace BegumYatch.Core.Services
             HttpContext context);
 
         Task DeleteUsersAsync(UserDtoForDelete userDto);
-        Task<IEnumerable<string>> GetAllRoleNamesAsync();
     }
 }

@@ -1,4 +1,5 @@
-﻿using BegumYatch.Core.DTOs.FlowerOrder;
+﻿using BegumYatch.API.Filters.AdminPanel.Attributes;
+using BegumYatch.Core.DTOs.FlowerOrder;
 using BegumYatch.Core.DTOs.FuelPurchaseDemand;
 using BegumYatch.Core.DTOs.ProvisionOrder;
 using BegumYatch.Core.DTOs.TechnicalAssitanceandSparePartOrder;
@@ -80,6 +81,7 @@ namespace BegumYatch.API.Controllers
     public partial class OrderController  // By MERT
     {
         [HttpGet("adminPanel/order/provision/filter")]
+        [MiarApiAuthorize("Admin")]
         public async Task<IActionResult> GetProvisionOrdersByFilter(
             [FromQuery] FormParamsForDisplayFormByStatus formParams)
         {
@@ -96,6 +98,7 @@ namespace BegumYatch.API.Controllers
 
 
         [HttpGet("adminPanel/order/flower/filter")]
+        [MiarApiAuthorize("Admin")]
         public async Task<IActionResult> GetFlowerOrdersByFilter(
             [FromQuery] FormParamsForDisplayFormByStatus formParams)
         {
@@ -112,6 +115,7 @@ namespace BegumYatch.API.Controllers
 
 
         [HttpGet("adminPanel/order/TechnicalAssistanceAndSparePart/filter")]
+        [MiarApiAuthorize("Admin")]
         public async Task<IActionResult> GetTechnicalAssistanceAndSparePartOrdersByFilter(
             [FromQuery] FormParamsForDisplayFormByStatus formParams)
         {

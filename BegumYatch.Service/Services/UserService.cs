@@ -251,51 +251,7 @@ namespace BegumYatch.Service.Services
 
     public partial class UserService  // By MERT (PUBLIC)
     {
-        public async Task<object> LoginAsync(UserLoginDto userDto)
-        {
-            #region when email is wrong (THROW)
-            var user = await _userManager.FindByEmailAsync(userDto.Email);
-
-            if (user == null)
-                throw new MiarException(
-                    404,
-                    "AE",
-                    "Authentication Error",
-                    "email veya şifre yanlış");
-            #endregion
-
-            #region when password is wrong (THROW)
-            var isPasswordTrue = await _userManager
-                .CheckPasswordAsync(user, userDto.Password);
-
-            if (!isPasswordTrue)
-                throw new MiarException(
-                    404,
-                    "AE",
-                    "Authentication Error",
-                    "email veya şifre yanlış");
-            #endregion
-
-            #region generate token
-            var userRole = (await _userRepository
-                .FromSqlRawAsync<MiarRole>(
-                    "EXEC Role_GetRolesOfUser @UserId = {0}",
-                    user.Id))
-                .FirstOrDefault();
-
-            var token = await GenerateTokenForUserAsync(
-                user,
-                userRole == null ? "null" : userRole.RoleName);
-            #endregion
-
-            return new
-            {
-                user.Id,
-                Token = token
-            };
-        }
-
-        #region User CRUD
+        #region CRUD
         public async Task CreateUserAsync(
             UserDtoForCreate userDto,
             Roles role)
@@ -532,7 +488,7 @@ namespace BegumYatch.Service.Services
             #endregion
 
             #region send mail
-            var mailMessage = $@"<p>Şifrenizi resetlemek için lütfen bu doğrulama kodunu kullanın</p>:
+            var mailMessage = $@"<p>Şifrenizi resetlemek için lütfen bu doğrulama kodunu kullanın:</p>
                 <br><br>
                     <b style='font-size:20px'>{verifyCode}</b>
                 <br><br>
@@ -609,16 +565,49 @@ namespace BegumYatch.Service.Services
         }
         #endregion
 
-        public async Task<IEnumerable<string>> GetAllRoleNamesAsync()
+        public async Task<object> LoginAsync(
+            UserLoginDto userDto)
         {
-            #region get role names
-            var roles = await _userRepository
-                .FromSqlRawAsync<MiarRole>("SELECT * FROM Roles");
+            #region when email is wrong (THROW)
+            var user = await _userManager.FindByEmailAsync(userDto.Email);
 
-            var roleNames = roles.Select(r => r.RoleName);
+            if (user == null)
+                throw new MiarException(
+                    404,
+                    "AE",
+                    "Authentication Error",
+                    "email veya şifre yanlış");
             #endregion
 
-            return roleNames;
+            #region when password is wrong (THROW)
+            var isPasswordTrue = await _userManager
+                .CheckPasswordAsync(user, userDto.Password);
+
+            if (!isPasswordTrue)
+                throw new MiarException(
+                    404,
+                    "AE",
+                    "Authentication Error",
+                    "email veya şifre yanlış");
+            #endregion
+
+            #region generate token
+            var userRole = (await _userRepository
+                .FromSqlRawAsync<MiarRole>(
+                    "EXEC Role_GetRolesOfUser @UserId = {0}",
+                    user.Id))
+                .FirstOrDefault();
+
+            var token = await GenerateTokenForUserAsync(
+                user,
+                userRole == null ? "null" : userRole.RoleName);
+            #endregion
+
+            return new
+            {
+                user.Id,
+                Token = token
+            };
         }
     }
 

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BegumYatch.API.Filters.AdminPanel.Attributes;
 using BegumYatch.Core.DTOs.AdminPanel.Login;
 using BegumYatch.Core.DTOs.Error;
 using BegumYatch.Core.DTOs.Password;
@@ -276,7 +277,8 @@ namespace BegumYatch.API.Controllers
 
             }
         }
-    }
+    }  // By RÜMEYSA
+
 
     public partial class UserController // By MERT
     {
@@ -290,7 +292,7 @@ namespace BegumYatch.API.Controllers
         }
 
 
-        [HttpGet("adminPanel/forgotPassword/sendCodeToMail")]  // MODIFIED
+        [HttpGet("adminPanel/forgotPassword/sendCodeToMail")]
         public async Task<IActionResult> SendCodeToMailForResetPassword(
             [FromQuery] LoginParamsForSendCodeToMail loginParams)
         {
@@ -311,7 +313,7 @@ namespace BegumYatch.API.Controllers
         }
 
 
-        [HttpPost("adminPanel/forgotPassword/resetPassword")]  // MODIFIED
+        [HttpPost("adminPanel/forgotPassword/resetPassword")]
         public async Task<IActionResult> MiarResetPassword(
             [FromBody] LoginDtoForResetPassword loginDto)
         {
@@ -320,8 +322,9 @@ namespace BegumYatch.API.Controllers
             return NoContent();
         }
 
-
+    
         [HttpPost("adminPanel/userCreate")]
+        [MiarApiAuthorize("Admin")]
         public async Task<IActionResult> CreateUser(
             [FromQuery(Name = "roleName")] Roles role,
             [FromBody] UserDtoForCreate userDto)
@@ -333,6 +336,7 @@ namespace BegumYatch.API.Controllers
 
 
         [HttpPost("mobile/userCreate")]
+        [MiarApiAuthorize("Admin")]
         public async Task<IActionResult> CreateUser(
             [FromBody] UserDtoForCreate userDto)
         {
@@ -343,6 +347,7 @@ namespace BegumYatch.API.Controllers
 
 
         [HttpGet("adminPanel/userDisplay/all")]
+        [MiarApiAuthorize("Admin")]
         public async Task<IActionResult> MiarGetAllUsers(
             [FromQuery(Name = "accountId")] int accountId)
         {
@@ -353,6 +358,7 @@ namespace BegumYatch.API.Controllers
 
 
         [HttpGet("adminPanel/userDisplay/Id")]
+        [MiarApiAuthorize("Admin")]
         public async Task<IActionResult> GetUserInfos(
             [FromQuery] UserParamsForDisplayById userParams)
         {
@@ -367,6 +373,7 @@ namespace BegumYatch.API.Controllers
 
 
         [HttpGet("adminPanel/userDisplay/filter")]
+        [MiarApiAuthorize("Admin")]
         public async Task<IActionResult> GetUserInfosFilter(
             [FromQuery] UserParamsForDisplayByFiltering userParams)
         {
@@ -380,6 +387,7 @@ namespace BegumYatch.API.Controllers
 
 
         [HttpPost("adminPanel/userUpdate")]
+        [MiarApiAuthorize("Admin")]
         public async Task<IActionResult> UpdateUser(
             [FromQuery(Name = "email")] string email,
             [FromBody] UserDtoForUpdate userDto)
@@ -391,21 +399,13 @@ namespace BegumYatch.API.Controllers
 
 
         [HttpPost("adminPanel/userDelete")]
+        [MiarApiAuthorize("Admin")]
         public async Task<IActionResult> DeleteUsers(
             [FromBody] UserDtoForDelete userDto)
         {
             await _userService.DeleteUsersAsync(userDto);
 
             return NoContent();
-        }
-
-
-        [HttpGet("adminPanel/roleDisplay")]
-        public async Task<IActionResult> GetAllRoleNames()
-        {
-            var roles = await _userService.GetAllRoleNamesAsync();
-
-            return Ok(roles);
         }
 
 

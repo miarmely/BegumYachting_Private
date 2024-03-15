@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using BegumYacht_Web.Filters;
+using BegumYatch.API.Filters.AdminPanel.Attributes;
 
 
 namespace BegumYacht_Web.Controllers
 {
-    [MiarAuthorize]
+    [MiarWebAuthorize("Admin")]
     public class UserController : Controller
     {
         public IActionResult Create() => View();

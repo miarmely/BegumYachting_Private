@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using BegumYatch.API.Filters.AdminPanel.Attributes;
 using BegumYatch.Core.DTOs.Password;
 using BegumYatch.Core.DTOs.Role;
 using BegumYatch.Core.DTOs.RoleCreate;
 using BegumYatch.Core.Models.Role;
 using BegumYatch.Core.Models.User;
+using BegumYatch.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,16 +14,19 @@ using Microsoft.EntityFrameworkCore;
 namespace BegumYatch.API.Controllers
 {
    // [Authorize]
-    public class RoleController : Controller
+    public partial class RoleController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<AppRole> _roleManager;
         private readonly IMapper _mapper;
-        public RoleController(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager, IMapper mapper)
+        private readonly IRoleService _roleService;
+
+        public RoleController(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager, IMapper mapper, IRoleService roleService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _mapper = mapper;
+            _roleService = roleService;
         }
 
         [HttpGet]
@@ -116,7 +121,18 @@ namespace BegumYatch.API.Controllers
             }
             return Ok();
         }
+    }
 
-        
+
+    public partial class RoleController  // By MERT
+    {
+        [HttpGet("adminPanel/roleDisplay")]
+        [MiarApiAuthorize("Admin")]
+        public async Task<IActionResult> GetAllRoleNames()
+        {
+            var roles = await _roleService.GetAllRoleNamesAsync();
+
+            return Ok(roles);
+        }
     }
 }

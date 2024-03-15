@@ -1,10 +1,10 @@
-﻿using BegumYacht_Web.Filters;
+﻿using BegumYatch.API.Filters.AdminPanel.Attributes;
 using Microsoft.AspNetCore.Mvc;
 
 
 namespace BegumYacht_Web.Controllers
 {
-    [MiarAuthorize]
+    [MiarWebAuthorize("Admin")]
     public class DemandController : Controller
     {
         public IActionResult FuelPurchase() => View();
