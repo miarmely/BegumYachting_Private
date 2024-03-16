@@ -3,6 +3,7 @@ using BegumYatch.Core.Configs;
 using BegumYatch.Core.Enums.AdminPanel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -24,56 +25,13 @@ namespace BegumYacht_Web.Controllers
         public AuthenticationController(
             IOptions<JwtSettingsConfig> jwtSettingsConfig) =>
                 _jwtSettingsConfig = jwtSettingsConfig.Value;
-
-        private async Task<bool> IsTokenInvalidAsync(string token)
-        {
-            #region validate token
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var securityKeyInBytes = Encoding.UTF8
-                .GetBytes(_jwtSettingsConfig.SecretKey);
-
-            var result = await tokenHandler.ValidateTokenAsync(token,
-                new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidIssuer = _jwtSettingsConfig.ValidIssuer,
-                    ValidateAudience = true,
-                    ValidAudience = _jwtSettingsConfig.ValidAudience1,
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(securityKeyInBytes),
-                    ValidateLifetime = false
-                });
-            #endregion
-
-            #region when token is invalid
-            if (!result.IsValid)
-                return true;
-            #endregion
-
-            return false;
-        }
-
-        private async Task<bool> isUserRoleValidAsync(IEnumerable<Claim> claims)
-        {
-            var roleName = await GetClaimValueAsync(
-                claims,
-                MiarClaimTypes.Role);
-
-            return _validRoles.Any(r => r.Equals(roleName));
-        }
-
-        private async Task<string> GetClaimValueAsync(
-            IEnumerable<Claim> claims,
-            string claimType) =>
-                claims
-                    .FirstOrDefault(c => c.Type.Equals(claimType))
-                    .Value;
     }
+
 
     public partial class AuthenticationController  // actions
     {
         public IActionResult Login() => View();
-        public IActionResult ForgotPassword() => View();
+        
         public IActionResult Register() => View();
         
         public async Task<IActionResult> AfterLogin(
@@ -107,7 +65,7 @@ namespace BegumYacht_Web.Controllers
         }
 
 
-        [MiarWebAuthorize("Admin")]
+        //[MiarWebAuthorize("Admin")]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(

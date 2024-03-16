@@ -2,24 +2,24 @@
 {
     public static class MiarClaimTypes
     {
-        public const string Id = "Id";
-        public const string NameSurname = "NameSurname";
-        public const string PhoneNumber = "PhoneNumber";
-        public const string Email = "Email";
-        public const string Gender = "Gender";
-        public const string Nationality = "Nationality";
-        public const string YachtType = "YachtType";
-        public const string YachtName = "YachtName";
-        public const string Flag = "Flag";
-        public const string NewPassportNo = "NewPassportNo";
-        public const string OldPassportNo = "OldPassportNo";
-        public const string Rank = "Rank";
-        public const string DateOfIssue = "DateOfIssue";
-        public const string PassPortExpiry = "PassPortExpiry";
-        public const string DateOfBirth = "DateOfBirth";
-        public const string PlaceOfBirth = "PlaceOfBirth";
-        public const string IsPersonel = "IsPersonel";
-        public const string IsDeleted = "IsDeleted";
-        public const string Role = "Role";
+        public const string Id = "id";
+        public const string NameSurname = "nameSurname";
+        public const string PhoneNumber = "phoneNumber";
+        public const string Email = "email";
+        public const string Gender = "gender";
+        public const string Nationality = "nationality";
+        public const string YachtType = "yachtType";
+        public const string YachtName = "yachtName";
+        public const string Flag = "flag";
+        public const string NewPassportNo = "newPassportNo";
+        public const string OldPassportNo = "oldPassportNo";
+        public const string Rank = "rank";
+        public const string DateOfIssue = "dateOfIssue";
+        public const string PassPortExpiry = "passPortExpiry";
+        public const string DateOfBirth = "dateOfBirth";
+        public const string PlaceOfBirth = "placeOfBirth";
+        public const string IsPersonel = "isPersonel";
+        public const string IsDeleted = "isDeleted";
+        public const string RoleName = "roleName";
     }
 }

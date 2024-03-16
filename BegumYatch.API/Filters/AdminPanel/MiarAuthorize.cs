@@ -8,10 +8,9 @@ namespace BegumYatch.API.Filters.AdminPanel
 {
     public abstract class MiarAuthorize
     {
-        private readonly string _claimTypeForRole = MiarClaimTypes.Role;
+        private readonly string _claimTypeForRole = MiarClaimTypes.RoleName;
         protected readonly List<string> RoleNamesOnAttribute;
         protected string Language = "TR";  // default
-        
 
         protected MiarAuthorize(List<string> roleNamesOnAttribute)
         {

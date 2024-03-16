@@ -1,4 +1,18 @@
-﻿<!DOCTYPE html>
+﻿@{
+	#region get claim infos
+	var claimInfos = new Dictionary<string, string>();
+	var ignoredClaimTypes = new string[] { "iss", "aud" };  // iss: issue | aud: audience
+
+	foreach(var claim in Context.User.Claims)
+		// don't get ignored claim types
+		if(!ignoredClaimTypes.Contains(claim.Type))
+			claimInfos[claim.Type] = claim.Value;
+
+	var serializedClaimInfos = Json.Serialize(claimInfos);
+	#endregion
+}
+
+<!DOCTYPE html>
 <html>
 	<head>
 		<title>Begüm Yat</title>
@@ -427,8 +441,7 @@
 					"EN": "an error occured"
 				}
 			}
-			let accountInfos = JSON.parse(
-				localStorage.getItem(localKeys.accountInfos));
+			const accountInfos = @serializedClaimInfos;
 		</script>
 		<script type="module" src="~/js/miar_mainLayout.js"></script>
 		<script src="~/js/bootstrap.js"></script>
@@ -438,4 +451,4 @@
 		<script src="~/js/jquery.nicescroll.js"></script>
 		<script src="~/js/jquery.scrollTo.js"></script>
 	</body>
-</html>q
+</html>

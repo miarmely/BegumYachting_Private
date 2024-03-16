@@ -726,7 +726,7 @@ namespace BegumYatch.Service.Services
                 new (MiarClaimTypes.PlaceOfBirth, user.PlaceOfBirth),
                 new (MiarClaimTypes.IsPersonel, user.IsPersonel.ToString()),
                 new (MiarClaimTypes.IsDeleted, user.IsDeleted.ToString()),
-                new (MiarClaimTypes.Role, roleName)
+                new (MiarClaimTypes.RoleName, roleName)
             };
 
             return claims;

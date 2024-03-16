@@ -285,7 +285,7 @@ export async function getDataByAjaxOrLocalAsync(keyNameInLocal, specialApiUrl) {
                 method: "GET",
                 url: baseApiUrl + specialApiUrl,
                 headers: {
-                    authorization: jwtToken
+                    "Authorization": jwtToken
                 },
                 contentType: "application/json",
                 dataType: "json",

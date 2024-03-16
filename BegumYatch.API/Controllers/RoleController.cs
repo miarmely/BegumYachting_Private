@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using BegumYatch.API.Filters.AdminPanel.Attributes;
-using BegumYatch.Core.DTOs.Password;
 using BegumYatch.Core.DTOs.Role;
 using BegumYatch.Core.DTOs.RoleCreate;
 using BegumYatch.Core.Models.Role;
@@ -10,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
 
 namespace BegumYatch.API.Controllers
 {
@@ -127,7 +127,7 @@ namespace BegumYatch.API.Controllers
     public partial class RoleController  // By MERT
     {
         [HttpGet("adminPanel/roleDisplay")]
-        [MiarApiAuthorize("Admin")]
+		[MiarApiAuthorize("Admin")]
         public async Task<IActionResult> GetAllRoleNames()
         {
             var roles = await _roleService.GetAllRoleNamesAsync();

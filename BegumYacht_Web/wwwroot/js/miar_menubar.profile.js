@@ -125,8 +125,8 @@ async function addDefaultValuesToFormAsync() {
         accountInfos.dateOfBirth);  // birth date
     inpt.birthPlace.val(accountInfos.placeOfBirth);
     inpt.gender.val(accountInfos.gender);
-    slct.yachtType.val(accountInfos.yacthType);
-    inpt.yachtName.val(accountInfos.yacthName);
+    slct.yachtType.val(accountInfos.yachtType);
+    inpt.yachtName.val(accountInfos.yachtName);
     slct.roleName.val(accountInfos.roleName);
     //#region set "isPersonal"
     if (accountInfos.isPersonel == true)
@@ -212,6 +212,9 @@ async function updateUserAsync() {
         method: "POST",
         url: baseApiUrl + `/adminPanel/userUpdate?email=${accountInfos.email}`,
         data: JSON.stringify(data),
+        headers: {
+            authorization: jwtToken
+        },
         contentType: "application/json",
         dataType: "json",
         beforeSend: () => {

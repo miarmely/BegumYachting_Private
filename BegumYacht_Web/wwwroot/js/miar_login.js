@@ -363,9 +363,6 @@ $(function () {
             $.ajax({
                 method: "GET",
                 url: baseApiUrl + `/adminPanel/forgotPassword/sendCodeToMail?email=${forgotPasswordBuffer.email}`,
-                headers: {
-                    authorization: jwtToken
-                },
                 contentType: "application/json",
                 dataType: "json",
                 beforeSend: () => {
@@ -396,9 +393,6 @@ $(function () {
                 url: (baseApiUrl + "/adminPanel/forgotPassword/verifyCode?" +
                     `email=${forgotPasswordBuffer.email}` +
                     `&verificationCode=${forgotPasswordBuffer.verificationCode}`),
-                headers: {
-                    authorization: jwtToken
-                },
                 contentType: "application/json",
                 dataType: "json",
                 beforeSend: () => {
@@ -432,9 +426,6 @@ $(function () {
         $.ajax({
             method: "POST",
             url: baseApiUrl + "/adminPanel/forgotPassword/resetPassword",
-            headers: {
-                authorization: jwtToken,
-            },
             data: JSON.stringify({
                 userId: forgotPasswordBuffer.userId.toString(),
                 tokenForResetPassword: forgotPasswordBuffer.token,

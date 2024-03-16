@@ -189,10 +189,14 @@ export async function populateArticlesAsync(
     func_populateInsideOfArticleAsync = (demands) => { },
     func_declareEventsAsync = () => { }
 ) {
+    // populate article
     await new Promise((resolve) => {
         $.ajax({
             method: "GET",
             url: baseApiUrl + specialUrl,
+            headers: {
+                authorization: jwtToken
+            },
             dataType: "json",
             beforeSend: () => {
                 addMsgWithImgToDivArticlesAsync(
@@ -233,7 +237,7 @@ export async function populateArticlesAsync(
                 resolve();
             }
         })
-    });  // populate article
+    });  
 }
 export async function populateSenderInfosAsync(inputIds, div_senderInfos_inputs) {
     // get senderer infos and add to inputs
@@ -242,6 +246,9 @@ export async function populateSenderInfosAsync(inputIds, div_senderInfos_inputs)
         url: (baseApiUrl + "/adminPanel/userDisplay/id?" +
             `userId=${infosOfLastClickedArticle.userId}` +
             `&checkIsDeleted=false`),
+        headers: {
+            authorization: jwtToken
+        },
         contentType: "application/json",
         dataType: "json",
         success: (senderInfos) => {
