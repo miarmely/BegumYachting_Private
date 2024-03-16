@@ -3,10 +3,10 @@ using BegumYatch.Core.DTOs.User;
 using BegumYatch.Core.DTOs.UserLogin;
 using BegumYatch.Core.DTOs.UserRegister;
 using BegumYatch.Core.Enums.AdminPanel;
-using BegumYatch.Core.Models.Role;
 using BegumYatch.Core.Models.User;
 using BegumYatch.Core.QueryParameters;
 using Microsoft.AspNetCore.Http;
+
 
 namespace BegumYatch.Core.Services
 {
@@ -23,10 +23,11 @@ namespace BegumYatch.Core.Services
 
     public partial interface IUserService  // By MERT
     {
-        Task<object> LoginAsync(UserLoginDto userDto);
+        Task<object> LoginAsync(UserLoginDto userDto, params Roles[] validRoles);
 
         Task SendCodeToMailForResetPasswordAsync(
-            LoginParamsForSendCodeToMail loginParams);
+            LoginParamsForSendCodeToMail loginParams,
+            params Roles[] validRoles);
 
         Task<object> VerifyCodeForResetPasswordAsync(
             LoginParamsForVerifyCode loginParams);

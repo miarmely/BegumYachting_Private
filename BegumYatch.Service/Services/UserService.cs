@@ -2,41 +2,29 @@
 using BegumYatch.Core.Configs;
 using BegumYatch.Core.DTOs.AdminPanel.Login;
 using BegumYatch.Core.DTOs.Error;
-using BegumYatch.Core.DTOs.Password;
 using BegumYatch.Core.DTOs.User;
 using BegumYatch.Core.DTOs.UserLogin;
 using BegumYatch.Core.DTOs.UserRegister;
-using BegumYatch.Core.Enums;
 using BegumYatch.Core.Enums.AdminPanel;
-using BegumYatch.Core.Models.AdminPanel;
 using BegumYatch.Core.Models.Role;
 using BegumYatch.Core.Models.User;
 using BegumYatch.Core.QueryParameters;
 using BegumYatch.Core.Repositories;
 using BegumYatch.Core.Services;
 using BegumYatch.Core.UnitOfWorks;
-using BegumYatch.Core.ViewModels;
-using BegumYatch.Repository.Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Buffers.Text;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json.Nodes;
-using System.Threading.Tasks;
+
 
 namespace BegumYatch.Service.Services
 {
@@ -48,7 +36,6 @@ namespace BegumYatch.Service.Services
         private readonly IEmailService _emailService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly JwtSettingsConfig _jwtSettingsConfig;
 
         public UserService(IGenericRepository<AppUser> userRepository, IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService, UserManager<AppUser> userManager, IGenericRepository<MailOtp> mailOtpRepository,
              IOptions<JwtSettingsConfig> jwtSettingsConfig)
@@ -251,6 +238,8 @@ namespace BegumYatch.Service.Services
 
     public partial class UserService  // By MERT (PUBLIC)
     {
+        private readonly JwtSettingsConfig _jwtSettingsConfig;
+
         #region CRUD
         public async Task CreateUserAsync(
             UserDtoForCreate userDto,
@@ -341,7 +330,7 @@ namespace BegumYatch.Service.Services
         }
 
         public async Task UpdateUserAsync(
-            string email, 
+            string email,
             UserDtoForUpdate userDto,
             HttpContext context)
         {
@@ -442,17 +431,28 @@ namespace BegumYatch.Service.Services
             }
             #endregion
         }
+
         #endregion
 
         #region forgot password
+
         public async Task SendCodeToMailForResetPasswordAsync(
-            [FromBody] LoginParamsForSendCodeToMail loginParams)
+            [FromBody] LoginParamsForSendCodeToMail loginParams,
+            params Roles[] validRoles)
         {
             #region when user not found (THROW)
-            var user = await _userManager
-                .FindByEmailAsync(loginParams.Email);
+            var user = await _userManager.FindByEmailAsync(loginParams.Email);
 
             if (user == null)
+                throw new MiarException(
+                    404,
+                    "NF-U",
+                    "Not Found - User",
+                    "kullanıcı bulunamadı");
+            #endregion
+
+            #region when user roles is invalid (THROW)
+            if (!await IsUserRolesValidAsync(user.Id, validRoles))
                 throw new MiarException(
                     404,
                     "NF-U",
@@ -488,11 +488,9 @@ namespace BegumYatch.Service.Services
             #endregion
 
             #region send mail
-            var mailMessage = $@"<p>Şifrenizi resetlemek için lütfen bu doğrulama kodunu kullanın:</p>
-                <br><br>
-                    <b style='font-size:20px'>{verifyCode}</b>
-                <br><br>
-              <b style='font-size:15px'>MostIdea</b>";
+            var mailMessage = $@"<p style='color: black'>Şifrenizi resetlemek için lütfen bu doğrulama kodunu kullanın:</p>
+                <p><b style='font-size:20px'>{verifyCode}</b></p>
+                <p><b style='font-size:14.5px'>Begum Yachting</b></p>";
 
             try
             {
@@ -563,11 +561,15 @@ namespace BegumYatch.Service.Services
                     "şifre resetlenirken bir hata oluştu");
             #endregion
         }
+
         #endregion
 
         public async Task<object> LoginAsync(
-            UserLoginDto userDto)
+            UserLoginDto userDto,
+            params Roles[] validRoles)
         {
+            #region security control (THROW)
+
             #region when email is wrong (THROW)
             var user = await _userManager.FindByEmailAsync(userDto.Email);
 
@@ -589,6 +591,17 @@ namespace BegumYatch.Service.Services
                     "AE",
                     "Authentication Error",
                     "email veya şifre yanlış");
+            #endregion
+
+            #region when user roles is invalid (THROW)
+            if (!await IsUserRolesValidAsync(user.Id, validRoles))
+                throw new MiarException(
+                    404,
+                    "AE",
+                    "Authentication Error",
+                    "email veya şifre yanlış");
+            #endregion
+
             #endregion
 
             #region generate token
@@ -663,7 +676,6 @@ namespace BegumYatch.Service.Services
             }
             #endregion
         }
-
 
         private async Task<string> GenerateTokenForUserAsync(
             AppUser user,
@@ -747,6 +759,26 @@ namespace BegumYatch.Service.Services
                 claimsPrincipal,
                 properties);
             #endregion
+        }
+
+        private async Task<bool> IsUserRolesValidAsync(
+            int userId,
+            Roles[] validRoles)
+        {
+            #region get roles of user
+            var rolesOfUser = (await _userRepository
+                .FromSqlRawAsync<MiarRole>(
+                    "EXEC Role_GetRolesOfUser @UserId = {0}",
+                    userId));
+            #endregion
+
+            #region when user roles is invalid
+            if (!rolesOfUser.Any(ur =>
+                    validRoles.Any(vr => vr.ToString() == ur.RoleName)))
+                return false;
+            #endregion
+
+            return true;
         }
     }
 }

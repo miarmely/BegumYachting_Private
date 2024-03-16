@@ -3,12 +3,10 @@ using BegumYatch.Core.Configs;
 using BegumYatch.Core.Enums.AdminPanel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using System.Text;
 
@@ -59,7 +57,7 @@ namespace BegumYacht_Web.Controllers
         {
             var roleName = await GetClaimValueAsync(
                 claims,
-                MiarClaimTypes.Role.ToString());
+                MiarClaimTypes.Role);
 
             return _validRoles.Any(r => r.Equals(roleName));
         }
@@ -81,14 +79,9 @@ namespace BegumYacht_Web.Controllers
         public async Task<IActionResult> AfterLogin(
             [FromQuery(Name = "token")] string token)
         {
-            #region check user role whether valid
+            #region sign in
             var jwtTokenClaims = new JwtSecurityToken(token).Claims;
 
-            if (!await isUserRoleValidAsync(jwtTokenClaims))
-                return NotFound();
-            #endregion
-
-            #region sign in
             var claimsIdentity = new ClaimsIdentity(
                 jwtTokenClaims,
                 CookieAuthenticationDefaults.AuthenticationScheme);

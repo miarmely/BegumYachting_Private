@@ -282,11 +282,26 @@ namespace BegumYatch.API.Controllers
 
     public partial class UserController // By MERT
     {
-        [HttpPost("adminPanel/login")]
-        public async Task<IActionResult> Login(
+        [HttpPost("adminPanel/loginForPanel")]
+        public async Task<IActionResult> LoginForPanel(
             [FromBody] UserLoginDto userDto)
         {
-            var responseObject = await _userService.LoginAsync(userDto);
+            var responseObject = await _userService.LoginAsync(
+                userDto,
+                Roles.Admin);
+
+            return Ok(responseObject);
+        }
+
+
+        [HttpPost("adminPanel/loginForMobile")]
+        public async Task<IActionResult> LoginForMobile(
+            [FromBody] UserLoginDto userDto)
+        {
+            var responseObject = await _userService.LoginAsync(
+                userDto,
+                Roles.Admin,
+                Roles.User);
 
             return Ok(responseObject);
         }
@@ -323,7 +338,7 @@ namespace BegumYatch.API.Controllers
         }
 
     
-        [HttpPost("adminPanel/userCreate")]
+        [HttpPost("adminPanel/userCreateForPanel")]
         [MiarApiAuthorize("Admin")]
         public async Task<IActionResult> CreateUser(
             [FromQuery(Name = "roleName")] Roles role,
@@ -335,7 +350,7 @@ namespace BegumYatch.API.Controllers
         }
 
 
-        [HttpPost("mobile/userCreate")]
+        [HttpPost("adminPanel/userCreateForMobile")]
         [MiarApiAuthorize("Admin")]
         public async Task<IActionResult> CreateUser(
             [FromBody] UserDtoForCreate userDto)

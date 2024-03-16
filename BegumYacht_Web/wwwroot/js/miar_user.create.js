@@ -83,7 +83,7 @@ $("form").submit(async (event) => {
 
     $.ajax({
         method: "POST",
-        url: baseApiUrl + `/adminPanel/userCreate?roleName=${slct.roles.val()}`,
+        url: baseApiUrl + `/adminPanel/userCreateForPanel?roleName=${slct.roles.val()}`,
         headers: {
             authorization: jwtToken
         },

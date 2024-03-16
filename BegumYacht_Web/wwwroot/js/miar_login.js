@@ -51,8 +51,9 @@ $(function () {
     };
     const p_resultLabel = $("#p_resultLabel");
     const img_loading = $("#img_loading");
-    const localKeys_username = "username";
+    const spn_signinOrSignupMessage = div.signinOrSignupMessage.children("span");
     const chck_rememberMe = $("#chck_rememberMe");
+    const localKeys_username = "username";
     const signinOrsignupMessage = {
         validationType: {
             spn: "Şifreni hatırladın mı?",
@@ -67,7 +68,6 @@ $(function () {
             a: "Giriş Yap"
         }
     }
-    const spn_signinOrSignupMessage = div.signinOrSignupMessage.children("span");
     const resultLabel_errorColor = "red";
     const resultLabel_successColor = "rgb(16, 155, 16)";  // green
     let token = null;
@@ -243,13 +243,9 @@ $(function () {
                 div.login.removeAttr("hidden");
                 currentPage = "login";
 
-                // update signin or signup message  
-                updateElementText(
-                    spn_signinOrSignupMessage,
-                    signinOrsignupMessage.login.spn);  // span
-                updateElementText(
-                    a.signinOrSignupMessage,
-                    signinOrsignupMessage.login.a);  // a
+                // reset signin or signup message  
+                updateElementText(spn_signinOrSignupMessage, "");  // span
+                updateElementText(a.signinOrSignupMessage, "");  // a
                 //#endregion
 
                 break;
@@ -285,7 +281,7 @@ $(function () {
         return await new Promise(resolve => {
             $.ajax({
                 method: "POST",
-                url: baseApiUrl + "/adminPanel/login",
+                url: baseApiUrl + "/adminPanel/loginForPanel",
                 data: JSON.stringify({
                     "email": inpt.email_login.val(),
                     "password": inpt.password_login.val()
