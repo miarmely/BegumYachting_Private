@@ -4,7 +4,7 @@ using BegumYatch.API.Filters.AdminPanel.Attributes;
 
 namespace BegumYacht_Web.Controllers
 {
-    //[MiarWebAuthorize("Admin")]
+    [MiarWebAuthorize("Admin")]
     public class UserController : Controller
     {
         public IActionResult Create() => View();

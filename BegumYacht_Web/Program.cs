@@ -1,11 +1,13 @@
+using BegumYacht_Web.Controllers;
 using BegumYacht_Web.Extensions;
+using Microsoft.AspNetCore.Components;
 
 #region add services
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.ConfigureConfigModels(builder.Configuration);
-builder.Services.ConfigureAuthentication(builder.Configuration);
+builder.Services.ConfigureAuthentication();
 
 var app = builder.Build();
 #endregion
@@ -13,7 +15,7 @@ var app = builder.Build();
 #region when mode is not development
 if (!app.Environment.IsDevelopment())
 {
-    app.UseHsts();
+	app.UseHsts();
 }
 #endregion
 
@@ -22,8 +24,6 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Authentication}/{action=Login}/{id?}");
+app.ConfigureMapControllerRoute();
 app.Run();
 #endregion

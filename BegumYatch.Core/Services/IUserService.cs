@@ -43,7 +43,7 @@ namespace BegumYatch.Core.Services
 
         Task CreateUserAsync(UserDtoForCreate userDto, Roles role);
 
-        Task UpdateUserAsync(
+        Task<string> UpdateUserAsync(
             string email,
             UserDtoForUpdate userDto,
             HttpContext context);

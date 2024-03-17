@@ -106,10 +106,7 @@ $(function () {
                 }
                 //#endregion
 
-                //#region login
-                if (await loginAsync())
-                    await afterLoginAsync();
-                //#endregion
+                await loginAsync();
 
                 break;
             case "validationType":
@@ -142,7 +139,7 @@ $(function () {
 
                 break;
             case "validationCode":
-                //#region when any input is blan
+                //#region when any input is blank
                 if (await checkInputsWhetherBlankAsync([inpt.validationCode])) {
                     isAnyInputBlank = true;
                     break;
@@ -158,7 +155,7 @@ $(function () {
 
                 break;
             case "newPassword":
-                //#region when password inputs is blank (RETURN)
+                //#region when password inputs is blank
                 if (await checkInputsWhetherBlankAsync([
                     inpt.password_newPassword,
                     inpt.password_newPassword_confirm
@@ -278,83 +275,62 @@ $(function () {
         //#endregion
     }
     async function loginAsync() {
-        return await new Promise(resolve => {
-            $.ajax({
-                method: "POST",
-                url: baseApiUrl + "/adminPanel/loginForPanel",
-                data: JSON.stringify({
-                    "email": inpt.email_login.val(),
-                    "password": inpt.password_login.val()
-                }),
-                contentType: "application/json",
-                dataType: "json",
-                beforeSend: () => {
-                    p_resultLabel.empty();
-                    img_loading.removeAttr("hidden");  // show
-                },
-                success: (response) => {
-                    //#region save token and account id to local
-                    token = response.token;
-                    jwtToken = "Bearer " + token;
-                    accountId = response.id;
-
-                    localStorage.setItem("token", token);
-                    localStorage.setItem("accountId", accountId);
-                    img_loading.attr("hidden", "");
-                    //#endregion
-
-                    resolve(true);
-                },
-                error: (response) => {
-                    //#region set error message by status code
-                    let errorMessage = "";
-
-                    switch (response.status) {
-                        case 400:  // for syntax error
-                            errorMessage = `email veya şifre yanlış`;
-                            break;
-                        case 404:  // for wrong username or password
-                            errorMessage = `email veya şifre yanlış`;
-                            break;
-                        default:  // for unexpected errors
-                            errorMessage = "bir hata oluştu, lütfen daha sonra tekrar deneyiniz";
-                            break;
-                    }
-                    //#endregion
-
-                    updateResultLabel(
-                        p_resultLabel,
-                        errorMessage,
-                        resultLabel.errorColor,
-                        "30px",
-                        img_loading);  // write error
-
-                    resolve(false);
-                }
-            })
-        })
-    }
-    async function afterLoginAsync() {
-        await saveOrRemoveUsernameFromLocalAsync(
-            chck_rememberMe,
-            inpt.email_login,
-            localKeys_username);  // by "remember me" checkbox
-
-        // sign in
         $.ajax({
-            method: "GET",
-            url: `/authentication/afterLogin?token=${token}`,
+            method: "POST",
+            url: baseApiUrl + "/adminPanel/loginForPanel",
+            data: JSON.stringify({
+                "email": inpt.email_login.val(),
+                "password": inpt.password_login.val()
+            }),
             contentType: "application/json",
             dataType: "json",
-            success: () => {
-                window.location.replace("/authentication/openHomepage");
+            beforeSend: () => {
+                p_resultLabel.empty();
+                img_loading.removeAttr("hidden");  // show
             },
-            error: () => {
+            success: (response) => {
+                //#region save token and account id to local
+                token = response.token;
+                jwtToken = "Bearer " + token;
+                accountId = response.id;
+
+                localStorage.setItem("token", token);
+                localStorage.setItem("accountId", accountId);
+                img_loading.attr("hidden", "");
+                //#endregion
+
+                //#region sign in
+                saveOrRemoveUsernameFromLocalAsync(
+                    chck_rememberMe,
+                    inpt.email_login,
+                    localKeys_username);  // by "remember me" checkbox
+
+                window.location.replace(`/authentication/afterLogin?token=${token}`);
+                //#endregion
+            },
+            error: (response) => {
+                //#region set error message by status code
+                let errorMessage = "";
+
+                switch (response.status) {
+                    case 400:  // for syntax error
+                        errorMessage = `email veya şifre yanlış`;
+                        break;
+                    case 404:  // for wrong username or password
+                        errorMessage = `email veya şifre yanlış`;
+                        break;
+                    default:  // for unexpected errors
+                        errorMessage = "bir hata oluştu, lütfen daha sonra tekrar deneyiniz";
+                        break;
+                }
+                //#endregion
+
                 updateResultLabel(
                     p_resultLabel,
-                    "email veya şifre yanlış",
-                    resultLabel_errorColor,
-                    "30px");
+                    errorMessage,
+                    resultLabel.errorColor,
+                    "30px",
+                    img_loading);  // write error
             }
         })
     }

@@ -27,5 +27,11 @@ namespace BegumYatch.Service.Services
 
             return roleNames;
         }
+
+        public async Task<IEnumerable<MiarRole>> GetUserRolesAsync(int userId) =>
+            await _repository
+                .FromSqlRawAsync<MiarRole>(
+                    "EXEC Role_GetRolesOfUser @UserId = {0}",
+                    userId);
     }
 }

@@ -65,6 +65,7 @@ namespace BegumYatch.API.Extensions
 							"Order-TechnicalAssistanceAndSparePart");
 				});
 			});
+
 		public static void ConfigureJwt(
 			this IServiceCollection services,
 			IConfiguration configuration) =>
@@ -87,7 +88,8 @@ namespace BegumYatch.API.Extensions
 						ValidateIssuerSigningKey = true,
 						IssuerSigningKey = new SymmetricSecurityKey(Encoding
 							.UTF8
-							.GetBytes(section["SecretKey"]))
+							.GetBytes(section["SecretKey"])),
+						ValidateLifetime = false  // close expires
 					};
 				});
 		

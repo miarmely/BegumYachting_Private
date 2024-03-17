@@ -4,12 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BegumYacht_Web.Controllers
 {
-    //[MiarWebAuthorize("Admin")]
+    [MiarWebAuthorize("Admin")]
     public partial class MenubarController : Controller // account
     {
-        public IActionResult Profile()
-        {
-            return View();
-        }
+        public IActionResult Profile() => View();
     }
 }

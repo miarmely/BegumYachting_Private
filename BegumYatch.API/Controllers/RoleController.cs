@@ -127,12 +127,23 @@ namespace BegumYatch.API.Controllers
     public partial class RoleController  // By MERT
     {
         [HttpGet("adminPanel/roleDisplay")]
-		[MiarApiAuthorize("Admin")]
+		[MiarApiAuthorize]
         public async Task<IActionResult> GetAllRoleNames()
         {
             var roles = await _roleService.GetAllRoleNamesAsync();
 
             return Ok(roles);
+        }
+
+
+        [HttpGet("adminPanel/getUserRoles")]
+        [MiarApiAuthorize]
+        public async Task<IActionResult> GetUserRoles(
+            [FromQuery(Name = "userId")] int userId)
+        {
+            var userRoles = _roleService.GetUserRolesAsync(userId);
+
+            return Ok(userRoles);
         }
     }
 }

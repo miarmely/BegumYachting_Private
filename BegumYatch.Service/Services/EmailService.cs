@@ -6,12 +6,9 @@ using BegumYatch.Core.UnitOfWorks;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Net.Mail;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace BegumYatch.Service.Services
 {

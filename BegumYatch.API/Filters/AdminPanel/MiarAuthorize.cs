@@ -56,10 +56,10 @@ namespace BegumYatch.API.Filters.AdminPanel
                 #endregion
 
                 #region get role names in role claims
-                var roleNamesOnToken = new List<string>();
+                var roleNamesOnClaims= new List<string>();
 
                 foreach (var roleClaim in roleClaims)
-                    roleNamesOnToken.Add(roleClaim.Value);
+					roleNamesOnClaims.Add(roleClaim.Value);
                 #endregion
 
                 #endregion
@@ -67,7 +67,7 @@ namespace BegumYatch.API.Filters.AdminPanel
                 #region control role names (THROW)
 
                 #region compare role names 
-                foreach (var roleName in roleNamesOnToken)
+                foreach (var roleName in roleNamesOnClaims)
                 {
                     #region when user role is valid
                     if (RoleNamesOnAttribute.Contains(roleName))

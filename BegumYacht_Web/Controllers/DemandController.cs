@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BegumYacht_Web.Controllers
 {
-    //[MiarWebAuthorize("Admin")]
+    [MiarWebAuthorize("Admin")]
     public class DemandController : Controller
     {
         public IActionResult FuelPurchase() => View();

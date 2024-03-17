@@ -36,7 +36,7 @@
 			<header class="header fixed-top clearfix">
 				@*logo*@
 				<div class="brand">
-					<a href="/homepage/index" class="logo">
+					<a href="/homepage" class="logo">
 						<img id="img_begumLogo" src="~/images/begumLogo2.png"/>
 					</a>
 					<div class="sidebar-toggle-box">
@@ -72,11 +72,11 @@
 							<ul id="ul_profileOptions" class="dropdown-menu extended logout">
 								@*profile*@
 								<li>
-									<a href="/menubar/profile"> <i class="fa fa-user"></i>Profil</a>
+									<a href="/userProfile"> <i class="fa fa-user"></i>Profil</a>
 								</li>
 								@*logout*@
 								<li>
-									<a id="a_logout" href="/authentication/logout"> <i class="fa fa-close"></i>Çıkış Yap</a>
+									<a id="a_logout" href="/logout"> <i class="fa fa-close"></i>Çıkış Yap</a>
 								</li>
 							</ul>
 						</li>
@@ -91,7 +91,7 @@
 						<ul class="sidebar-menu">
 							@*homepage*@
 							<li>
-								<a href="/homepage/index">
+								<a href="/homepage">
 									<i class="fa fa-settings"></i>
 									<span>Anasayfa</span>
 								</a>
@@ -108,13 +108,13 @@
 							<li id="li_user_create_submenu" class="li_submenu" hidden>
 								<ul>
 									<li>
-										<a href="/user/create">
+										<a href="/userCreate">
 											<i class="fa fa-settings"></i>
 											<span>Yeni Kullanıcı</span>
 										</a>
 									</li>
 									<li>
-										<a href="/user/display">
+										<a href="/userDisplay">
 											<i class="fa fa-settings"></i>
 											<span>Kayıtlı Kullanıcılar</span>
 										</a>
@@ -133,19 +133,19 @@
 							<li id="li_orders_submenu" class="li_submenu" hidden>
 								<ul>
 									<li>
-										<a href="/order/provision">
+										<a href="/provisionOrder">
 											<i class="fa fa-settings"></i>
 											<span>Genel Sipariş</span>
 										</a>
 									</li>
 									<li>
-										<a href="/order/flower">
+										<a href="/flowerOrder">
 											<i class="fa fa-settings"></i>
 											<span>Çiçek Siparişi</span>
 										</a>
 									</li>
 									<li>
-										<a href="/order/technicalAssistanceAndSparePart">
+										<a href="/technicalAssistanceAndSparePartOrder">
 											<i class="fa fa-settings"></i>
 											<span>Teknik Yardım / Yedek Parça</span>
 										</a>
@@ -164,43 +164,43 @@
 							<li id="li_demands_submenu" class="li_submenu" hidden>
 								<ul>
 									<li>
-										<a href="/demand/fuelPurchase">
+										<a href="/fuelPurchaseDemand">
 											<i class="fa fa-settings"></i>
 											<span>Yakıt Alma</span>
 										</a>
 									</li>
 									<li>
-										<a href="/demand/checkinAndCheckout">
+										<a href="/checkinAndCheckoutDemand">
 											<i class="fa fa-settings"></i>
 											<span>Yat Giriş / Çıkış İşlemleri</span>
 										</a>
 									</li>
 									<li>
-										<a href="/demand/berthReservation">
+										<a href="/berthReservationDemand">
 											<i class="fa fa-settings"></i>
 											<span>Marina Rezervasyonu</span>
 										</a>
 									</li>
 									<li>
-										<a href="/demand/vipTransfer">
+										<a href="/vipTransferDemand">
 											<i class="fa fa-settings"></i>
 											<span>VIP Transfer</span>
 										</a>
 									</li>
 									<li>
-										<a href="/demand/excursion">
+										<a href="/excursionDemand">
 											<i class="fa fa-settings"></i>
 											<span>Gezi İsteği</span>
 										</a>
 									</li>
 									<li>
-										<a href="/demand/conciergeService">
+										<a href="/conciergeServiceDemand">
 											<i class="fa fa-settings"></i>
 											<span>Konsiyerj Hizmeti</span>
 										</a>
 									</li>
 									<li>
-										<a href="/demand/securityAndProtectionService">
+										<a href="/securityAndProtectionServiceDemand">
 											<i class="fa fa-settings"></i>
 											<span>Güvenlik Ve Koruma Hizmeti</span>
 										</a>
