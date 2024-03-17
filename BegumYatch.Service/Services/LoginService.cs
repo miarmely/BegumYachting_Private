@@ -3,11 +3,12 @@ using BegumYatch.Core.DTOs.AdminPanel.Login;
 using BegumYatch.Core.DTOs.Error;
 using BegumYatch.Core.DTOs.UserLogin;
 using BegumYatch.Core.Enums.AdminPanel;
-using BegumYatch.Core.Models.Role;
 using BegumYatch.Core.Models.User;
 using BegumYatch.Core.QueryParameters;
 using BegumYatch.Core.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 using System.Collections.ObjectModel;
 using System.IdentityModel.Tokens.Jwt;
@@ -17,12 +18,12 @@ using System.Text;
 
 namespace BegumYatch.Service.Services
 {
-	public partial class LoginService : ILoginService 
+	public partial class LoginService : ILoginService
 	{
-		private readonly IRoleService _roleService;
-		private readonly UserManager<AppUser> _userManager;
 		private readonly IUserService _userService;
+		private readonly IRoleService _roleService;
 		private readonly IEmailService _emailService;
+		private readonly UserManager<AppUser> _userManager;
 		private readonly JwtSettingsConfig _jwtSettingsConfig;
 
 		public LoginService(
@@ -30,17 +31,18 @@ namespace BegumYatch.Service.Services
 			UserManager<AppUser> userManager,
 			IUserService userService,
 			IEmailService emailService,
-			JwtSettingsConfig jwtSettingsConfig)
+			IOptions<JwtSettingsConfig> jwtSettingsConfig)
 		{
 			_roleService = roleService;
 			_userManager = userManager;
 			_userService = userService;
 			_emailService = emailService;
-			_jwtSettingsConfig = jwtSettingsConfig;
+			_jwtSettingsConfig = jwtSettingsConfig.Value;
 		}
 
-
-		private async Task<string> LoginAsync(UserLoginDto userDto, params Roles[] validRoles)
+		private async Task<string> LoginAsync(
+			UserLoginDto userDto,
+			params Roles[] validRoles)
 		{
 			#region security control (THROW)
 
@@ -70,7 +72,7 @@ namespace BegumYatch.Service.Services
 			#region when user roles is invalid (THROW)
 			var userRoles = await _roleService.GetUserRolesAsync(user.Id);
 
-			if (!await IsUserRolesValidAsync(userRoles, validRoles))
+			if (!await _roleService.IsUserRolesValidAsync(userRoles, validRoles))
 				throw new MiarException(
 					404,
 					"AE",
@@ -80,52 +82,23 @@ namespace BegumYatch.Service.Services
 
 			#endregion
 
-			return await GenerateTokenForUserAsync(
-				user,
-				await _roleService.GetUserRolesAsync(user.Id));
-		}
+			#region get role name of user
+			var userRole = (await _roleService
+				.GetUserRolesAsync(user.Id))
+				.FirstOrDefault();
 
-		private async Task<bool> IsUserRolesValidAsync(
-			IEnumerable<MiarRole> userRoles,
-			Roles[] validRoles)
-		{
-			#region when user roles is invalid
-			if (!userRoles.Any(ur =>
-					validRoles.Any(vr => vr.ToString() == ur.RoleName)))
-				return false;
+			var roleName = userRole == null ?
+				null
+				: userRole.RoleName;
 			#endregion
 
-			return true;
-		}
-
-		private async Task<string> GenerateTokenForUserAsync(
-			AppUser user,
-			IEnumerable<MiarRole> userRoles)
-		{
-			#region set signingCredentials
-			var secretKeyInBytes = Encoding.UTF8
-				.GetBytes(_jwtSettingsConfig.SecretKey);
-
-			var signingCredentials = new SigningCredentials(
-				new SymmetricSecurityKey(secretKeyInBytes),
-				SecurityAlgorithms.HmacSha256);
-			#endregion
-
-			#region set jwt token
-			var token = new JwtSecurityToken(
-				_jwtSettingsConfig.ValidIssuer,
-				_jwtSettingsConfig.ValidAudience1,
-				await GenerateClaimsAsync(user, userRoles),
-				signingCredentials: signingCredentials);
-			#endregion
-
-			return new JwtSecurityTokenHandler()
-				.WriteToken(token);
+			return await GenerateTokenForUserAsync(user, roleName);
 		}
 
 		private async Task<IEnumerable<Claim>> GenerateClaimsAsync(
 			AppUser user,
-			IEnumerable<MiarRole> userRoles)
+			string userRole,
+			string? token = null)
 		{
 			var claims = new Collection<Claim>
 			{
@@ -147,21 +120,13 @@ namespace BegumYatch.Service.Services
 				new (MiarClaimTypes.PlaceOfBirth, user.PlaceOfBirth),
 				new (MiarClaimTypes.IsPersonel, user.IsPersonel.ToString()),
 				new (MiarClaimTypes.IsDeleted, user.IsDeleted.ToString()),
+				new (MiarClaimTypes.RoleName, userRole)
 			};
 
-			#region add user roles to claims
-			// when user has roles
-			if (userRoles.Count() > 0)
-				foreach (var userRole in userRoles)
-					claims.Add(new Claim(
-						MiarClaimTypes.RoleName,
-						userRole.RoleName));
-
-			// when user hasn't roles
-			else
-				claims.Add(new Claim(
-					MiarClaimTypes.RoleName,
-					"null"));
+			#region add token to claims if desired
+			if (token != null)
+				claims.Add(
+					new Claim(MiarClaimTypes.Token, token));
 			#endregion
 
 			return claims;
@@ -171,16 +136,18 @@ namespace BegumYatch.Service.Services
 
 	public partial class LoginService  // public
 	{
-		public async Task<object> LoginForMobileAsync(UserLoginDto userDto)
+		public async Task<string> LoginForMobileAsync(UserLoginDto userDto)
 		{
 			var token = await LoginAsync(userDto, Roles.User, Roles.Admin);
 
 			return token;
 		}
 
-		public async Task LoginForPanelAsync(UserLoginDto userDto)
+		public async Task<string> LoginForPanelAsync(UserLoginDto userDto)
 		{
-			var token = LoginAsync(userDto, Roles.Admin);
+			var token = await LoginAsync(userDto, Roles.Admin);
+
+			return token;
 		}
 
 		public async Task SendCodeToMailForResetPasswordAsync(
@@ -201,7 +168,7 @@ namespace BegumYatch.Service.Services
 			#region when user roles is invalid (THROW)
 			var userRoles = await _roleService.GetUserRolesAsync(user.Id);
 
-			if (!await IsUserRolesValidAsync(userRoles, validRoles))
+			if (!await _roleService.IsUserRolesValidAsync(userRoles, validRoles))
 				throw new MiarException(
 					404,
 					"NF-U",
@@ -310,6 +277,31 @@ namespace BegumYatch.Service.Services
 					"Internal Server Error",
 					"şifre resetlenirken bir hata oluştu");
 			#endregion
+		}
+
+		public async Task<string> GenerateTokenForUserAsync(
+			AppUser user,
+			string? roleName)
+		{
+			#region set signingCredentials
+			var secretKeyInBytes = Encoding.UTF8
+				.GetBytes(_jwtSettingsConfig.SecretKey);
+
+			var signingCredentials = new SigningCredentials(
+				new SymmetricSecurityKey(secretKeyInBytes),
+				SecurityAlgorithms.HmacSha256);
+			#endregion
+
+			#region set jwt token
+			var token = new JwtSecurityToken(
+				_jwtSettingsConfig.ValidIssuer,
+				_jwtSettingsConfig.ValidAudience1,
+				await GenerateClaimsAsync(user, roleName ?? "null"),
+				signingCredentials: signingCredentials);
+			#endregion
+
+			return new JwtSecurityTokenHandler()
+				.WriteToken(token);
 		}
 	}
 }

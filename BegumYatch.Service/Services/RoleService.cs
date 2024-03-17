@@ -1,8 +1,8 @@
-﻿using BegumYatch.Core.Models.AdminPanel;
+﻿using BegumYatch.Core.Enums.AdminPanel;
+using BegumYatch.Core.Models.AdminPanel;
 using BegumYatch.Core.Models.Role;
 using BegumYatch.Core.Repositories;
 using BegumYatch.Core.Services;
-
 
 namespace BegumYatch.Service.Services
 {
@@ -33,5 +33,18 @@ namespace BegumYatch.Service.Services
                 .FromSqlRawAsync<MiarRole>(
                     "EXEC Role_GetRolesOfUser @UserId = {0}",
                     userId);
-    }
+
+		public async Task<bool> IsUserRolesValidAsync(
+			IEnumerable<MiarRole> userRoles,
+			Roles[] validRoles)
+		{
+			#region when user roles is invalid
+			if (!userRoles.Any(ur =>
+					validRoles.Any(vr => vr.ToString() == ur.RoleName)))
+				return false;
+			#endregion
+
+			return true;
+		}
+	}
 }

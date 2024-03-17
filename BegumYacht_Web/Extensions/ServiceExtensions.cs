@@ -1,9 +1,5 @@
 ﻿using BegumYatch.Core.Configs;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 
 
 namespace BegumYacht_Web.Extensions

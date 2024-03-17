@@ -277,7 +277,7 @@ $(function () {
     async function loginAsync() {
         $.ajax({
             method: "POST",
-            url: baseApiUrl + "/adminPanel/loginForPanel",
+            url: baseApiUrl + "/api/login/panel",
             data: JSON.stringify({
                 "email": inpt.email_login.val(),
                 "password": inpt.password_login.val()
@@ -294,8 +294,8 @@ $(function () {
                 jwtToken = "Bearer " + token;
                 accountId = response.id;
 
-                localStorage.setItem("token", token);
-                localStorage.setItem("accountId", accountId);
+                //localStorage.setItem("token", token);
+                //localStorage.setItem("accountId", accountId);
                 img_loading.attr("hidden", "");
                 //#endregion
 
@@ -338,7 +338,7 @@ $(function () {
         return await new Promise((resolve) => {
             $.ajax({
                 method: "GET",
-                url: baseApiUrl + `/adminPanel/forgotPassword/sendCodeToMail?email=${forgotPasswordBuffer.email}`,
+                url: baseApiUrl + `/api/login/forgotPassword/sendCodeToMail?email=${forgotPasswordBuffer.email}`,
                 contentType: "application/json",
                 dataType: "json",
                 beforeSend: () => {
@@ -366,7 +366,7 @@ $(function () {
         return await new Promise(resolve => {
             $.ajax({
                 method: "GET",
-                url: (baseApiUrl + "/adminPanel/forgotPassword/verifyCode?" +
+                url: (baseApiUrl + "/api/login/forgotPassword/verifyCode?" +
                     `email=${forgotPasswordBuffer.email}` +
                     `&verificationCode=${forgotPasswordBuffer.verificationCode}`),
                 contentType: "application/json",
@@ -401,7 +401,7 @@ $(function () {
     async function resetPasswordAsync() { 
         $.ajax({
             method: "POST",
-            url: baseApiUrl + "/adminPanel/forgotPassword/resetPassword",
+            url: baseApiUrl + "/api/login/forgotPassword/resetPassword",
             data: JSON.stringify({
                 userId: forgotPasswordBuffer.userId.toString(),
                 tokenForResetPassword: forgotPasswordBuffer.token,

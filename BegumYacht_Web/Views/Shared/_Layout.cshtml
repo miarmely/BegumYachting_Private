@@ -7,9 +7,9 @@
 		// don't get ignored claim types
 		if(!ignoredClaimTypes.Contains(claim.Type))
 			claimInfos[claim.Type] = claim.Value;
+	#endregion
 
 	var serializedClaimInfos = Json.Serialize(claimInfos);
-	#endregion
 }
 
 <!DOCTYPE html>
@@ -236,7 +236,8 @@
 
 		<script>
 			const language = "TR";
-			const jwtToken = "Bearer " + localStorage.getItem("token");
+			const accountInfos = @serializedClaimInfos;
+			const jwtToken = "Bearer " + accountInfos.token;  // get token from claims
 			const baseApiUrl = "https://localhost:7272";  // for local
 			const searchBarPlaceHolderByLanguages = {
 				"TR": "Ara",
@@ -441,7 +442,6 @@
 					"EN": "an error occured"
 				}
 			}
-			const accountInfos = @serializedClaimInfos;
 		</script>
 		<script type="module" src="~/js/miar_mainLayout.js"></script>
 		<script src="~/js/bootstrap.js"></script>

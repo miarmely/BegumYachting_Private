@@ -108,7 +108,7 @@ builder.Services.ConfigureApplicationCookie(opt =>
 #region By MERT
 builder.Services.ConfigureServices();
 builder.Services.ConfigureConfigModels(builder.Configuration);
-builder.Services.ConfigureJwt(builder.Configuration);
+builder.Services.ConfigureAuthentication(builder.Configuration);
 builder.Services.ConfigureCors();
 #endregion
 

@@ -1,4 +1,5 @@
-﻿using BegumYatch.Core.Models.Role;
+﻿using BegumYatch.Core.Enums.AdminPanel;
+using BegumYatch.Core.Models.Role;
 
 namespace BegumYatch.Core.Services
 {
@@ -6,5 +7,9 @@ namespace BegumYatch.Core.Services
     {
         Task<IEnumerable<string>> GetAllRoleNamesAsync();
         Task<IEnumerable<MiarRole>> GetUserRolesAsync(int userId);
+
+		Task<bool> IsUserRolesValidAsync(
+			IEnumerable<MiarRole> userRoles,
+			Roles[] validRoles);
 	}
 }

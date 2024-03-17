@@ -1,11 +1,9 @@
-﻿using Autofac.Core;
-using BegumYatch.Core.Configs;
+﻿using BegumYatch.Core.Configs;
 using BegumYatch.Core.Models.Role;
 using BegumYatch.Core.Models.User;
 using BegumYatch.Core.Services;
 using BegumYatch.Repository;
 using BegumYatch.Service.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -66,7 +64,7 @@ namespace BegumYatch.API.Extensions
 				});
 			});
 
-		public static void ConfigureJwt(
+		public static void ConfigureAuthentication(
 			this IServiceCollection services,
 			IConfiguration configuration) =>
 			services
@@ -93,7 +91,6 @@ namespace BegumYatch.API.Extensions
 					};
 				});
 		
-
 		public static void ConfigureConfigModels(
 			this IServiceCollection services,
 			IConfiguration configuration)
@@ -105,11 +102,12 @@ namespace BegumYatch.API.Extensions
 		public static void ConfigureServices(
 			this IServiceCollection services)
 		{
+			services.AddScoped<IRoleService, RoleService>();
+			services.AddTransient<ILoginService, LoginService>();
+
 			services.AddScoped<
 				IBaseDemandAndOrderService,
 				BaseDemandAndOrderService>();
-
-			services.AddScoped<IRoleService, RoleService>();
 		}
 	}
 }

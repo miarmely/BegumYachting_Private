@@ -23,17 +23,8 @@ namespace BegumYatch.Core.Services
 
     public partial interface IUserService  // By MERT
     {
-        Task<object> LoginAsync(UserLoginDto userDto, params Roles[] validRoles);
-
-        Task SendCodeToMailForResetPasswordAsync(
-            LoginParamsForSendCodeToMail loginParams,
-            params Roles[] validRoles);
-
-        Task<object> VerifyCodeForResetPasswordAsync(
-            LoginParamsForVerifyCode loginParams);
-
-        Task ResetPasswordAsync(LoginDtoForResetPassword loginDto);
-        Task<List<MiarUser>> GetAllUsers(int accountId);
+		Task CreateUserAsync(UserDtoForCreate userDto, Roles role);
+		Task<List<MiarUser>> GetAllUsers(int accountId);
 
         Task<List<MiarUser>> GetUsersByFilteringAsync(
             int? UserId = null,
@@ -41,9 +32,7 @@ namespace BegumYatch.Core.Services
             string? Phone = null,
             bool CheckIsDeleted = true);
 
-        Task CreateUserAsync(UserDtoForCreate userDto, Roles role);
-
-        Task<string> UpdateUserAsync(
+        Task<AppUser> UpdateUserAsync(
             string email,
             UserDtoForUpdate userDto,
             HttpContext context);

@@ -21,5 +21,6 @@
         public const string IsPersonel = "isPersonel";
         public const string IsDeleted = "isDeleted";
         public const string RoleName = "roleName";
+        public const string Token = "token";
     }
 }
