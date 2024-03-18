@@ -1,16 +1,11 @@
 ﻿using BegumYatch.API.Filters.AdminPanel.Attributes;
 using BegumYatch.Core.DTOs.FlowerOrder;
-using BegumYatch.Core.DTOs.FuelPurchaseDemand;
-using BegumYatch.Core.DTOs.ProvisionOrder;
-using BegumYatch.Core.DTOs.TechnicalAssitanceandSparePartOrder;
 using BegumYatch.Core.Enums.AdminPanel;
-using BegumYatch.Core.Models.AdminPanel.DemandModel;
 using BegumYatch.Core.Models.AdminPanel.OrderModel;
 using BegumYatch.Core.QueryParameters;
 using BegumYatch.Core.Services;
-using BegumYatch.Service.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 
 namespace BegumYatch.API.Controllers
 {
@@ -21,14 +16,15 @@ namespace BegumYatch.API.Controllers
         private readonly IProvisionOrderService _provisionOrderService;
         private readonly IBaseDemandAndOrderService _baseDemandAndOrderService;
 
-        public OrderController(IFlowerOrderService flowerOrderService, IProvisionOrderService provisionOrderService, IBaseDemandAndOrderService baseDemandAndOrderService)
-        {
-            _flowerOrderService = flowerOrderService;
-            _provisionOrderService = provisionOrderService;
-            _baseDemandAndOrderService = baseDemandAndOrderService;
-        }
+		public OrderController(IFlowerOrderService flowerOrderService, IProvisionOrderService provisionOrderService, IBaseDemandAndOrderService baseDemandAndOrderService, IBaseDemandAndOrderService baseFormService)
+		{
+			_flowerOrderService = flowerOrderService;
+			_provisionOrderService = provisionOrderService;
+			_baseDemandAndOrderService = baseDemandAndOrderService;
+			_baseFormService = baseFormService;
+		}
 
-        [HttpPost("AddFlowerOrder")]
+		[HttpPost("AddFlowerOrder")]
         public async Task<IActionResult> AddFlowerOrder(AddFlowerOrderDto addFlowerOrderDto)
         {
             await _flowerOrderService.AddFlowerOrder(addFlowerOrderDto);
@@ -80,6 +76,8 @@ namespace BegumYatch.API.Controllers
 
     public partial class OrderController  // By MERT
     {
+        private readonly IBaseDemandAndOrderService _baseFormService;
+
         [HttpGet("adminPanel/order/provision/filter")]
         [MiarApiAuthorize("Admin")]
         public async Task<IActionResult> GetProvisionOrdersByFilter(
@@ -89,7 +87,7 @@ namespace BegumYatch.API.Controllers
                 <ProvisionOrderModel>(
                     formParams,
                     "Order_Provision_GetFormsByStatus",
-                    FormType.Order,
+                    FormCategory.Order,
                     "Provision",
                     HttpContext);
 
@@ -97,7 +95,22 @@ namespace BegumYatch.API.Controllers
         }
 
 
-        [HttpGet("adminPanel/order/flower/filter")]
+		[HttpGet("adminPanel/order/provision/answer")]
+		[MiarApiAuthorize("Admin")]
+		public async Task<IActionResult> AnswerTheProvisionOrder(
+			[FromQuery] FormParamsForAnswerTheForm formParams)
+		{
+			await _baseFormService.AnswerTheFormAsync(
+				FormType.ProvisionOrder,
+				formParams.FormId,
+				formParams.FormStatus,
+				HttpContext);
+
+			return NoContent();
+		}
+
+
+		[HttpGet("adminPanel/order/flower/filter")]
         [MiarApiAuthorize("Admin")]
         public async Task<IActionResult> GetFlowerOrdersByFilter(
             [FromQuery] FormParamsForDisplayFormByStatus formParams)
@@ -106,7 +119,7 @@ namespace BegumYatch.API.Controllers
                 <FlowerOrderModel>(
                     formParams,
                     "Order_Flower_GetFormsByStatus",
-                    FormType.Order,
+                    FormCategory.Order,
                     "Flower",
                     HttpContext);
 
@@ -114,7 +127,22 @@ namespace BegumYatch.API.Controllers
         }
 
 
-        [HttpGet("adminPanel/order/TechnicalAssistanceAndSparePart/filter")]
+		[HttpGet("adminPanel/order/flower/answer")]
+		[MiarApiAuthorize("Admin")]
+		public async Task<IActionResult> AnswerTheFlowerOrder(
+			[FromQuery] FormParamsForAnswerTheForm formParams)
+		{
+			await _baseFormService.AnswerTheFormAsync(
+				FormType.FlowerOrder,
+				formParams.FormId,
+				formParams.FormStatus,
+				HttpContext);
+
+			return NoContent();
+		}
+
+
+		[HttpGet("adminPanel/order/TechnicalAssistanceAndSparePart/filter")]
         [MiarApiAuthorize("Admin")]
         public async Task<IActionResult> GetTechnicalAssistanceAndSparePartOrdersByFilter(
             [FromQuery] FormParamsForDisplayFormByStatus formParams)
@@ -123,11 +151,26 @@ namespace BegumYatch.API.Controllers
                 <TechnicalAssistanceAndSparePartOrderModel>(
                     formParams,
                     "Order_TechnicalAssistanceAndSparePart_GetFormsByStatus",
-                    FormType.Order,
+                    FormCategory.Order,
                     "TechnicalAssistanceAndSparePart",
                     HttpContext);
 
             return Ok(orders);
         }
-    }
+
+
+		[HttpGet("adminPanel/order/TechnicalAssistanceAndSparePart/answer")]
+		[MiarApiAuthorize("Admin")]
+		public async Task<IActionResult> AnswerTheTechnicalAssistanceAndSparePartOrder(
+			[FromQuery] FormParamsForAnswerTheForm formParams)
+		{
+			await _baseFormService.AnswerTheFormAsync(
+				FormType.TechnicalAssistanceAndSparePartOrder,
+				formParams.FormId,
+				formParams.FormStatus,
+				HttpContext);
+
+			return NoContent();
+		}
+	}
 }

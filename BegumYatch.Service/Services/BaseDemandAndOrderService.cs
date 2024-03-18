@@ -24,9 +24,9 @@ namespace BegumYatch.Service.Services
         public async Task<PagingList<TModel>> GetFormsByStatusAsync<TModel>(
             FormParamsForDisplayFormByStatus formParams,
             string procedureName,
-            FormType formType,
-            string formName,
-            HttpContext context)
+            FormCategory formType,  // for Exception
+            string formName,  // for Exception
+			HttpContext context)
             where TModel : class
         {
             #region set sql command
@@ -78,5 +78,53 @@ namespace BegumYatch.Service.Services
 
             return formPagingList;
         }
-    }
+
+        public async Task AnswerTheFormAsync(
+            FormType formType,
+            int formId,
+            FormStatus formStatus,
+            HttpContext context)
+        {
+			#region set parameters 
+			var statusCode = new SqlParameter()
+			{
+				ParameterName = "@StatusCode",
+				SqlDbType = SqlDbType.TinyInt,
+				Direction = ParameterDirection.Output
+			};
+
+			var answererId = context.User.Claims
+				.FirstOrDefault(c => c.Type.Equals(MiarClaimTypes.Id))
+				.Value;
+			#endregion
+
+			#region answer the form
+			var sql = @"EXEC DemandAndOrder_AnswerTheForm
+                @FormTypeId = {0},
+        		@FormId = {1},
+        		@AnswererId = {2},
+        		@StatusId = {3},
+        		@AnsweredDate = {4},
+        		@StatusCode = {5} OUT";
+
+            await _repository.ExecuteSqlRawAsync(
+                sql,
+                formType,
+                formId,
+				answererId,
+				formStatus,
+                DateTime.UtcNow,
+                statusCode);
+            #endregion
+
+            #region when form is already answered (THROW)
+            if ((int)statusCode.Value == 409)
+                throw new MiarException(
+                    409,
+                    "CE-F-A",
+                    "Conflict Error - Form - Answer",
+                    "form daha önceden yanıtlanmış");
+			#endregion
+		}
+	}
 }

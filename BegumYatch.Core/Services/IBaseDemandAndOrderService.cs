@@ -11,9 +11,15 @@ namespace BegumYatch.Core.Services
         Task<PagingList<TModel>> GetFormsByStatusAsync<TModel>(
             FormParamsForDisplayFormByStatus formParams,
             string procedureName,
-            FormType formType,
+            FormCategory formType,
             string formName,  // for header and exception
             HttpContext context)
             where TModel : class;
-    }
+
+        Task AnswerTheFormAsync(
+            FormType formType,
+            int formId,
+            FormStatus formStatus,
+            HttpContext context);
+	}
 }

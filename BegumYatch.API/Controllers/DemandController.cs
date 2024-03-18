@@ -1,21 +1,18 @@
 ﻿using BegumYatch.API.Filters.AdminPanel.Attributes;
 using BegumYatch.Core.DTOs.ConciergeServiceDemand;
-using BegumYatch.Core.DTOs.Error;
 using BegumYatch.Core.DTOs.ExcursionDemand;
 using BegumYatch.Core.DTOs.FuelPurchaseDemand;
-using BegumYatch.Core.DTOs.MainPage;
 using BegumYatch.Core.DTOs.ProvisionOrder;
 using BegumYatch.Core.DTOs.SecurityServiceDemand;
 using BegumYatch.Core.DTOs.TechnicalAssitanceandSparePartOrder;
 using BegumYatch.Core.DTOs.VipDemand.BegumYatch.Core.DTOs.VipDemand;
-using BegumYatch.Core.Enums;
 using BegumYatch.Core.Enums.AdminPanel;
 using BegumYatch.Core.Models.AdminPanel.DemandModel;
 using BegumYatch.Core.Models.Demands;
 using BegumYatch.Core.QueryParameters;
 using BegumYatch.Core.Services;
-using BegumYatch.Service.Services;
 using Microsoft.AspNetCore.Mvc;
+
 
 namespace BegumYatch.API.Controllers
 {
@@ -223,7 +220,7 @@ namespace BegumYatch.API.Controllers
                 .GetFormsByStatusAsync<FuelPurchaseDemandModel>(
                     formParams,
                     "Demand_FuelPurchase_GetFormsByStatus",
-                    FormType.Demand,
+                    FormCategory.Demand,
                     "fuelPurchase",
                     HttpContext);
 
@@ -231,7 +228,22 @@ namespace BegumYatch.API.Controllers
         }
 
 
-        [HttpGet("adminPanel/demand/checkinAndCheckout/filter")]
+		[HttpGet("adminPanel/demand/fuelPurchase/answer")]
+		[MiarApiAuthorize("Admin")]
+		public async Task<IActionResult> AnswerTheFuelPurchaseDemand(
+			[FromQuery] FormParamsForAnswerTheForm formParams)
+		{
+            await _baseDemandService.AnswerTheFormAsync(
+                FormType.FuelPurchaseDemand,
+                formParams.FormId,
+                formParams.FormStatus,
+                HttpContext);
+
+			return NoContent();
+		}
+
+
+		[HttpGet("adminPanel/demand/checkinAndCheckout/filter")]
         [MiarApiAuthorize("Admin")]
         public async Task<IActionResult> GetCheckinAndCheckoutDemandsByFilter(
             [FromQuery] FormParamsForDisplayFormByStatus formParams)
@@ -240,7 +252,7 @@ namespace BegumYatch.API.Controllers
                 .GetFormsByStatusAsync<CheckinAndCheckoutDemandModel>(
                     formParams,
                     "Demand_CheckInAndOut_GetFormsByStatus",
-                    FormType.Demand,
+                    FormCategory.Demand,
                     "CheckinAndCheckout",
                     HttpContext);
                 
@@ -248,7 +260,22 @@ namespace BegumYatch.API.Controllers
         }
 
 
-        [HttpGet("adminPanel/demand/berthReservation/filter")]
+		[HttpGet("adminPanel/demand/checkinAndCheckout/answer")]
+		[MiarApiAuthorize("Admin")]
+		public async Task<IActionResult> AnswerTheCheckinAndCheckoutDemand(
+			[FromQuery] FormParamsForAnswerTheForm formParams)
+		{
+			await _baseDemandService.AnswerTheFormAsync(
+				FormType.CheckInAndOutDemand,
+				formParams.FormId,
+				formParams.FormStatus,
+				HttpContext);
+
+			return NoContent();
+		}
+
+
+		[HttpGet("adminPanel/demand/berthReservation/filter")]
         [MiarApiAuthorize("Admin")]
         public async Task<IActionResult> GetBerthReservationDemandsByFilter(
             [FromQuery] FormParamsForDisplayFormByStatus formParams)
@@ -257,7 +284,7 @@ namespace BegumYatch.API.Controllers
                 .GetFormsByStatusAsync<BerthReservationDemandModel>(
                     formParams,
                     "Demand_BerthReservation_GetFormsByStatus",
-                    FormType.Demand,
+                    FormCategory.Demand,
                     "BerthReservation",
                     HttpContext);
 
@@ -265,7 +292,22 @@ namespace BegumYatch.API.Controllers
         }
 
 
-        [HttpGet("adminPanel/demand/vipTransfer/filter")]
+		[HttpGet("adminPanel/demand/berthReservation/answer")]
+		[MiarApiAuthorize("Admin")]
+		public async Task<IActionResult> AnswerTheBerthReservationDemand(
+			[FromQuery] FormParamsForAnswerTheForm formParams)
+		{
+			await _baseDemandService.AnswerTheFormAsync(
+				FormType.BerthReservationDemand,
+				formParams.FormId,
+				formParams.FormStatus,
+				HttpContext);
+
+			return NoContent();
+		}
+
+
+		[HttpGet("adminPanel/demand/vipTransfer/filter")]
         [MiarApiAuthorize("Admin")]
         public async Task<IActionResult> GetVipTransferDemandsByFilter(
             [FromQuery] FormParamsForDisplayFormByStatus formParams)
@@ -274,7 +316,7 @@ namespace BegumYatch.API.Controllers
                 .GetFormsByStatusAsync<VipTransferDemandModel>(
                     formParams,
                     "Demand_VipTransfer_GetFormsByStatus",
-                    FormType.Demand,
+                    FormCategory.Demand,
                     "VipTransfer",
                     HttpContext);
 
@@ -282,7 +324,22 @@ namespace BegumYatch.API.Controllers
         }
 
 
-        [HttpGet("adminPanel/demand/excursion/filter")]
+		[HttpGet("adminPanel/demand/vipTransfer/answer")]
+		[MiarApiAuthorize("Admin")]
+		public async Task<IActionResult> AnswerTheVipTransferDemand(
+			[FromQuery] FormParamsForAnswerTheForm formParams)
+		{
+			await _baseDemandService.AnswerTheFormAsync(
+				FormType.VipTransferDemand,
+				formParams.FormId,
+				formParams.FormStatus,
+				HttpContext);
+
+			return NoContent();
+		}
+
+
+		[HttpGet("adminPanel/demand/excursion/filter")]
         [MiarApiAuthorize("Admin")]
         public async Task<IActionResult> GetExcursionDemandsByFilter(
             [FromQuery] FormParamsForDisplayFormByStatus formParams)
@@ -291,7 +348,7 @@ namespace BegumYatch.API.Controllers
                 .GetFormsByStatusAsync<ExcursionDemandModel>(
                     formParams,
                     "Demand_Excursion_GetFormsByStatus",
-                    FormType.Demand,
+                    FormCategory.Demand,
                     "Excursion",
                     HttpContext);
 
@@ -299,7 +356,22 @@ namespace BegumYatch.API.Controllers
         }
 
 
-        [HttpGet("adminPanel/demand/conciergeService/filter")]
+		[HttpGet("adminPanel/demand/excursion/answer")]
+		[MiarApiAuthorize("Admin")]
+		public async Task<IActionResult> AnswerTheExcursionDemand(
+			[FromQuery] FormParamsForAnswerTheForm formParams)
+		{
+			await _baseDemandService.AnswerTheFormAsync(
+				FormType.ExcursionDemand,
+				formParams.FormId,
+				formParams.FormStatus,
+				HttpContext);
+
+			return NoContent();
+		}
+
+
+		[HttpGet("adminPanel/demand/conciergeService/filter")]
         [MiarApiAuthorize("Admin")]
         public async Task<IActionResult> GetConciergeServiceDemandsByFilter(
             [FromQuery] FormParamsForDisplayFormByStatus formParams)
@@ -308,7 +380,7 @@ namespace BegumYatch.API.Controllers
                 .GetFormsByStatusAsync<ConciergeServiceDemandModel>(
                     formParams,
                     "Demand_ConciergeService_GetFormsByStatus",
-                    FormType.Demand,
+                    FormCategory.Demand,
                     "ConciergeService",
                     HttpContext);
 
@@ -316,7 +388,22 @@ namespace BegumYatch.API.Controllers
         }
 
 
-        [HttpGet("adminPanel/demand/securityAndProtectionService/filter")]
+		[HttpGet("adminPanel/demand/conciergeService/answer")]
+		[MiarApiAuthorize("Admin")]
+		public async Task<IActionResult> AnswerTheConciergeServiceDemand(
+			[FromQuery] FormParamsForAnswerTheForm formParams)
+		{
+			await _baseDemandService.AnswerTheFormAsync(
+				FormType.ConciergeServiceDemand,
+				formParams.FormId,
+				formParams.FormStatus,
+				HttpContext);
+
+			return NoContent();
+		}
+
+
+		[HttpGet("adminPanel/demand/securityAndProtectionService/filter")]
         [MiarApiAuthorize("Admin")]
         public async Task<IActionResult> GetSecurityAndProtectionServiceDemandsByFilter(
             [FromQuery] FormParamsForDisplayFormByStatus formParams)
@@ -325,11 +412,26 @@ namespace BegumYatch.API.Controllers
                 .GetFormsByStatusAsync<SecurityAndProtectionServiceDemandModel>(
                     formParams,
                     "Demand_SecurityAndProtectionService_GetFormsByStatus",
-                    FormType.Demand,
+                    FormCategory.Demand,
                     "SecurityAndProtectionService",
                     HttpContext);
 
             return Ok(demands);
         }
-    }
+
+
+		[HttpGet("adminPanel/demand/securityAndProtectionService/answer")]
+		[MiarApiAuthorize("Admin")]
+		public async Task<IActionResult> AnswerTheSecurityAndProtectionServiceDemand(
+			[FromQuery] FormParamsForAnswerTheForm formParams)
+		{
+			await _baseDemandService.AnswerTheFormAsync(
+				FormType.SecurityAndProtectionServiceDemand,
+				formParams.FormId,
+				formParams.FormStatus,
+				HttpContext);
+
+			return NoContent();
+		}
+	}
 }
