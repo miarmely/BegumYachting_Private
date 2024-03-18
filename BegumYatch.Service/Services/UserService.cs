@@ -41,7 +41,8 @@ namespace BegumYatch.Service.Services
 			IMapper mapper,
 			IEmailService emailService,
 			UserManager<AppUser> userManager,
-			IGenericRepository<MailOtp> mailOtpRepository)
+			IGenericRepository<MailOtp> mailOtpRepository,
+			IRoleService roleService)
 			: base(userRepository, unitOfWork)
 		{
 			_userRepository = userRepository;
@@ -50,6 +51,7 @@ namespace BegumYatch.Service.Services
 			_emailService = emailService;
 			_userManager = userManager;
 			_mailOtpRepository = mailOtpRepository;
+			_roleService = roleService;
 		}
 
 		public async Task<List<ReturnResponseModel>> VerifyConfirmCode(VerifyConfirmCode verifyConfirmCode)
@@ -240,6 +242,8 @@ namespace BegumYatch.Service.Services
 
 	public partial class UserService  // By MERT (PUBLIC)
 	{
+		private readonly IRoleService _roleService;
+
 		public async Task CreateUserAsync(
 			UserDtoForCreate userDto,
 			Roles role)

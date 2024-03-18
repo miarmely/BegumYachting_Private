@@ -37,7 +37,7 @@ namespace BegumYatch.API.Controllers
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IMapper _mapper;
 
-		public UserController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper, IEmailService emailService, IUserService userService, IUnitOfWork unitOfWork, IMailDtoRepository emailRepo, ILoginService loginService)
+		public UserController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper, IEmailService emailService, IUserService userService, IUnitOfWork unitOfWork, IMailDtoRepository emailRepo, ILoginService loginService, IRoleService roleService)
 		{
 			_userManager = userManager;
 			_signInManager = signInManager;
@@ -47,6 +47,7 @@ namespace BegumYatch.API.Controllers
 			_unitOfWork = unitOfWork;
 			_emailRepo = emailRepo;
 			_loginService = loginService;
+			_roleService = roleService;
 		}
 
 
@@ -285,6 +286,7 @@ namespace BegumYatch.API.Controllers
 	public partial class UserController // By MERT
 	{
 		private readonly ILoginService _loginService;
+		private readonly IRoleService _roleService;
 
 
 		[HttpPost("adminPanel/userCreateForPanel")]
@@ -356,23 +358,53 @@ namespace BegumYatch.API.Controllers
 			[FromQuery(Name = "email")] string email,
 			[FromBody] UserDtoForUpdate userDto)
 		{
+			var updatedUser = await _userService
+				.UpdateUserAsync(email, userDto, HttpContext);
+			
+			return NoContent();
+		}
+
+		[HttpPost("adminPanel/accountUpdate")]
+		[MiarApiAuthorize("Admin")]
+		public async Task<IActionResult> UpdateAccount(
+			[FromQuery(Name = "email")] string email,
+			[FromBody] UserDtoForUpdate userDto)
+		{
 			#region update user
-			var user = await _userService
+			var updatedUser = await _userService
 				.UpdateUserAsync(email, userDto, HttpContext);
 			#endregion
 
-			#region generate new token with new claims
-			var roleName = userDto.RoleName == null ?
-				null  // when role is not updated
-				: userDto.RoleName.ToString();
+			#region get role name
 
-			var newToken = await _loginService
-				.GenerateTokenForUserAsync(user, roleName);
+			#region when role name is not updated
+			var roleName = "";
+
+			if (userDto.RoleName == null)
+			{
+				var userRole = (await _roleService
+					.GetUserRolesAsync(updatedUser.Id))
+					.FirstOrDefault();
+
+				roleName = userRole == null ?
+					"null"  // when role is not updated
+					: userRole.RoleName;
+			}
+			#endregion
+
+			#region when role name is updated
+			else
+			{
+				roleName = userDto.RoleName.ToString();
+			}
+			#endregion
+
 			#endregion
 
 			return Ok(new
 			{
-				Token = newToken
+				Token = await _loginService
+					.GenerateTokenForUserAsync(updatedUser, roleName)
 			});
 		}
 

@@ -129,7 +129,7 @@ async function addDefaultValuesToFormAsync() {
     inpt.yachtName.val(accountInfos.yachtName);
     slct.roleName.val(accountInfos.roleName);
     //#region set "isPersonal"
-    if (accountInfos.isPersonel == true)
+    if (accountInfos.isPersonel == "True")
         $("#rad_yes").prop("checked", true);
 
     else
@@ -208,30 +208,23 @@ async function updateUserAsync() {
     }
     //#endregion
 
-    $.ajax({
-        method: "POST",
-        url: baseApiUrl + `/adminPanel/userUpdate?email=${accountInfos.email}`,
-        data: JSON.stringify(data),
-        headers: {
-            authorization: jwtToken
-        },
-        contentType: "application/json",
-        dataType: "json",
-        beforeSend: () => {
-            p_resultLabel.empty();
-            img_loading.removeAttr("hidden"); // show
-        },
-        success: () => {
-            new Promise(async resolve => {
-                //#region update account infos in local
-                await autoObjectMapperAsync(accountInfos, data, true);
-
-                localStorage.setItem(
-                    localKeys.accountInfos,
-                    JSON.stringify(accountInfos));
-                //#endregion
-
-                //#region write success messsage
+    //#region update user
+    let newToken = await new Promise(resolve => {
+        $.ajax({
+            method: "POST",
+            url: baseApiUrl + `/adminPanel/accountUpdate?email=${accountInfos.email}`,
+            data: JSON.stringify(data),
+            headers: {
+                authorization: jwtToken
+            },
+            contentType: "application/json",
+            dataType: "json",
+            beforeSend: () => {
+                p_resultLabel.empty();
+                img_loading.removeAttr("hidden"); // show
+            },
+            success: (response) => {
+                // write success messsage
                 updateResultLabel(
                     p_resultLabel,
                     "başarıyla güncellendi",
@@ -239,20 +232,35 @@ async function updateUserAsync() {
                     "30px",
                     img_loading);
 
-                resolve();
-                //#endregion
-            })
-        },
-        error: (response) => {
-            // write error message
-            updateResultLabel(
-                p_resultLabel,
-                JSON.parse(response.responseText).errorMessage,
-                resultLabel_errorColor,
-                "30px",
-                img_loading);
-        },
-    })
+                resolve(response.token);
+            },
+            error: (response) => {
+                // write error message
+                updateResultLabel(
+                    p_resultLabel,
+                    JSON.parse(response.responseText).errorMessage,
+                    resultLabel_errorColor,
+                    "30px",
+                    img_loading);
+
+                resolve(null);
+            }
+        })
+    });
+    //#endregion
+
+    //#region re-signin to http context
+    if (newToken != null) {
+        $.ajax({
+            method: "GET",
+            url: `/authentication/signin?token=${newToken}`,
+            contentType: "application/json",
+            dataType: "json",
+            success: (isSigned) => {}
+        })
+    }
+    //#endregion
+
 }
 //#endregion
 

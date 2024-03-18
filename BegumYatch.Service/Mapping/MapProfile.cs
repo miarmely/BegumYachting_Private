@@ -74,7 +74,9 @@ namespace BegumYatch.Service.Mapping
 
             #region By MERT
             CreateMap<UserDtoForCreate, AppUser>().ReverseMap();
-            CreateMap<FuelPurchaseDemand, DemandDtoForFuelPurchase>()
+			CreateMap<AppUser, MiarUser>().ReverseMap();
+
+			CreateMap<FuelPurchaseDemand, DemandDtoForFuelPurchase>()
                 .ForMember(
                     target => target.YachtType,
                     opt => opt.MapFrom(source => source.User.YacthType))
