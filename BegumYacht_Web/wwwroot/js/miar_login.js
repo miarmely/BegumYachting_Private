@@ -338,7 +338,7 @@ $(function () {
         return await new Promise((resolve) => {
             $.ajax({
                 method: "GET",
-                url: baseApiUrl + `/api/login/forgotPassword/sendCodeToMail?email=${forgotPasswordBuffer.email}`,
+                url: baseApiUrl + `/api/login/forgotPassword/sendCodeToMail/panel?email=${forgotPasswordBuffer.email}`,
                 contentType: "application/json",
                 dataType: "json",
                 beforeSend: () => {

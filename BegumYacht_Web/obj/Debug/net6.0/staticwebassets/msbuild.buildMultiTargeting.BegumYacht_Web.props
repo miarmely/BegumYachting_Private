@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\BegumYacht_Web.props" />
+</Project>

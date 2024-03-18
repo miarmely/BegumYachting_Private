@@ -1,5 +1,6 @@
 ﻿using BegumYatch.Core.DTOs.AdminPanel.Login;
 using BegumYatch.Core.DTOs.UserLogin;
+using BegumYatch.Core.Enums.AdminPanel;
 using BegumYatch.Core.QueryParameters;
 using BegumYatch.Core.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -45,12 +46,26 @@ namespace BegumYatch.API.Controllers
 		}
 
 
-		[HttpGet("forgotPassword/sendCodeToMail")]
-		public async Task<IActionResult> SendCodeToMailForResetPassword(
+		[HttpGet("forgotPassword/sendCodeToMail/panel")]
+		public async Task<IActionResult> SendCodeToMailForResetPasswordForPanel(
 			[FromQuery] LoginParamsForSendCodeToMail loginParams)
 		{
 			await _loginService.SendCodeToMailForResetPasswordAsync(
-				loginParams);
+				loginParams,
+				Roles.Admin);
+
+			return NoContent();
+		}
+
+
+		[HttpGet("forgotPassword/sendCodeToMail/mobile")]
+		public async Task<IActionResult> SendCodeToMailForResetPasswordForMobile(
+			[FromQuery] LoginParamsForSendCodeToMail loginParams)
+		{
+			await _loginService.SendCodeToMailForResetPasswordAsync(
+				loginParams,
+				Roles.User, 
+				Roles.Admin);
 
 			return NoContent();
 		}
