@@ -1,14 +1,17 @@
 ﻿import {
     checkInputsWhetherBlankAsync, click_inputAsync, click_showPasswordButtonAsync,
-    keyup_inputAsync, populateInfoMessagesAsync
+    keyup_inputAsync
 } from "./miar_module.userForm.js";
 
 import {
-    addValueToDateInputAsync, isDatesEqualAsync, convertStrDateToDateAsync
+    isDatesEqualAsync, convertStrLocalDateToUtcDateAsync, convertStrUtcDateToUtcDateAsync,
+    addUtcDateToDateInputAsync,
+    convertStrUtcDateToLocalDateAsync
 } from "./miar_module.date.js";
 
 import {
-    autoObjectMapperAsync, updateResultLabel, isAllObjectValuesNullAsync, getDataByAjaxOrLocalAsync, populateSelectAsync
+    updateResultLabel, isAllObjectValuesNullAsync, getDataByAjaxOrLocalAsync,
+    populateSelectAsync
 } from "./miar_module.js";
 
 
@@ -107,18 +110,18 @@ async function addDefaultValuesToFormAsync() {
     inpt.newPassportNo.val(accountInfos.newPassportNo);
     inpt.oldPassportNo.val(accountInfos.oldPassportNo);
     inpt.rank.val(accountInfos.rank);
-    await addValueToDateInputAsync(
+    await addUtcDateToDateInputAsync(
         inpt.issueDate,
         "datetime",
         null,
-        accountInfos.dateOfIssue);  // issue date
-    await addValueToDateInputAsync(
+        accountInfos.dateOfIssue); // issue date
+    await addUtcDateToDateInputAsync(
         inpt.passportExpiration,
         "datetime",
         null,
-        accountInfos.passPortExpiry);  // passport expiration
+        accountInfos.passPortExpiry); // passport expiration
     inpt.nationality.val(accountInfos.nationality);
-    await addValueToDateInputAsync(
+    await addUtcDateToDateInputAsync(
         inpt.birthDate,
         "date",
         null,
@@ -168,20 +171,20 @@ async function updateUserAsync() {
         rank: inputValues.rank == accountInfos.rank ? null : inputValues.rank,
         dateOfIssue: (await isDatesEqualAsync(
             inputValues.dateOfIssue,
-            await convertStrDateToDateAsync(accountInfos.dateOfIssue),
+            await convertStrUtcDateToLocalDateAsync(accountInfos.dateOfIssue),
             { year: true, month: true, day: true, hours: true, minutes: true, second: false }) ?
             null
             : inputValues.dateOfIssue),
         passPortExpiry: (await isDatesEqualAsync(
             inputValues.passPortExpiry,
-            await convertStrDateToDateAsync(accountInfos.passPortExpiry),
+            await convertStrUtcDateToLocalDateAsync(accountInfos.passPortExpiry),
             { year: true, month: true, day: true, hours: true, minutes: true, second: false }) ?
             null
             : inputValues.passPortExpiry),
         nationality: inputValues.nationality == accountInfos.nationality ? null : inputValues.nationality,
         dateOfBirth: (await isDatesEqualAsync(
             inputValues.birthDate,
-            await convertStrDateToDateAsync(accountInfos.dateOfBirth),
+            await convertStrUtcDateToLocalDateAsync(accountInfos.dateOfBirth),
             { year: true, month: true, day: true, hours: false, minutes: false, second: false }) ?
             null
             : inputValues.birthDate),

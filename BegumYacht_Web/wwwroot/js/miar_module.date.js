@@ -52,7 +52,7 @@ export async function convertDateToStrDateAsync(
 }
 export async function convertStrUtcDateToStrLocalDateAsync(
     utcDateTimeInStr,
-    add = {hours: true, minutes: true, seconds: true}) {
+    add = { hours: true, minutes: true, seconds: true }) {
     //#region when datetime is invalid
     if (utcDateTimeInStr == null
         || utcDateTimeInStr == "")
@@ -101,10 +101,27 @@ export async function convertStrUtcDateToStrLocalDateAsync(
 
     return formattedDate;
 }
-export async function convertStrDateToDateAsync(dateInStr) {
-    dateInStr = dateInStr.replace("__", ",");  // "01.03.2002__13.00" ~~> "01.03.2002, 13.00"
+export async function convertStrLocalDateToLocalDateAsync(localDateInStr) {
+    localDateInStr = localDateInStr.replace("__", ",");  // "01.03.2002__13.00" ~~> "01.03.2002, 13.00"
 
-    return new Date(dateInStr);
+    return new Date(localDateInStr);
+}
+export async function convertStrLocalDateToUtcDateAsync(localDateInStr) {
+    localDateInStr = localDateInStr.replace("__", ",");  // "01.03.2002__13.00" ~~> "01.03.2002, 13.00
+    let localDate = new Date(localDateInStr);
+
+    return await convertLocalDateToUtcDateAsync(localDate);
+}
+export async function convertStrUtcDateToLocalDateAsync(utcDateInStr) {
+    utcDateInStr = utcDateInStr.replace("__", ",");  // "01.03.2002__13.00" ~~> "01.03.2002, 13.00"
+    let utcDate = new Date(utcDateInStr);
+
+    return await convertUtcDateToLocalDateAsync(utcDate);
+}
+export async function convertStrUtcDateToUtcDateAsync(utcDateInStr) {
+    utcDateInStr = utcDateInStr.replace("__", ",");  // "01.03.2002__13.00" ~~> "01.03.2002, 13.00"
+   
+    return new Date(utcDateInStr);
 }
 export async function convertLocalDateToUtcDateAsync(localDate) {
     let utcDateInStr = localDate.toLocaleString(window.navigator.language, {
@@ -117,7 +134,7 @@ export async function convertLocalDateToUtcDateAsync(localDate) {
         hour12: false,
         timeZone: "UTC",
     });
-    
+
     return new Date(utcDateInStr);
 }
 export async function convertUtcDateToLocalDateAsync(utcDate) {
@@ -132,16 +149,16 @@ export async function convertUtcDateToLocalDateAsync(utcDate) {
 
     return new Date(localDateInNumber);
 }
-export async function addValueToDateInputAsync(input, inputType, dateTime = null, dateTimeInStr = null) {
+export async function addLocalDateToDateInputAsync(input, inputType, localDate = null, localDateInStr = null) {
     // inputType? "datetime" | "date"
 
     //#region when datetime in param is str (convert)
-    if (dateTimeInStr != null)
-        dateTime = await convertStrDateToDateAsync(dateTimeInStr);
+    if (localDateInStr != null)
+        localDate = await convertStrLocalDateToLocalDateAsync(localDateInStr);
     //#endregion
 
     //#region add value to date input
-    let dateInfos = await getDateInfosInJsonAsync(dateTime);
+    let dateInfos = await getDateInfosInJsonAsync(localDate);
 
     switch (inputType) {
         case "datetime":
@@ -152,12 +169,43 @@ export async function addValueToDateInputAsync(input, inputType, dateTime = null
                 dateInfos.hours + ":" +
                 dateInfos.minutes);
             break;
-
         case "date":
             input.val(
                 dateInfos.year + "-" +
                 dateInfos.month + "-" +
                 dateInfos.day);
+            break;
+    }
+    //#endregion
+}
+export async function addUtcDateToDateInputAsync(input, inputType, utcDate = null, utcDateInStr = null) {
+    // inputType? "datetime" | "date"
+
+    //#region get date infos
+    let localDate = utcDateInStr == null ?
+        await convertUtcDateToLocalDateAsync(utcDate)
+        : await convertStrUtcDateToLocalDateAsync(utcDateInStr);
+
+    let dateInfos = await getDateInfosInJsonAsync(localDate);
+    //#endregion
+
+    //#region add value to date input
+    switch (inputType) {
+        case "datetime":
+            input.val(
+                dateInfos.year + "-" +
+                dateInfos.month + "-" +
+                dateInfos.day + "T" +
+                dateInfos.hours + ":" +
+                dateInfos.minutes);
+
+            break;
+        case "date":
+            input.val(
+                dateInfos.year + "-" +
+                dateInfos.month + "-" +
+                dateInfos.day);
+
             break;
     }
     //#endregion

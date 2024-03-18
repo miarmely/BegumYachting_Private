@@ -364,6 +364,7 @@ namespace BegumYatch.API.Controllers
 			return NoContent();
 		}
 
+
 		[HttpPost("adminPanel/accountUpdate")]
 		[MiarApiAuthorize("Admin")]
 		public async Task<IActionResult> UpdateAccount(

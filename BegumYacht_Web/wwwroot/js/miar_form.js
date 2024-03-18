@@ -174,7 +174,7 @@ export async function beforePopulateAsync(articleWidth, articleHeight, div_artic
             "paddingR": 10,
             "paddingL": 10,
             "border": 1,
-            "borderColor": "blue",
+            "borderColor": "#0095ff",
             "boxShadow": "5px 5px 10px rgba(0, 0, 0, 0.3)",
             "bgColorForDelete": "red"
         },

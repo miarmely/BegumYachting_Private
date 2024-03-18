@@ -73,7 +73,7 @@ $(function () {
         ["input", "text", "fuelSupplyPort", "Yakıt İkmal Yeri", false, "readonly", [div.demandInfos_inputs]],
         ["input", "text", "fuelSupplyDate", "Yakıt İkmal Tarihi", false, "readonly", [div.demandInfos_inputs]],
         ["input", "text", "createdDate", "Talep Tarihi", false, "readonly", [div.demandInfos_inputs]],
-        ["textarea", "notes", "Notlar", true, "readonly", [div.demandInfos_inputs]]  // type for switch/case | id | label name | info message | hidden/disabled/readonly of input | place to add            
+        ["textarea", "notes", "Notlar", false, "readonly", [div.demandInfos_inputs]]  // type for switch/case | id | label name | info message | hidden/disabled/readonly of input | place to add
     ];
     const inpt_id = {
         nameSurname: "inpt_nameSurname",
@@ -230,8 +230,7 @@ $(function () {
         await populateInfoMessagesAsync({
             div_senderInfos: ["Şeklin üzerine tıklayarak talebi gönderen personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
             div_answererInfos: ["Şeklin üzerine tıklayarak talebe cevap veren personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
-            div_demandInfos: ["Şeklin üzerine tıklayarak talep bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
-            div_notes: ["şekli, sağ alt ucundan aşağı doğru çekerek uzatabilirsin.",]
+            div_demandInfos: ["Şeklin üzerine tıklayarak talep bilgilerini görüntüleyebilir veya gizleyebilirsin.",]
         });
     }
     async function populateFuelPurchaseArticlesAsync() {

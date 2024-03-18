@@ -64,7 +64,7 @@ namespace BegumYacht_Web.Controllers
 				return Redirect("/login");
 			#endregion
 
-			return Redirect("/homepage");
+			return Redirect("/userDisplay");
 		}
 
 

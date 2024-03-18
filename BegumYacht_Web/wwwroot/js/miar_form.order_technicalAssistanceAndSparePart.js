@@ -222,7 +222,7 @@ $(function () {
             div_senderInfos: ["Şeklin üzerine tıklayarak talebi gönderen personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
             div_answererInfos: ["Şeklin üzerine tıklayarak talebe cevap veren personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
             div_orderInfos: ["Şeklin üzerine tıklayarak talep bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
-            div_requestesService: ["Talep edilen teknik servis bilgisidir.",],
+            div_requestedService: ["Talep edilen teknik servis bilgisidir.",],
             div_sparePart: ["Talep edilen yedek parça bilgisidir.",]
         });
     }

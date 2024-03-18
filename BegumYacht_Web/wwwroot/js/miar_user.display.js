@@ -1,6 +1,6 @@
 ﻿import {
     getDataByAjaxOrLocalAsync,
-    isAllObjectValuesNullAsync, isExistsOnArray, populateSelectAsync, updateElementText, updateResultLabel
+    isAllObjectValuesNullAsync, isExistsOnArray, populateSelectAsync, updateResultLabel
 } from "./miar_module.js"
 
 import {
@@ -8,8 +8,8 @@ import {
 } from "./miar_module.table.js";
 
 import {
-    addValueToDateInputAsync, convertDateToStrDateAsync, convertStrDateToDateAsync,
-    convertStrUtcDateToStrLocalDateAsync, isDatesEqualAsync,
+    convertDateToStrDateAsync, isDatesEqualAsync, convertStrUtcDateToStrLocalDateAsync,
+    addLocalDateToDateInputAsync, convertStrLocalDateToLocalDateAsync
 } from "./miar_module.date.js"
 
 import {
@@ -375,18 +375,18 @@ $(function () {
         inpt.newPassportNo.val(userInfosOfLastClickedRow[4]);
         inpt.oldPassportNo.val(userInfosOfLastClickedRow[5]);
         inpt.rank.val(userInfosOfLastClickedRow[6]);
-        await addValueToDateInputAsync(
+        await addLocalDateToDateInputAsync(
             inpt.issueDate,
             "datetime",
             null,
             userInfosOfLastClickedRow[7]);  // issue date
-        await addValueToDateInputAsync(
+        await addLocalDateToDateInputAsync(
             inpt.passportExpiration,
             "datetime",
             null,
             userInfosOfLastClickedRow[8]);  // passport expiration
         inpt.nationality.val(userInfosOfLastClickedRow[9]);
-        await addValueToDateInputAsync(
+        await addLocalDateToDateInputAsync(
             inpt.birthDate,
             "date",
             null,
@@ -435,21 +435,21 @@ $(function () {
             oldPassportNo: inputValues.oldPassportNo == userInfosOfLastClickedRow[5] ? null : inputValues.oldPassportNo,
             rank: inputValues.rank == userInfosOfLastClickedRow[6] ? null : inputValues.rank,
             dateOfIssue: (await isDatesEqualAsync(
-                inputValues.dateOfIssue,
-                await convertStrDateToDateAsync(userInfosOfLastClickedRow[7]),
+                inputValues.dateOfIssue,  // local date
+                await convertStrLocalDateToLocalDateAsync(userInfosOfLastClickedRow[7]),
                 { year: true, month: true, day: true, hours: true, minutes: true, second: false }) ?
                 null
                 : inputValues.dateOfIssue),
             passPortExpiry: (await isDatesEqualAsync(
                 inputValues.passPortExpiry,
-                await convertStrDateToDateAsync(userInfosOfLastClickedRow[8]),
+                await convertStrLocalDateToLocalDateAsync(userInfosOfLastClickedRow[8]),
                 { year: true, month: true, day: true, hours: true, minutes: true, second: false }) ?
                 null
                 : inputValues.passPortExpiry),
             nationality: inputValues.nationality == userInfosOfLastClickedRow[9] ? null : inputValues.nationality,
             dateOfBirth: (await isDatesEqualAsync(
                 inputValues.birthDate,
-                await convertStrDateToDateAsync(userInfosOfLastClickedRow[10]),
+                await convertStrLocalDateToLocalDateAsync(userInfosOfLastClickedRow[10]),
                 { year: true, month: true, day: true, hours: false, minutes: false, second: false }) ?
                 null
                 : inputValues.birthDate),

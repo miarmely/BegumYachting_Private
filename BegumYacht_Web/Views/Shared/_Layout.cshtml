@@ -12,13 +12,14 @@
 	var serializedClaimInfos = Json.Serialize(claimInfos);
 }
 
+
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Begüm Yat</title>
+		<title>Begüm Yachting</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<meta name="keywords" content="Begüm Admin Panel">	
+		<meta name="keywords" content="Begüm Yachting Admin Panel">	
 
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap">
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -36,7 +37,7 @@
 			<header class="header fixed-top clearfix">
 				@*logo*@
 				<div class="brand">
-					<a href="/homepage" class="logo">
+					<a href="/userDisplay" class="logo">
 						<img id="img_begumLogo" src="~/images/begumLogo2.png"/>
 					</a>
 					<div class="sidebar-toggle-box">
@@ -53,14 +54,14 @@
 						</li>*@
 						<!-- search bar end -->
 						@*notifications*@
-						<li class="dropdown">
+						@*<li class="dropdown">
 							<a data-toggle="dropdown" class="dropdown-toggle" href="#">
 								<img src="/images/notification.png"/>
 								<span class="username">Bildirimler</span>
 								<b class="caret"></b>
 							</a>
 							<ul id="ul_notification" class="dropdown-menu extended"></ul>
-						</li>
+						</li>*@
 
 						@*user*@
 						<li class="dropdown">
@@ -90,12 +91,14 @@
 					<div class="leftside-navigation">
 						<ul class="sidebar-menu">
 							@*homepage*@
+							@*
 							<li>
 								<a href="/homepage">
 									<i class="fa fa-settings"></i>
 									<span>Anasayfa</span>
 								</a>
 							</li>
+							*@
 							
 							@*users*@
 							<li id="li_user_create" class="li_dropdown">
@@ -226,7 +229,7 @@
 				<div class="footer">
 					<div class="wthree-copyright">
 						<p>
-							<span id="spn_footerInfo">© 2023 Tüm hakları saklıdır. | Designed by </span>
+							<span id="spn_footerInfo">© 2024 Tüm hakları saklıdır. | Designed by </span>
 							<a href="https://mostidea.com.tr">MostIdea</a>
 						</p>
 					</div>
