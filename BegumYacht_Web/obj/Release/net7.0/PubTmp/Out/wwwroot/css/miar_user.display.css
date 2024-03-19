@@ -1,0 +1,46 @@
+﻿/* --------- DISPLAY PAGE --------- */
+#div_userDisplay {
+    margin: 30px 30px 15px 30px;
+}
+
+    #div_userDisplay tbody {
+        text-align: center
+    }
+
+        #div_userDisplay tbody tr:hover {
+            background-color: #0b609fe8;
+            cursor: pointer
+        }
+
+            #div_userDisplay tbody tr:hover td {
+                color: white;
+            }
+
+#div_tableMode{
+    color: black;
+    font-size: 15.5px;
+}
+
+#div_tableMode button{
+    background-color: red;
+    color: white;
+}
+
+#tbl_user {
+    width: 100%;
+}
+
+#tbl_user_wrapper {
+    margin-bottom: 30px
+}
+
+#tbl_user_filter input {
+    font-weight: normal
+}
+
+
+/* --------- UPDATE PAGE --------- */
+#div_isPersonal #div_radio {
+    position: relative;
+    top: 7px;
+}

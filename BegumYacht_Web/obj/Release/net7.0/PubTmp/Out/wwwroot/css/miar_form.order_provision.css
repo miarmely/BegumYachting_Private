@@ -1,0 +1,30 @@
+﻿.p_article:nth-child(1) {
+    font-size: 26px;
+    font-weight: bolder
+}
+
+/*yachtType*/
+.p_article:nth-child(2) {
+    font-size: 19px;
+    margin-top: 2px;
+    font-weight: bolder;
+}
+
+/*YachtName*/
+.p_article:nth-child(3) {
+    font-size: 16.5px;
+    font-weight: bolder;
+}
+
+/*nameSurname*/
+.p_article:nth-child(4) {
+    font-size: 14.5px;
+    margin-top: 15px;
+    font-weight: bolder;
+}
+
+/*notes*/
+.p_article:nth-child(5) {
+    font-size: 12.5px;
+    margin-top: 10px;
+}

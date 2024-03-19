@@ -1,0 +1,82 @@
+﻿/*///////////// DISPLAY PAGE /////////////*/
+.article h2, h3, h4 {
+    font-weight: bold;
+}
+
+#div_passedTime {
+    color: red;
+    font-weight: bold;
+}
+
+
+/*//////////// UPDATE PAGE ////////////*/
+#btn_accept {
+    background-color: forestgreen;
+}
+
+#btn_reject {
+}
+
+#txt_notes {
+    min-height: 200px;
+    max-height: 500px;
+    resize: vertical;
+}
+
+#div_form{
+    padding-top: 20px;
+}
+
+.div_infos_button {
+    cursor: pointer;
+    border-width: 1px;
+    border-style: solid;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+    padding-top: 5px;
+    padding-bottom: 10px;
+    margin-bottom: 5px;
+}
+
+    .div_infos_button:hover {
+        background-color: lightgray
+    }
+
+    .div_infos_button img {
+        width: 85px;
+        height: 85px;
+    }
+
+    .div_infos_button h4 {
+        margin-top: 10px;
+        font-size: 16px
+    }
+
+.div_infos_inputs {
+    margin-bottom: 50px;
+}
+
+#div_article_update textarea {
+    min-height: 200px;
+}
+
+#div_senderInfos .div_infos_button {
+    border-color: #4136f1;
+}
+
+#div_answererInfos .div_infos_button {
+    border-color: #EA7A13;
+}
+
+#div_demandInfos .div_infos_button,
+#div_orderInfos .div_infos_button
+{
+    border-color: #00CAAD
+}
+
+#div_buttons {
+    margin-top: 50px
+}
+
+#slct_article_submenu_display {
+    width: 130px;
+}

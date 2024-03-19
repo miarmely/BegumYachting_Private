@@ -64,7 +64,7 @@ namespace BegumYatch.API.Controllers
 		{
 			await _loginService.SendCodeToMailForResetPasswordAsync(
 				loginParams,
-				Roles.User, 
+				Roles.User,
 				Roles.Admin);
 
 			return NoContent();

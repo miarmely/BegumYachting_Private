@@ -1,0 +1,39 @@
+﻿#img_begumLogo {
+    width: 300px;
+    height: 80px;
+}
+
+.btn_show {
+    border-style: none;
+    width: 50px;
+}
+
+    .btn_show img {
+        width: 25px
+    }
+
+#div_userIcon {
+    background-color: #170065
+}
+
+#div_createAccount {
+    text-align: center;
+}
+
+    #div_createAccount a {
+        color: #170065
+    }
+
+
+#div_signinOrSignupMessage {
+    text-align: center
+}
+
+#btn_submit:disabled {
+    cursor: no-drop;
+}
+
+.help-block {
+    color: red;
+    text-align: center;
+}

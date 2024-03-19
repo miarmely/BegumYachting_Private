@@ -47,7 +47,11 @@ namespace BegumYatch.API.Extensions
 				{
 					config.WithOrigins(
 							"http://localhost:3408",
-							"https://localhost:3408")
+							"https://localhost:3408",
+							"http://192.168.200.1:5554",  // iis in my pc
+							"https://192.168.200.1:5554",
+							"http://104.247.163.183:5554",  // iis in real server
+							"https://104.247.163.183:5554")
 						.AllowAnyMethod()
 						.AllowAnyHeader()
 						.WithExposedHeaders(
