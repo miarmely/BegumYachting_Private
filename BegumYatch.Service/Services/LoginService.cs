@@ -40,7 +40,49 @@ namespace BegumYatch.Service.Services
 			_jwtSettingsConfig = jwtSettingsConfig.Value;
 		}
 
-		private async Task<string> LoginAsync(
+		private async Task<IEnumerable<Claim>> GenerateClaimsAsync(
+			AppUser user,
+			string userRole,
+			string? token = null)
+		{
+			var claims = new Collection<Claim>
+			{
+				new (MiarClaimTypes.Id, user.Id.ToString()),
+				new (MiarClaimTypes.NameSurname, user.NameSurname),
+				new (MiarClaimTypes.PhoneNumber, user.PhoneNumber),
+				new (MiarClaimTypes.Email, user.Email),
+				new (MiarClaimTypes.Gender, user.Gender),
+				new (MiarClaimTypes.Nationality, user.Nationality),
+				new (MiarClaimTypes.YachtType, user.YacthType.ToString()),
+				new (MiarClaimTypes.YachtName, user.YacthName),
+				new (MiarClaimTypes.Flag, user.Flag),
+				new (MiarClaimTypes.NewPassportNo, user.NewPassportNo),
+				new (MiarClaimTypes.OldPassportNo, user.OldPassportNo),
+				new (MiarClaimTypes.Rank, user.Rank),
+				new (MiarClaimTypes.DateOfIssue, user.DateOfIssue.Value.ToString("s")),
+				new (MiarClaimTypes.PassPortExpiry, user.PassPortExpiry.Value
+					.ToString("s")),
+				new (MiarClaimTypes.DateOfBirth, user.DateOfBirth.Value.ToString("s")),
+				new (MiarClaimTypes.PlaceOfBirth, user.PlaceOfBirth),
+				new (MiarClaimTypes.IsPersonel, user.IsPersonel.ToString()),
+				new (MiarClaimTypes.IsDeleted, user.IsDeleted.ToString()),
+				new (MiarClaimTypes.RoleName, userRole)
+			};
+
+			#region add token to claims if desired
+			if (token != null)
+				claims.Add(
+					new Claim(MiarClaimTypes.Token, token));
+			#endregion
+
+			return claims;
+		}
+	}  // private
+
+
+	public partial class LoginService  // public
+	{
+		public async Task<string> LoginAsync(
 			UserLoginDto userDto,
 			params Roles[] validRoles)
 		{
@@ -93,61 +135,6 @@ namespace BegumYatch.Service.Services
 			#endregion
 
 			return await GenerateTokenForUserAsync(user, roleName);
-		}
-
-		private async Task<IEnumerable<Claim>> GenerateClaimsAsync(
-			AppUser user,
-			string userRole,
-			string? token = null)
-		{
-			var claims = new Collection<Claim>
-			{
-				new (MiarClaimTypes.Id, user.Id.ToString()),
-				new (MiarClaimTypes.NameSurname, user.NameSurname),
-				new (MiarClaimTypes.PhoneNumber, user.PhoneNumber),
-				new (MiarClaimTypes.Email, user.Email),
-				new (MiarClaimTypes.Gender, user.Gender),
-				new (MiarClaimTypes.Nationality, user.Nationality),
-				new (MiarClaimTypes.YachtType, user.YacthType.ToString()),
-				new (MiarClaimTypes.YachtName, user.YacthName),
-				new (MiarClaimTypes.Flag, user.Flag),
-				new (MiarClaimTypes.NewPassportNo, user.NewPassportNo),
-				new (MiarClaimTypes.OldPassportNo, user.OldPassportNo),
-				new (MiarClaimTypes.Rank, user.Rank),
-				new (MiarClaimTypes.DateOfIssue, user.DateOfIssue.ToString()),
-				new (MiarClaimTypes.PassPortExpiry, user.PassPortExpiry.ToString()),
-				new (MiarClaimTypes.DateOfBirth, user.DateOfBirth.ToString()),
-				new (MiarClaimTypes.PlaceOfBirth, user.PlaceOfBirth),
-				new (MiarClaimTypes.IsPersonel, user.IsPersonel.ToString()),
-				new (MiarClaimTypes.IsDeleted, user.IsDeleted.ToString()),
-				new (MiarClaimTypes.RoleName, userRole)
-			};
-
-			#region add token to claims if desired
-			if (token != null)
-				claims.Add(
-					new Claim(MiarClaimTypes.Token, token));
-			#endregion
-
-			return claims;
-		}
-	}  // private
-
-
-	public partial class LoginService  // public
-	{
-		public async Task<string> LoginForMobileAsync(UserLoginDto userDto)
-		{
-			var token = await LoginAsync(userDto, Roles.User, Roles.Admin);
-
-			return token;
-		}
-
-		public async Task<string> LoginForPanelAsync(UserLoginDto userDto)
-		{
-			var token = await LoginAsync(userDto, Roles.Admin);
-
-			return token;
 		}
 
 		public async Task SendCodeToMailForResetPasswordAsync(

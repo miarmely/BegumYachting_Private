@@ -1,9 +1,10 @@
 ﻿using BegumYatch.Core.Enums;
-
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BegumYatch.Core.Models.User
 {
-	public record MiarUser
+	public partial record MiarUser
 	{
 		public int Id { get; init; }
 		public string? NameSurname { get; init; }

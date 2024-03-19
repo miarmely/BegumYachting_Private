@@ -9,8 +9,7 @@ namespace BegumYatch.Core.Services
 {
 	public interface ILoginService
 	{
-		Task<string> LoginForMobileAsync(UserLoginDto userDto);
-		Task<string> LoginForPanelAsync(UserLoginDto userDto);
+		Task<string> LoginAsync(UserLoginDto userDto, params Roles[] validRoles);
 
 		Task SendCodeToMailForResetPasswordAsync(
 			LoginParamsForSendCodeToMail loginParams,

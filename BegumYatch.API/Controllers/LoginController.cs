@@ -24,7 +24,7 @@ namespace BegumYatch.API.Controllers
 		public async Task<IActionResult> LoginForPanel(
 			[FromBody] UserLoginDto userDto)
 		{
-			var token = await _loginService.LoginForPanelAsync(userDto);
+			var token = await _loginService.LoginAsync(userDto, Roles.Admin);
 
 			return Ok(new
 			{
@@ -37,7 +37,7 @@ namespace BegumYatch.API.Controllers
 		public async Task<IActionResult> LoginForMobile(
 			[FromBody] UserLoginDto userDto)
 		{
-			var token = await _loginService.LoginForMobileAsync(userDto);
+			var token = await _loginService.LoginAsync(userDto, Roles.User, Roles.Admin);
 
 			return Ok(new
 			{
