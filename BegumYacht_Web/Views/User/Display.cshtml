@@ -22,21 +22,21 @@
                         @{
                             #region add inputs
                             var inputInfos = new object[][]{
-                                new object[] {"input", "text", "firstnameLastname", "Ad Soyad", true},  // type for case | type for input | id | label name | info message
-                                new object[] {"input", "text", "phone", "Telefon", true},
-                                new object[] {"input", "text", "email", "Email", true},
-                                new object[] {"input", "text", "flag" , "Bayrak", true},
-                                new object[] {"input", "text", "newPassportNo", "Yeni Pasaport No", true},
-                                new object[] {"input", "text", "oldPassportNo", "Eski Pasaport No", true},
-                                new object[] {"input", "text", "rank", "Rank", true},
+                                new object[] {"input", "text", "firstnameLastname", "Ad Soyad", false},  // type for case | type for input | id | label name | info message
+                                new object[] {"input", "text", "phone", "Telefon", false},
+                                new object[] {"input", "text", "email", "Email", false},
+                                new object[] {"input", "text", "flag" , "Bayrak", false},
+                                new object[] {"input", "text", "newPassportNo", "Yeni Pasaport No", false},
+                                new object[] {"input", "text", "oldPassportNo", "Eski Pasaport No", false},
+                                new object[] {"input", "text", "rank", "Rank", false},
                                 new object[] {"input", "datetime-local", "issueDate", "Pasaport Veriliş Tarihi", false},
                                 new object[] {"input", "datetime-local", "passportExpiration", "Pasaport Bitiş Tarihi", false},
-                                new object[] {"input", "text", "nationality", "Uyruk", true},
+                                new object[] {"input", "text", "nationality", "Uyruk", false},
                                 new object[] {"input", "date", "birthDate", "Doğum Tarihi", false},
-                                new object[] {"input", "text", "birthPlace", "Doğum Yeri", true},
-                                new object[] {"input", "text", "gender", "Cinsiyet", true},
-                                new object[] {"select", "yachtType", "Yat Tipi", true, new string[] {"MotorYacht", "SailingYacht", "Catamaran"}},  // type for case | id | label name | options | info message
-                                new object[] {"input", "text", "yachtName", "Yat Adı", true},
+                                new object[] {"input", "text", "birthPlace", "Doğum Yeri", false},
+                                new object[] {"input", "text", "gender", "Cinsiyet", false},
+                                new object[] {"select", "yachtType", "Yat Tipi", false, new string[] {"MotorYacht", "SailingYacht", "Catamaran"}},  // type for case | id | label name | options | info message
+                                new object[] {"input", "text", "yachtName", "Yat Adı", false},
                                 new object[] {"select", "roles", "Rol", false, new string[] {} }
                             };
 

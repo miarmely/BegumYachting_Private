@@ -18,7 +18,5 @@ namespace BegumYatch.Core.Models.User
         public DateTime DateAdded { get; set; }
         public string Email { get; set; }
         public string Token { get; set; }
-
-
     }
 }

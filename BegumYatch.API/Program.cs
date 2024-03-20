@@ -122,18 +122,12 @@ using (var scope = app.Services.CreateScope())
 
     await PermissionSeed.Seed(roleManager);
 }
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
 app.UseSwagger();
 app.UseSwaggerUI();
-
 app.UseHttpsRedirection();
-//app.UseMiddleware<ResponseFormatterMiddleware>();
+app.UseStaticFiles();
+app.UseRouting();
 app.UseCors();  // By MERT
 app.UseAuthentication();
 app.UseAuthorization();

@@ -14,7 +14,7 @@ using System.Collections.ObjectModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-
+using System.Text.Json;
 
 namespace BegumYatch.Service.Services
 {
@@ -195,18 +195,11 @@ namespace BegumYatch.Service.Services
                 <p><b style='font-size:20px'>{verifyCode}</b></p>
                 <p><b style='font-size:14.5px'>Begum Yachting</b></p>";
 
-			try
-			{
-				await _userService.SendOtp(model);
-				await _emailService.SendEmailAsync(
-					"MostIdea - Forget Password",
-					mailMessage,
-					user.Email);
-			}
-			catch (Exception ex)
-			{
-				throw new Exception(ex.Message);
-			}
+			await _userService.SendOtp(model);
+			await _emailService.SendEmailAsync(
+				"MostIdea - Forget Password",
+				mailMessage,
+				user.Email);
 			#endregion
 		}
 

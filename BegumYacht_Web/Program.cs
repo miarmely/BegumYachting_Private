@@ -1,6 +1,5 @@
-using BegumYacht_Web.Controllers;
 using BegumYacht_Web.Extensions;
-using Microsoft.AspNetCore.Components;
+
 
 #region add services
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +22,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 app.ConfigureMapControllerRoute();
 app.Run();
