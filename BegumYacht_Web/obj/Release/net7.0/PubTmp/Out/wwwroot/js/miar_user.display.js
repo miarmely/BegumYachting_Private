@@ -8,8 +8,10 @@ import {
 } from "./miar_module.table.js";
 
 import {
-    convertDateToStrDateAsync, isDatesEqualAsync, convertStrUtcDateToStrLocalDateAsync,
-    addLocalDateToDateInputAsync, convertStrLocalDateToLocalDateAsync
+    isDatesEqualAsync, convertStrUtcDateToStrLocalDateAsync,
+    addLocalDateToDateInputAsync, convertStrLocalDateToLocalDateAsync,
+    convertStrUtcDateToIsoLocalDateAsync,
+    removeTimeFromIsoDateAsync
 } from "./miar_module.date.js"
 
 import {
@@ -269,16 +271,10 @@ $(function () {
                                 newPassportNo: userInfo.newPassportNo,
                                 oldPassportNo: userInfo.oldPassportNo,
                                 rank: userInfo.rank,
-                                dateOfIssue: await convertStrUtcDateToStrLocalDateAsync(
-                                    userInfo.dateOfIssue,
-                                    { hours: true, minutes: true, seconds: false }),
-                                passPortExpiry: await convertStrUtcDateToStrLocalDateAsync(
-                                    userInfo.passPortExpiry,
-                                    { hours: true, minutes: true, seconds: false }),
+                                dateOfIssue: await convertStrUtcDateToIsoLocalDateAsync(userInfo.dateOfIssue),
+                                passPortExpiry: await convertStrUtcDateToIsoLocalDateAsync(userInfo.passPortExpiry),
                                 nationality: userInfo.nationality,
-                                dateOfBirth: await convertStrUtcDateToStrLocalDateAsync(
-                                    userInfo.dateOfBirth,
-                                    { hours: false, minutes: false, seconds: false }),
+                                dateOfBirth: await convertStrUtcDateToIsoLocalDateAsync(userInfo.dateOfBirth, false),
                                 placeOfBirth: userInfo.placeOfBirth,
                                 gender: userInfo.gender,
                                 yacthType: userInfo.yacthType,
@@ -500,16 +496,10 @@ $(function () {
                         inputValues.newPassportNo,
                         inputValues.oldPassportNo,
                         inputValues.rank,
-                        await convertDateToStrDateAsync(
-                            inputValues.dateOfIssue,
-                            { hours: true, minutes: true, seconds: false }),
-                        await convertDateToStrDateAsync(
-                            inputValues.passPortExpiry,
-                            { hours: true, minutes: true, seconds: false }),
+                        inputValues.dateOfIssue.toISOString(),
+                        inputValues.passPortExpiry.toISOString(),
                         inputValues.nationality,
-                        await convertDateToStrDateAsync(
-                            inputValues.birthDate,
-                            { hours: false, minutes: false, seconds: false }),
+                        await removeTimeFromIsoDateAsync(inputValues.birthDate.toISOString()),
                         inputValues.birthPlace,
                         inputValues.gender,
                         inputValues.yachtType,

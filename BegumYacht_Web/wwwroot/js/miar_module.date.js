@@ -93,16 +93,44 @@ export async function convertStrUtcDateToStrLocalDateAsync(
         formatOptions);
 
     let formattedDate = formatter
-        .format(localDateTime)
-        .replace(", ", "__");
+        .format(localDateTime);
     //#endregion
 
     //#endregion
 
     return formattedDate;
 }
+export async function convertStrUtcDateToIsoLocalDateAsync(utcDateTimeInStr, addTime = true) {
+    //#region when datetime is invalid
+    if (utcDateTimeInStr == null
+        || utcDateTimeInStr == "")
+        return;
+    //#endregion
+
+    //#region convert utc date to local date
+    let utcDateTime = new Date(utcDateTimeInStr);
+    let localDateTime = new Date(Date.UTC(
+        utcDateTime.getFullYear(),
+        utcDateTime.getMonth(),
+        utcDateTime.getDate(),
+        utcDateTime.getHours(),
+        utcDateTime.getMinutes(),
+        utcDateTime.getSeconds()
+    ));
+    //#endregion
+
+    //#region convert local date to iso date
+    var isoDate = localDateTime.toISOString()
+
+    if (!addTime) {
+        isoDate = await removeTimeFromIsoDateAsync(isoDate);
+    }
+    //#endregion
+
+    return isoDate;
+}
 export async function convertStrLocalDateToLocalDateAsync(localDateInStr) {
-    localDateInStr = localDateInStr.replace("__", ",");  // "01.03.2002__13.00" ~~> "01.03.2002, 13.00"
+    localDateInStr = localDateInStr.replace("__", " ");  // "2040/02/20__11:12" ~~> "2040/02/20 11:12"
 
     return new Date(localDateInStr);
 }
@@ -120,7 +148,7 @@ export async function convertStrUtcDateToLocalDateAsync(utcDateInStr) {
 }
 export async function convertStrUtcDateToUtcDateAsync(utcDateInStr) {
     utcDateInStr = utcDateInStr.replace("__", ",");  // "01.03.2002__13.00" ~~> "01.03.2002, 13.00"
-   
+
     return new Date(utcDateInStr);
 }
 export async function convertLocalDateToUtcDateAsync(localDate) {
@@ -313,4 +341,10 @@ export async function getPassedTimeInStringAsync(
     //#endregion
 
     //#endregion
+}
+export async function removeTimeFromIsoDateAsync(isoDate) {
+    let indexOfT = isoDate.indexOf('T');
+    isoDate = isoDate.substring(0, indexOfT);
+    
+    return isoDate;
 }
