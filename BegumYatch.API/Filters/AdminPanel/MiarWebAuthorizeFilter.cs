@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 
@@ -33,7 +35,18 @@ namespace BegumYatch.API.Filters.AdminPanel
             }
             #endregion
 
-            await base.CheckUserRolesAsync(context);
-        }
-    }
+            #region when user roles is invalid (LOGOUT + REDIRECT)
+            else if (!await base.IsUserRolesValidAsync(context))
+            {
+				// senario: current user role is admin but user can be change
+                // his role from Admin to User.  Thats why i am logging out..
+				await context.HttpContext.SignOutAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme);
+
+				// redirect to login page
+				context.Result = new RedirectResult("/login", true);
+			}
+			#endregion
+		}
+	}
 }

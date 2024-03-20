@@ -5,7 +5,7 @@ import { addCriticalSectionAsync, shiftTheChildDivToBottomOfParentDivAsync } fro
 import {
     addImageToArticleAsync, beforePopulateAsync, click_articleAsync, resize_windowAsync,
     click_backButtonAsync, click_InfoDivAsync, getDefaultValueIfValueNullOrEmpty,
-    populateArticlesAsync, addInputsToInfoDivsAsync
+    populateArticlesAsync, addInputsToInfoDivsAsync, click_sidebarMenuAsync
 } from "./miar_form.js"
 
 import {
@@ -105,17 +105,9 @@ $(function () {
             criticalSectionIds.window);
     })
     div.sidebarMenuButton.click(async () => {
-        //#region when display page is opened
-        if (div.article_display.attr("hidden") == null)
-            await addCriticalSectionAsync(
-                criticalSectionIds.sidebarMenuButton,
-                async () => {
-                    await controlArticleWidthAsync();
-                    await alignArticlesToCenterAsync("px");
-                    await setHeightOfArticlesDivAsync()
-                },
-                500);
-        //#endregion
+        await click_sidebarMenuAsync(
+            div.article_display,
+            criticalSectionIds.sidebarMenuButton);
     })
     $("#" + inpt_paginationCurrent_id).on("input", async () => {
         await change_inpt_paginationCurrentAsync();

@@ -1,5 +1,4 @@
-﻿using BegumYatch.Core.DTOs.Error;
-using BegumYatch.Core.Enums.AdminPanel;
+﻿using BegumYatch.Core.Enums.AdminPanel;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Data;
 
@@ -18,31 +17,10 @@ namespace BegumYatch.API.Filters.AdminPanel
         }
 
 
-        protected string ConvertErrorCodeToErrorMessageByLanguage(
-            string language,
-            string errorCode)
-        {
-            return language switch
-            {
-                "TR" => errorCode switch
-                {
-                    "AE-U" => "oturum açmadınız",
-                    "AE-F" => "yetkiniz yok",
-                    "AE-E" => "oturum süreniz doldu"
-                },
-                "EN" => errorCode switch
-                {
-                    "AE-U" => "you are not logged in",
-                    "AE-F" => "you don't have permission",
-                    "AE-E" => "your session time expired"
-                }
-            };
-        }
-
-        protected async Task CheckUserRolesAsync(
+        protected async Task<bool> IsUserRolesValidAsync(
             AuthorizationFilterContext context)
         {
-            #region control roles (THROW)
+            #region control roles
             // when there is a role restriction  
             if (RoleNamesOnAttribute.Count != 0)
             {
@@ -64,29 +42,21 @@ namespace BegumYatch.API.Filters.AdminPanel
 
                 #endregion
 
-                #region control role names (THROW)
-
                 #region compare role names 
                 foreach (var roleName in roleNamesOnClaims)
                 {
                     #region when user role is valid
                     if (RoleNamesOnAttribute.Contains(roleName))
-                        return;
+                        return true;
                     #endregion
                 }
                 #endregion
 
-                #region when role is invalid (throw)
-                throw new MiarException(
-                    403,
-                    "AE-F",
-                    "Authorization Error - Forbidden",
-                    ConvertErrorCodeToErrorMessageByLanguage(Language, "AE-F"));
-                #endregion
-
-                #endregion
+                return false;
             }
             #endregion
+
+            return true;
         }
 
 

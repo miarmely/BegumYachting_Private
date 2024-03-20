@@ -231,6 +231,7 @@ $(function () {
 
                 break;
             case "validationCode":
+                inpt.validationCode.val("");  //reset
                 await sendVerificationCodeToMailAsync();
                 break;
             case "newPassword":

@@ -2,12 +2,17 @@
 import { resetFormAsync, showOrHideBackButtonAsync } from "./miar_module.userForm.js";
 
 import {
-    addMsgWithImgToDivArticlesAsync, alignArticlesToCenterAsync, alignImageToVerticalCenterAsync,
-    controlArticleWidthAsync, div_article_image_id, getArticleCountOnOneRowAsync,
-    setHeightOfArticlesDivAsync, articleBuffer, setArticleBufferAsync, getValidArticleWidthAsync, addArticlesAsync
+    addMsgWithImgToDivArticlesAsync, alignArticlesToCenterAsync,
+    alignImageToVerticalCenterAsync, controlArticleWidthAsync, div_article_image_id,
+    getArticleCountOnOneRowAsync, setHeightOfArticlesDivAsync, articleBuffer,
+    setArticleBufferAsync, getValidArticleWidthAsync, addArticlesAsync
 } from "./miar_module.article.js";
 
-import { addValueToPaginationLastButtonAsync, controlPaginationBackAndNextButtonsAsync, pagingBuffer, setPagingBufferAsync } from "./miar_module.pagination.js";
+import {
+    addValueToPaginationLastButtonAsync, controlPaginationBackAndNextButtonsAsync,
+    pagingBuffer, setPagingBufferAsync
+} from "./miar_module.pagination.js";
+
 import { convertStrUtcDateToStrLocalDateAsync } from "./miar_module.date.js";
 
 
@@ -150,6 +155,19 @@ export async function click_articleAsync(
     //#endregion
 
     await showOrHideBackButtonAsync(div_backButton, div_panelTitle, btn_back);
+}
+export async function click_sidebarMenuAsync(div_article_display, criticalSectionId) {
+    await addCriticalSectionAsync(
+        criticalSectionId,
+        async () => {
+            // when article page is open
+            if (div_article_display.attr("hidden") == null) {
+                await controlArticleWidthAsync();
+                await alignArticlesToCenterAsync("px");
+                await setHeightOfArticlesDivAsync()
+            }
+        },
+        500);
 }
 //#endregion
 

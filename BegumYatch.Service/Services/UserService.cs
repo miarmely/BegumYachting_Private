@@ -337,12 +337,16 @@ namespace BegumYatch.Service.Services
 				userDto.Email,
 				userDto.PhoneNumber);
 
-			#region  get user by id (throw)
+			#region  get account owner by id (throw)
 			var user = await _userManager.FindByEmailAsync(email);
 
-			// when user not found
+			// when account owner not found
 			if (user == null)
-				throw new Exception("User not found.");
+				throw new MiarException(
+					404,
+					"NF-U",
+					"Not Found - User",
+					"account owner not found.");
 			#endregion
 
 			#region update user

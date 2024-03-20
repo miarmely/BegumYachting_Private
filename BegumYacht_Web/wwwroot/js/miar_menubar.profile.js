@@ -259,7 +259,11 @@ async function updateUserAsync() {
             url: `/authentication/signin?token=${newToken}`,
             contentType: "application/json",
             dataType: "json",
-            success: (isSigned) => {}
+            success: (isSigned) => {
+                // refresh page for update "accountInfos" object
+                if (isSigned)
+                    window.location.reload()
+            }
         })
     }
     //#endregion

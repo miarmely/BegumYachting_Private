@@ -10,6 +10,7 @@ namespace BegumYatch.API.Filters.AdminPanel
             : base(roleNamesOnAttribute)
         { }
 
+
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
         {
             #region get language from query
@@ -32,9 +33,37 @@ namespace BegumYatch.API.Filters.AdminPanel
                 "AE-U",
                 "Authorization Error - Unauthorized",
                 ConvertErrorCodeToErrorMessageByLanguage(base.Language, "AE-U"));
-            #endregion
+			#endregion
 
-            await base.CheckUserRolesAsync(context);
+			#region when user roles is invalid (THROW)
+			if (!await base.IsUserRolesValidAsync(context))
+				throw new MiarException(
+					403,
+					"AE-F",
+					"Authorization Error - Forbidden",
+					ConvertErrorCodeToErrorMessageByLanguage(Language, "AE-F"));
+			#endregion
         }
-    }
+
+		private string ConvertErrorCodeToErrorMessageByLanguage(
+		  string language,
+		  string errorCode)
+		{
+			return language switch
+			{
+				"TR" => errorCode switch
+				{
+					"AE-U" => "oturum açmadınız",
+					"AE-F" => "yetkiniz yok",
+					"AE-E" => "oturum süreniz doldu"
+				},
+				"EN" => errorCode switch
+				{
+					"AE-U" => "you are not logged in",
+					"AE-F" => "you don't have permission",
+					"AE-E" => "your session time expired"
+				}
+			};
+		}
+	}
 }
