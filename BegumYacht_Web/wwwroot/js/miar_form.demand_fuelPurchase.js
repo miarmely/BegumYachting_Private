@@ -51,7 +51,6 @@ $(function () {
     const slct = {
         article_submenu_display: $("#slct_article_submenu_display")
     };
-    const formType = "FuelPurchaseDemand";
     const inputInfos = [
         ["input", "text", "nameSurname", "Ad Soyad", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],  // type for switch/case | type for switch/case | type for input | id | label name | info message | hidden/disabled/readonly of input | place to add
         ["input", "text", "phone", "Telefon", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
@@ -134,21 +133,20 @@ $(function () {
             populateFuelPurchaseArticlesAsync);
     })
     slct.article_submenu_display.change(async () => {
-        //#region show/hide anserer infos <div>
-        formStatus = slct.article_submenu_display.val();
-
+        //#region show/hide anwerer infos <div>
         // show
+        formStatus = slct.article_submenu_display.val();
         if (formStatus == "Accepted"
             || formStatus == "Rejected")
             div.answererInfos.removeAttr("hidden");
 
         // hide
-        else
+        else  // when it is "Unanswered"
             div.answererInfos.attr("hidden", "");
         //#endregion
 
         await populateFuelPurchaseArticlesAsync();
-    })  // DISABLED
+    })
     spn_eventManager.on("click_article", async (_, event) => {
         await click_articleAsync(
             event,

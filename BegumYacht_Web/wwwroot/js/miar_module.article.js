@@ -414,7 +414,7 @@ export async function addMsgWithImgToDivArticlesAsync(imagePath, imageAlt, messa
     let div_articles = articleBuffer.div_articles;
 
     div_articles.empty();
-    div_articles.removeAttr("style");
+    div_articles.removeAttr("style");  // reset vertical center styles
     //#endregion
 
     //#region add message with image to div_articles

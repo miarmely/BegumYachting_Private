@@ -94,9 +94,9 @@ export async function click_backButtonAsync(
         div_backButton,
         div_panelTitle,
         btn_back);
-
+   
     //#region reset info <div>s
-    // hide <div>s
+    // hide input <div>s
     div_senderInfos_inputs.attr("hidden", "");
     div_answererInfos_inputs.attr("hidden", "");
     formInfos_inputs.attr("hidden", "");
@@ -114,9 +114,13 @@ export async function click_backButtonAsync(
     //#endregion
 
     //#region show user display page
-    div_article_update.attr("hidden", "");
     div_article_display.removeAttr("hidden");
+    div_article_update.attr("hidden", "");
     //#endregion
+
+    await controlArticleWidthAsync();
+    await alignArticlesToCenterAsync("px");
+    await setHeightOfArticlesDivAsync();
 }
 export async function click_articleAsync(
     event,
@@ -180,7 +184,10 @@ export async function populateAnswererInfosByAnswererIdAsync(inputIds, div_answe
         method: "GET",
         url: (baseApiUrl + "/adminPanel/userDisplay/id?" +
             `userId=${infosOfLastClickedArticle.answererId}` +
-            `&checkIsDeleted=false`),
+            `&checkIsDeleted=false`),  // get deleted users too
+        headers: {
+            authorization: jwtToken
+        },
         contentType: "application/json",
         dataType: "json",
         success: (answererInfos) => {
@@ -231,6 +238,7 @@ export async function acceptTheFormAsync(
     lbl_result,
     img_loading,
     inputIds,
+    div_answererInfos,
     div_answererInfos_inputs
 ) {
     await answerTheFormAsync(
@@ -240,6 +248,7 @@ export async function acceptTheFormAsync(
         lbl_result,
         img_loading,
         inputIds,
+        div_answererInfos,
         div_answererInfos_inputs);
 
 }
@@ -249,6 +258,7 @@ export async function rejectTheFormAsync(
     lbl_result,
     img_loading,
     inputIds,
+    div_answererInfos,
     div_answererInfos_inputs
 ) {
     await answerTheFormAsync(
@@ -258,6 +268,7 @@ export async function rejectTheFormAsync(
         lbl_result,
         img_loading,
         inputIds,
+        div_answererInfos,
         div_answererInfos_inputs);
 }
 async function answerTheFormAsync(
@@ -267,6 +278,7 @@ async function answerTheFormAsync(
     lbl_result,
     img_loading,
     inputIds,
+    div_answererInfos,
     div_answererInfos_inputs
 ) {
     $.ajax({
@@ -289,15 +301,17 @@ async function answerTheFormAsync(
                     inputIds,
                     div_answererInfos_inputs);
 
-                // write success message
+                //#region display answerer infos button
+                div_answererInfos.removeAttr("hidden");
                 updateResultLabel(
                     lbl_result,
                     "form başarıyla cevaplandı",
                     resultLabel_successColor,
                     "30px",
-                    img_loading);
+                    img_loading);  // write success message
 
                 resolve();
+                //#endregion
             })
         },
         error: (response) => {
@@ -570,6 +584,7 @@ export async function addImageToArticleAsync(
     await alignImageToVerticalCenterAsync(articleId);
 }
 export async function resetDivArticlesAsync() {
+    // reset "Loading..." message from div
     articleBuffer.div_articles.empty();
     articleBuffer.div_articles.removeAttr("style");
 }
