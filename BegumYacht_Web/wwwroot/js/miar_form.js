@@ -1,4 +1,4 @@
-﻿import { addCriticalSectionAsync, updateElementText } from "./miar_module.js";
+﻿import { addCriticalSectionAsync, updateElementText, updateResultLabel } from "./miar_module.js";
 import { resetFormAsync, showOrHideBackButtonAsync } from "./miar_module.userForm.js";
 
 import {
@@ -144,7 +144,7 @@ export async function click_articleAsync(
     //#region populate answerer infos
     if (formStatus == "Accepted"
         || formStatus == "Rejected")
-        await populateAnswererInfosAsync(inputIds, div_answererInfos_inputs);
+        await populateAnswererInfosByAnswererIdAsync(inputIds, div_answererInfos_inputs);
     //#endregion
 
     await func_populateDemandInfosAsync(infosOfLastClickedArticle);
@@ -172,6 +172,147 @@ export async function click_sidebarMenuAsync(div_article_display, criticalSectio
 //#endregion
 
 //#region functions
+
+//#region populate answerer infos
+export async function populateAnswererInfosByAnswererIdAsync(inputIds, div_answererInfos_inputs) {
+    // get answerer infos and add to inputs
+    $.ajax({
+        method: "GET",
+        url: (baseApiUrl + "/adminPanel/userDisplay/id?" +
+            `userId=${infosOfLastClickedArticle.answererId}` +
+            `&checkIsDeleted=false`),
+        contentType: "application/json",
+        dataType: "json",
+        success: (answererInfos) => {
+            //#region populate inputs belong to answerer
+            new Promise(async resolve => {
+                await populateAnswererInfosAsync(
+                    inputIds,
+                    div_answererInfos_inputs,
+                    answererInfos);
+
+                resolve();
+            });
+            //#endregion
+        },
+    })
+}
+export async function populateAnswererInfosByAccountInfosAsync(inputIds, div_answererInfos_inputs) {
+    await populateAnswererInfosAsync(
+        inputIds,
+        div_answererInfos_inputs,
+        accountInfos);
+}
+async function populateAnswererInfosAsync(inputIds, div_answererInfos_inputs, answererInfos) {
+    div_answererInfos_inputs.find("#" + inputIds.nameSurname).val(answererInfos.nameSurname);
+    div_answererInfos_inputs.find("#" + inputIds.phone).val(answererInfos.phoneNumber);
+    div_answererInfos_inputs.find("#" + inputIds.email).val(answererInfos.email);
+    div_answererInfos_inputs.find("#" + inputIds.newPassportNo).val(
+        getDefaultValueIfValueNullOrEmpty(answererInfos.newPassportNo));
+    div_answererInfos_inputs.find("#" + inputIds.oldPassportNo).val(
+        getDefaultValueIfValueNullOrEmpty(answererInfos.oldPassportNo));
+    div_answererInfos_inputs.find("#" + inputIds.rank).val(
+        getDefaultValueIfValueNullOrEmpty(answererInfos.rank));
+    div_answererInfos_inputs.find("#" + inputIds.nationality).val(
+        getDefaultValueIfValueNullOrEmpty(answererInfos.nationality));
+    div_answererInfos_inputs.find("#" + inputIds.gender).val(
+        getDefaultValueIfValueNullOrEmpty(answererInfos.gender));
+    div_answererInfos_inputs.find("#" + inputIds.answeredDate).val(
+        await convertStrUtcDateToStrLocalDateAsync(
+            infosOfLastClickedArticle.answeredDate,
+            { hours: true, minutes: true, seconds: false }));
+}
+//#endregion
+
+//#region answer the form
+export async function acceptTheFormAsync(
+    specialUrl,
+    formId,
+    lbl_result,
+    img_loading,
+    inputIds,
+    div_answererInfos_inputs
+) {
+    await answerTheFormAsync(
+        specialUrl,
+        formId,
+        "Accepted",
+        lbl_result,
+        img_loading,
+        inputIds,
+        div_answererInfos_inputs);
+
+}
+export async function rejectTheFormAsync(
+    specialUrl,
+    formId,
+    lbl_result,
+    img_loading,
+    inputIds,
+    div_answererInfos_inputs
+) {
+    await answerTheFormAsync(
+        specialUrl,
+        formId,
+        "Rejected",
+        lbl_result,
+        img_loading,
+        inputIds,
+        div_answererInfos_inputs);
+}
+async function answerTheFormAsync(
+    specialUrl,
+    formId,
+    formStatus,
+    lbl_result,
+    img_loading,
+    inputIds,
+    div_answererInfos_inputs
+) {
+    $.ajax({
+        method: "GET",
+        url: (baseApiUrl + specialUrl +
+            `?formId=${formId}` +
+            `&FormStatus=${formStatus}`),
+        headers: {
+            authorization: jwtToken
+        },
+        contentType: "application/json",
+        dataType: "json",
+        beforeSend: () => {
+            img_loading.removeAttr("hidden");
+        },
+        success: () => {
+            // populate answerer infos
+            new Promise(async resolve => {
+                await populateAnswererInfosByAccountInfosAsync(
+                    inputIds,
+                    div_answererInfos_inputs);
+
+                // write success message
+                updateResultLabel(
+                    lbl_result,
+                    "form başarıyla cevaplandı",
+                    resultLabel_successColor,
+                    "30px",
+                    img_loading);
+
+                resolve();
+            })
+        },
+        error: (response) => {
+            // write error message
+            updateResultLabel(
+                lbl_result,
+                JSON.parse(response.responseText).errorMessage,
+                resultLabel_errorColor,
+                "30px",
+                img_loading);
+        }
+    });
+}
+//#endregion
+
 export async function beforePopulateAsync(articleWidth, articleHeight, div_articles) {
     await setArticleBufferAsync({
         div_articles: div_articles,
@@ -255,7 +396,7 @@ export async function populateArticlesAsync(
                 resolve();
             }
         })
-    });  
+    });
 }
 export async function populateSenderInfosAsync(inputIds, div_senderInfos_inputs) {
     // get senderer infos and add to inputs
@@ -283,43 +424,7 @@ export async function populateSenderInfosAsync(inputIds, div_senderInfos_inputs)
             div_senderInfos_inputs.find("#" + inputIds.nationality).val(
                 getDefaultValueIfValueNullOrEmpty(senderInfos.nationality));
             div_senderInfos_inputs.find("#" + inputIds.gender).val(
-            getDefaultValueIfValueNullOrEmpty(senderInfos.gender));
-            //#endregion
-        },
-    })
-}
-export async function populateAnswererInfosAsync(inputIds, div_answererInfos_inputs) {
-    // get answerer infos and add to inputs
-    $.ajax({
-        method: "GET",
-        url: (baseApiUrl + "/adminPanel/userDisplay/id?" +
-            `userId=${infosOfLastClickedArticle.answererId}` +
-            `&checkIsDeleted=false`),
-        contentType: "application/json",
-        dataType: "json",
-        success: (answererInfos) => {
-            //#region populate inputs
-            new Promise(async resolve => {
-                div_answererInfos_inputs.find("#" + inputIds.nameSurname).val(answererInfos.nameSurname);
-                div_answererInfos_inputs.find("#" + inputIds.phone).val(answererInfos.phoneNumber);
-                div_answererInfos_inputs.find("#" + inputIds.email).val(answererInfos.email);
-                div_answererInfos_inputs.find("#" + inputIds.newPassportNo).val(
-                    getDefaultValueIfValueNullOrEmpty(answererInfos.newPassportNo));
-                div_answererInfos_inputs.find("#" + inputIds.oldPassportNo).val(
-                    getDefaultValueIfValueNullOrEmpty(answererInfos.oldPassportNo));
-                div_answererInfos_inputs.find("#" + inputIds.rank).val(
-                    getDefaultValueIfValueNullOrEmpty(answererInfos.rank));
-                div_answererInfos_inputs.find("#" + inputIds.nationality).val(
-                    getDefaultValueIfValueNullOrEmpty(answererInfos.nationality));
-                div_answererInfos_inputs.find("#" + inputIds.gender).val(
-                    getDefaultValueIfValueNullOrEmpty(answererInfos.gender));
-                div_answererInfos_inputs.find("#" + inputIds.answeredDate).val(
-                    await convertStrUtcDateToStrLocalDateAsync(
-                        infosOfLastClickedArticle.answeredDate,
-                        { hours: true, minutes: true, seconds: false }));
-
-                resolve();
-            });
+                getDefaultValueIfValueNullOrEmpty(senderInfos.gender));
             //#endregion
         },
     })
@@ -431,7 +536,7 @@ export async function addImageToArticleAsync(
     articleId,
     yachtType,
     imageWidthRate,  // ex: 65 / 100
-    imageHeightRate  
+    imageHeightRate
 ) {
     //#region set image path by yacht type
     let path_image = "";
