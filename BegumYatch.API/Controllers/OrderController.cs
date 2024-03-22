@@ -100,13 +100,15 @@ namespace BegumYatch.API.Controllers
 		public async Task<IActionResult> AnswerTheProvisionOrder(
 			[FromQuery] FormParamsForAnswerTheForm formParams)
 		{
-			await _baseFormService.AnswerTheFormAsync(
+			var answeredDate = await _baseFormService.AnswerTheFormAsync(
 				FormType.ProvisionOrder,
 				formParams.FormId,
 				formParams.FormStatus,
 				HttpContext);
 
-			return NoContent();
+			return Ok(new {
+                AnsweredDate = answeredDate
+            });
 		}
 
 
@@ -132,13 +134,15 @@ namespace BegumYatch.API.Controllers
 		public async Task<IActionResult> AnswerTheFlowerOrder(
 			[FromQuery] FormParamsForAnswerTheForm formParams)
 		{
-			await _baseFormService.AnswerTheFormAsync(
+			var answeredDate = await _baseFormService.AnswerTheFormAsync(
 				FormType.FlowerOrder,
 				formParams.FormId,
 				formParams.FormStatus,
 				HttpContext);
 
-			return NoContent();
+			return Ok(new {
+                AnsweredDate = answeredDate
+            });
 		}
 
 
@@ -164,13 +168,15 @@ namespace BegumYatch.API.Controllers
 		public async Task<IActionResult> AnswerTheTechnicalAssistanceAndSparePartOrder(
 			[FromQuery] FormParamsForAnswerTheForm formParams)
 		{
-			await _baseFormService.AnswerTheFormAsync(
+			var answeredDate = await _baseFormService.AnswerTheFormAsync(
 				FormType.TechnicalAssistanceAndSparePartOrder,
 				formParams.FormId,
 				formParams.FormStatus,
 				HttpContext);
 
-			return NoContent();
+			return Ok(new { 
+                AnsweredDate = answeredDate
+            });
 		}
 	}
 }

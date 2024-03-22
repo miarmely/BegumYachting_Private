@@ -16,216 +16,216 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BegumYatch.API.Controllers
 {
-    public partial class DemandController : Controller
-    {
-        private readonly IFuelPurchaseDemandService _fuelPurchaseDemandService;
-        private readonly IConciergeServiceDemandService _conciergeService;
-        private readonly IExcursionDemandService _excursionDemandService;
-        private readonly ISecurityServiceDemandService _securityServiceDemandService;
-        private readonly IFileOperationService _fileOperationService;
-        private readonly ITechnicalAssitanceandSparePartOrderService _technicalAssitanceandSparePartOrderService;
-        private readonly IProvisionOrderService _provisionOrderService;
-        
-        public DemandController(IFuelPurchaseDemandService fuelPurchaseDemandService, IConciergeServiceDemandService conciergeService, IExcursionDemandService excursionDemandService, ISecurityServiceDemandService securityServiceDemandService, IFileOperationService fileOperationService, ITechnicalAssitanceandSparePartOrderService technicalAssitanceandSparePartOrderService, IProvisionOrderService provisionOrderService, IBaseDemandAndOrderService baseDemandService)
-        {
-            _fuelPurchaseDemandService = fuelPurchaseDemandService;
-            _conciergeService = conciergeService;
-            _excursionDemandService = excursionDemandService;
-            _securityServiceDemandService = securityServiceDemandService;
-            _fileOperationService = fileOperationService;
-            _technicalAssitanceandSparePartOrderService = technicalAssitanceandSparePartOrderService;
-            _provisionOrderService = provisionOrderService;
-            _baseDemandService = baseDemandService;
-        }
+	public partial class DemandController : Controller
+	{
+		private readonly IFuelPurchaseDemandService _fuelPurchaseDemandService;
+		private readonly IConciergeServiceDemandService _conciergeService;
+		private readonly IExcursionDemandService _excursionDemandService;
+		private readonly ISecurityServiceDemandService _securityServiceDemandService;
+		private readonly IFileOperationService _fileOperationService;
+		private readonly ITechnicalAssitanceandSparePartOrderService _technicalAssitanceandSparePartOrderService;
+		private readonly IProvisionOrderService _provisionOrderService;
+
+		public DemandController(IFuelPurchaseDemandService fuelPurchaseDemandService, IConciergeServiceDemandService conciergeService, IExcursionDemandService excursionDemandService, ISecurityServiceDemandService securityServiceDemandService, IFileOperationService fileOperationService, ITechnicalAssitanceandSparePartOrderService technicalAssitanceandSparePartOrderService, IProvisionOrderService provisionOrderService, IBaseDemandAndOrderService baseDemandService)
+		{
+			_fuelPurchaseDemandService = fuelPurchaseDemandService;
+			_conciergeService = conciergeService;
+			_excursionDemandService = excursionDemandService;
+			_securityServiceDemandService = securityServiceDemandService;
+			_fileOperationService = fileOperationService;
+			_technicalAssitanceandSparePartOrderService = technicalAssitanceandSparePartOrderService;
+			_provisionOrderService = provisionOrderService;
+			_baseDemandService = baseDemandService;
+		}
 
 
-        [HttpGet("GetDemands")]
-        public async Task<List<GetFuelPurchaseDemandByIdandUserIdDto>> GetDemands()
-        {
-            var MainPageList = await _fuelPurchaseDemandService.GetDemands();
-            //var response = _mapper.Map<List<GetDemandsDto>>(MainPageList);
-            return MainPageList;
-        }
+		[HttpGet("GetDemands")]
+		public async Task<List<GetFuelPurchaseDemandByIdandUserIdDto>> GetDemands()
+		{
+			var MainPageList = await _fuelPurchaseDemandService.GetDemands();
+			//var response = _mapper.Map<List<GetDemandsDto>>(MainPageList);
+			return MainPageList;
+		}
 
-        [HttpPost("AddDemands")]
-        public async Task<String> AddDemands([FromBody]CheckIn model)
-        {
+		[HttpPost("AddDemands")]
+		public async Task<String> AddDemands([FromBody] CheckIn model)
+		{
 
-            model.DateAdded = DateTime.Now;
-            var MainPageList = await _fuelPurchaseDemandService.AddDemands(model);
-            
-           //await _unitOfWork.CommitAsync();
-            //var response = _mapper.Map<String>(MainPageList);
-            return MainPageList;
-        }
+			model.DateAdded = DateTime.Now;
+			var MainPageList = await _fuelPurchaseDemandService.AddDemands(model);
 
-        [HttpGet("GetAllInfo")]
-        public async Task<CheckIn> GetAllInfo(int userId)
-        {
+			//await _unitOfWork.CommitAsync();
+			//var response = _mapper.Map<String>(MainPageList);
+			return MainPageList;
+		}
 
-            
-            var MainPageList = await _fuelPurchaseDemandService.GetAllInfo(userId);
-
-            //await _unitOfWork.CommitAsync();
-            //var response = _mapper.Map<String>(MainPageList);
-            return MainPageList;
-        }
+		[HttpGet("GetAllInfo")]
+		public async Task<CheckIn> GetAllInfo(int userId)
+		{
 
 
-        [HttpPost("DownloadFile")]
-        public async Task<IActionResult> DownloadFile(int id)
-        {
-            if (id < 1)
-                return BadRequest();
+			var MainPageList = await _fuelPurchaseDemandService.GetAllInfo(userId);
 
-            await _fileOperationService.DownloadFile(id);
-            return Ok();
-        }
-
-        [HttpPost("AddFuelPurchaseDemand")]
-        public async Task<IActionResult> AddFuelPurchaseDemand([FromBody]AddFuelPurchaseDemandDto addFuelPurchaseDemandDto)
-        {
-            await _fuelPurchaseDemandService.AddFuelPurchaseDemand(addFuelPurchaseDemandDto);
-            // await _fileOperationService.UploadFile(addFuelPurchaseDemandDto.Notes);
-            return Ok();
-        }
-
-        [HttpPost("AddTechnicalAssitance")]
-        public async Task<IActionResult> AddTechnicalAssitance([FromBody] AddTechnicalAssitanceDto addTechnicalAssitanceDto)
-        {
-            await _technicalAssitanceandSparePartOrderService.AddTechnicalAssitanceandSparePartOrder(addTechnicalAssitanceDto);
-            return Ok();
-        }
-
-        [HttpPost("AddConciergeServiceDemand")]
-        public async Task<IActionResult> AddConciergeServiceDemand([FromBody]AddConciergeServiceDemandDto addConciergeServiceDemandDto)
-        {
-            await _conciergeService.AddConciergeServiceDemand(addConciergeServiceDemandDto);
-            return Ok();
-        }
-
-        [HttpPost("VipServiceDemand")]
-        public async Task<IActionResult> VipServiceDemand([FromBody] AddVipDemand addVipServiceDemandDto)
-        {
-            await _conciergeService.AddVipServiceDemand(addVipServiceDemandDto);
-            return Ok();
-        }
-
-        [HttpPost("AddExcursionDemand")]
-        public async Task<IActionResult> AddExcursionDemand([FromBody]AddExcursionDemandDto addExcursionDemandDto)
-        {
-            await _excursionDemandService.AddExcursionDemand(addExcursionDemandDto);
-            return Ok();
-        }
-
-        [HttpPost("AddSecurityServiceDemand")]
-        public async Task<IActionResult> AddSecurityServiceDemand([FromBody]AddSecurityServiceDemandDto addSecurityServiceDemandDto)
-        {
-            await _securityServiceDemandService.AddSecurityServiceDemand(addSecurityServiceDemandDto);
-            return Ok();
-        }
+			//await _unitOfWork.CommitAsync();
+			//var response = _mapper.Map<String>(MainPageList);
+			return MainPageList;
+		}
 
 
-        [HttpPost("AddProvisionOrder")]
-        public async Task<IActionResult> AddProvisionOrder([FromBody]AddProvisionOrderDto provisionOrderDto)
-        {
-            await _provisionOrderService.AddProvisionOrder(provisionOrderDto);
-            return Ok();
-        }
+		[HttpPost("DownloadFile")]
+		public async Task<IActionResult> DownloadFile(int id)
+		{
+			if (id < 1)
+				return BadRequest();
 
-        [HttpGet("GetConciergeServices")]
-        public async Task<IActionResult> GetConciergeServices(int userId)
-        {
-            var concierges = await _conciergeService.GetAllConciergeServices(userId);
-            return Ok(concierges);
-        }
+			await _fileOperationService.DownloadFile(id);
+			return Ok();
+		}
 
-        [HttpGet("GetConciergeService")]
-        public async Task<IActionResult> GetConciergeService(int id, int userId)
-        {
-            var concierge = await _conciergeService.GetlConciergeServiceById(id, userId);
-            return Ok(concierge);
-        }
+		[HttpPost("AddFuelPurchaseDemand")]
+		public async Task<IActionResult> AddFuelPurchaseDemand([FromBody] AddFuelPurchaseDemandDto addFuelPurchaseDemandDto)
+		{
+			await _fuelPurchaseDemandService.AddFuelPurchaseDemand(addFuelPurchaseDemandDto);
+			// await _fileOperationService.UploadFile(addFuelPurchaseDemandDto.Notes);
+			return Ok();
+		}
 
-        [HttpGet("GetAllExcursionDemands")]
-        public async Task<IActionResult> GetAllExcursionDemands(int userId)
-        {
-            var excursions = await _excursionDemandService.GetAllExcursionDemandServices(userId);
-            return Ok(excursions);
-        }
+		[HttpPost("AddTechnicalAssitance")]
+		public async Task<IActionResult> AddTechnicalAssitance([FromBody] AddTechnicalAssitanceDto addTechnicalAssitanceDto)
+		{
+			await _technicalAssitanceandSparePartOrderService.AddTechnicalAssitanceandSparePartOrder(addTechnicalAssitanceDto);
+			return Ok();
+		}
 
-        [HttpGet("GetExcursionDemand")]
-        public async Task<IActionResult> GetExcursionDemand(int id, int userId)
-        {
-            var excursion = await _excursionDemandService.GetExcursionDemandById(id, userId);
-            return Ok(excursion);
-        }
+		[HttpPost("AddConciergeServiceDemand")]
+		public async Task<IActionResult> AddConciergeServiceDemand([FromBody] AddConciergeServiceDemandDto addConciergeServiceDemandDto)
+		{
+			await _conciergeService.AddConciergeServiceDemand(addConciergeServiceDemandDto);
+			return Ok();
+		}
 
-        [HttpGet("GetAllFuelPurchaseDemands")]
-        public async Task<IActionResult> GetAllFuelPurchaseDemands(int userId)
-        {
-            var fuelPurchases = await _fuelPurchaseDemandService
-                .GetAllFuelPurchaseDemands(userId);
-            return Ok(fuelPurchases);
-        }
+		[HttpPost("VipServiceDemand")]
+		public async Task<IActionResult> VipServiceDemand([FromBody] AddVipDemand addVipServiceDemandDto)
+		{
+			await _conciergeService.AddVipServiceDemand(addVipServiceDemandDto);
+			return Ok();
+		}
 
-        [HttpGet("GetFuelPurchaseDemand")]
-        public async Task<IActionResult> GetFuelPurchaseDemand(int id, int userId)
-        {
-            var fuelPurchase = await _fuelPurchaseDemandService.GetFuelPurchaseDemandById(id, userId);
-            return Ok(fuelPurchase);
-        }
+		[HttpPost("AddExcursionDemand")]
+		public async Task<IActionResult> AddExcursionDemand([FromBody] AddExcursionDemandDto addExcursionDemandDto)
+		{
+			await _excursionDemandService.AddExcursionDemand(addExcursionDemandDto);
+			return Ok();
+		}
 
-        [HttpGet("GetAllSecurityServiceDemands")]
-        public async Task<IActionResult> GetAllSecurityServiceDemands(int userId)
-        {
-            var securityDemands = await _securityServiceDemandService.GetAllSecurityServiceDemands(userId);
-            return Ok(securityDemands);
-        }
-
-        [HttpGet("GetSecurityServiceDemand")]
-        public async Task<IActionResult> GetSecurityServiceDemand(int id, int userId)
-        {
-            var securityDemand = await _securityServiceDemandService.GetSecurityServiceDemandById(id, userId);
-            return Ok(securityDemand);
-        }
-
-        [HttpGet("GetAllOrders")]
-        public async Task<IActionResult> GetAllOrders(int userId)
-        {
-            var concierges = await _conciergeService.GetAllOrdersService(userId);
-            return Ok(concierges);
-        }
+		[HttpPost("AddSecurityServiceDemand")]
+		public async Task<IActionResult> AddSecurityServiceDemand([FromBody] AddSecurityServiceDemandDto addSecurityServiceDemandDto)
+		{
+			await _securityServiceDemandService.AddSecurityServiceDemand(addSecurityServiceDemandDto);
+			return Ok();
+		}
 
 
-        [HttpGet("GetAllRequests")]
-        public async Task<IActionResult> GetAllRequests(int userId)
-        {
-            var concierges = await _conciergeService.GetAllRequetsService(userId);
-            return Ok(concierges);
-        }
-    }
+		[HttpPost("AddProvisionOrder")]
+		public async Task<IActionResult> AddProvisionOrder([FromBody] AddProvisionOrderDto provisionOrderDto)
+		{
+			await _provisionOrderService.AddProvisionOrder(provisionOrderDto);
+			return Ok();
+		}
 
-    public partial class DemandController  // By MERT
-    {
-        private readonly IBaseDemandAndOrderService _baseDemandService;
-        
+		[HttpGet("GetConciergeServices")]
+		public async Task<IActionResult> GetConciergeServices(int userId)
+		{
+			var concierges = await _conciergeService.GetAllConciergeServices(userId);
+			return Ok(concierges);
+		}
 
-        [HttpGet("adminPanel/demand/fuelPurchase/filter")]
-        [MiarApiAuthorize("Admin")]
-        public async Task<IActionResult> GetFuelPurchaseDemandsByFilter(
-            [FromQuery] FormParamsForDisplayFormByStatus formParams)
-        {
-            var demands = await _baseDemandService
-                .GetFormsByStatusAsync<FuelPurchaseDemandModel>(
-                    formParams,
-                    "Demand_FuelPurchase_GetFormsByStatus",
-                    FormCategory.Demand,
-                    "fuelPurchase",
-                    HttpContext);
+		[HttpGet("GetConciergeService")]
+		public async Task<IActionResult> GetConciergeService(int id, int userId)
+		{
+			var concierge = await _conciergeService.GetlConciergeServiceById(id, userId);
+			return Ok(concierge);
+		}
 
-            return Ok(demands);
-        }
+		[HttpGet("GetAllExcursionDemands")]
+		public async Task<IActionResult> GetAllExcursionDemands(int userId)
+		{
+			var excursions = await _excursionDemandService.GetAllExcursionDemandServices(userId);
+			return Ok(excursions);
+		}
+
+		[HttpGet("GetExcursionDemand")]
+		public async Task<IActionResult> GetExcursionDemand(int id, int userId)
+		{
+			var excursion = await _excursionDemandService.GetExcursionDemandById(id, userId);
+			return Ok(excursion);
+		}
+
+		[HttpGet("GetAllFuelPurchaseDemands")]
+		public async Task<IActionResult> GetAllFuelPurchaseDemands(int userId)
+		{
+			var fuelPurchases = await _fuelPurchaseDemandService
+				.GetAllFuelPurchaseDemands(userId);
+			return Ok(fuelPurchases);
+		}
+
+		[HttpGet("GetFuelPurchaseDemand")]
+		public async Task<IActionResult> GetFuelPurchaseDemand(int id, int userId)
+		{
+			var fuelPurchase = await _fuelPurchaseDemandService.GetFuelPurchaseDemandById(id, userId);
+			return Ok(fuelPurchase);
+		}
+
+		[HttpGet("GetAllSecurityServiceDemands")]
+		public async Task<IActionResult> GetAllSecurityServiceDemands(int userId)
+		{
+			var securityDemands = await _securityServiceDemandService.GetAllSecurityServiceDemands(userId);
+			return Ok(securityDemands);
+		}
+
+		[HttpGet("GetSecurityServiceDemand")]
+		public async Task<IActionResult> GetSecurityServiceDemand(int id, int userId)
+		{
+			var securityDemand = await _securityServiceDemandService.GetSecurityServiceDemandById(id, userId);
+			return Ok(securityDemand);
+		}
+
+		[HttpGet("GetAllOrders")]
+		public async Task<IActionResult> GetAllOrders(int userId)
+		{
+			var concierges = await _conciergeService.GetAllOrdersService(userId);
+			return Ok(concierges);
+		}
+
+
+		[HttpGet("GetAllRequests")]
+		public async Task<IActionResult> GetAllRequests(int userId)
+		{
+			var concierges = await _conciergeService.GetAllRequetsService(userId);
+			return Ok(concierges);
+		}
+	}
+
+	public partial class DemandController  // By MERT
+	{
+		private readonly IBaseDemandAndOrderService _baseDemandService;
+
+
+		[HttpGet("adminPanel/demand/fuelPurchase/filter")]
+		[MiarApiAuthorize("Admin")]
+		public async Task<IActionResult> GetFuelPurchaseDemandsByFilter(
+			[FromQuery] FormParamsForDisplayFormByStatus formParams)
+		{
+			var demands = await _baseDemandService
+				.GetFormsByStatusAsync<FuelPurchaseDemandModel>(
+					formParams,
+					"Demand_FuelPurchase_GetFormsByStatus",
+					FormCategory.Demand,
+					"fuelPurchase",
+					HttpContext);
+
+			return Ok(demands);
+		}
 
 
 		[HttpGet("adminPanel/demand/fuelPurchase/answer")]
@@ -233,31 +233,34 @@ namespace BegumYatch.API.Controllers
 		public async Task<IActionResult> AnswerTheFuelPurchaseDemand(
 			[FromQuery] FormParamsForAnswerTheForm formParams)
 		{
-            await _baseDemandService.AnswerTheFormAsync(
-                FormType.FuelPurchaseDemand,
-                formParams.FormId,
-                formParams.FormStatus,
-                HttpContext);
+			var answeredDate = await _baseDemandService.AnswerTheFormAsync(
+				FormType.FuelPurchaseDemand,
+				formParams.FormId,
+				formParams.FormStatus,
+				HttpContext);
 
-			return NoContent();
+			return Ok(new
+			{
+				AnsweredDate = answeredDate
+			});
 		}
 
 
 		[HttpGet("adminPanel/demand/checkinAndCheckout/filter")]
-        [MiarApiAuthorize("Admin")]
-        public async Task<IActionResult> GetCheckinAndCheckoutDemandsByFilter(
-            [FromQuery] FormParamsForDisplayFormByStatus formParams)
-        {
-            var demands = await _baseDemandService
-                .GetFormsByStatusAsync<CheckinAndCheckoutDemandModel>(
-                    formParams,
-                    "Demand_CheckInAndOut_GetFormsByStatus",
-                    FormCategory.Demand,
-                    "CheckinAndCheckout",
-                    HttpContext);
-                
-            return Ok(demands);
-        }
+		[MiarApiAuthorize("Admin")]
+		public async Task<IActionResult> GetCheckinAndCheckoutDemandsByFilter(
+			[FromQuery] FormParamsForDisplayFormByStatus formParams)
+		{
+			var demands = await _baseDemandService
+				.GetFormsByStatusAsync<CheckinAndCheckoutDemandModel>(
+					formParams,
+					"Demand_CheckInAndOut_GetFormsByStatus",
+					FormCategory.Demand,
+					"CheckinAndCheckout",
+					HttpContext);
+
+			return Ok(demands);
+		}
 
 
 		[HttpGet("adminPanel/demand/checkinAndCheckout/answer")]
@@ -265,31 +268,34 @@ namespace BegumYatch.API.Controllers
 		public async Task<IActionResult> AnswerTheCheckinAndCheckoutDemand(
 			[FromQuery] FormParamsForAnswerTheForm formParams)
 		{
-			await _baseDemandService.AnswerTheFormAsync(
+			var answeredDate = await _baseDemandService.AnswerTheFormAsync(
 				FormType.CheckInAndOutDemand,
 				formParams.FormId,
 				formParams.FormStatus,
 				HttpContext);
 
-			return NoContent();
+			return Ok(new
+			{
+				AnsweredDate = answeredDate
+			});
 		}
 
 
 		[HttpGet("adminPanel/demand/berthReservation/filter")]
-        [MiarApiAuthorize("Admin")]
-        public async Task<IActionResult> GetBerthReservationDemandsByFilter(
-            [FromQuery] FormParamsForDisplayFormByStatus formParams)
-        {
-            var demands = await _baseDemandService
-                .GetFormsByStatusAsync<BerthReservationDemandModel>(
-                    formParams,
-                    "Demand_BerthReservation_GetFormsByStatus",
-                    FormCategory.Demand,
-                    "BerthReservation",
-                    HttpContext);
+		[MiarApiAuthorize("Admin")]
+		public async Task<IActionResult> GetBerthReservationDemandsByFilter(
+			[FromQuery] FormParamsForDisplayFormByStatus formParams)
+		{
+			var demands = await _baseDemandService
+				.GetFormsByStatusAsync<BerthReservationDemandModel>(
+					formParams,
+					"Demand_BerthReservation_GetFormsByStatus",
+					FormCategory.Demand,
+					"BerthReservation",
+					HttpContext);
 
-            return Ok(demands);
-        }
+			return Ok(demands);
+		}
 
 
 		[HttpGet("adminPanel/demand/berthReservation/answer")]
@@ -297,31 +303,34 @@ namespace BegumYatch.API.Controllers
 		public async Task<IActionResult> AnswerTheBerthReservationDemand(
 			[FromQuery] FormParamsForAnswerTheForm formParams)
 		{
-			await _baseDemandService.AnswerTheFormAsync(
+			var answeredDate = await _baseDemandService.AnswerTheFormAsync(
 				FormType.BerthReservationDemand,
 				formParams.FormId,
 				formParams.FormStatus,
 				HttpContext);
 
-			return NoContent();
+			return Ok(new
+			{
+				AnsweredDate = answeredDate
+			});
 		}
 
 
 		[HttpGet("adminPanel/demand/vipTransfer/filter")]
-        [MiarApiAuthorize("Admin")]
-        public async Task<IActionResult> GetVipTransferDemandsByFilter(
-            [FromQuery] FormParamsForDisplayFormByStatus formParams)
-        {
-            var demands = await _baseDemandService
-                .GetFormsByStatusAsync<VipTransferDemandModel>(
-                    formParams,
-                    "Demand_VipTransfer_GetFormsByStatus",
-                    FormCategory.Demand,
-                    "VipTransfer",
-                    HttpContext);
+		[MiarApiAuthorize("Admin")]
+		public async Task<IActionResult> GetVipTransferDemandsByFilter(
+			[FromQuery] FormParamsForDisplayFormByStatus formParams)
+		{
+			var demands = await _baseDemandService
+				.GetFormsByStatusAsync<VipTransferDemandModel>(
+					formParams,
+					"Demand_VipTransfer_GetFormsByStatus",
+					FormCategory.Demand,
+					"VipTransfer",
+					HttpContext);
 
-            return Ok(demands);
-        }
+			return Ok(demands);
+		}
 
 
 		[HttpGet("adminPanel/demand/vipTransfer/answer")]
@@ -329,31 +338,34 @@ namespace BegumYatch.API.Controllers
 		public async Task<IActionResult> AnswerTheVipTransferDemand(
 			[FromQuery] FormParamsForAnswerTheForm formParams)
 		{
-			await _baseDemandService.AnswerTheFormAsync(
+			var answeredDate = await _baseDemandService.AnswerTheFormAsync(
 				FormType.VipTransferDemand,
 				formParams.FormId,
 				formParams.FormStatus,
 				HttpContext);
 
-			return NoContent();
+			return Ok(new
+			{
+				AnsweredDate = answeredDate
+			});
 		}
 
 
 		[HttpGet("adminPanel/demand/excursion/filter")]
-        [MiarApiAuthorize("Admin")]
-        public async Task<IActionResult> GetExcursionDemandsByFilter(
-            [FromQuery] FormParamsForDisplayFormByStatus formParams)
-        {
-            var demands = await _baseDemandService
-                .GetFormsByStatusAsync<ExcursionDemandModel>(
-                    formParams,
-                    "Demand_Excursion_GetFormsByStatus",
-                    FormCategory.Demand,
-                    "Excursion",
-                    HttpContext);
+		[MiarApiAuthorize("Admin")]
+		public async Task<IActionResult> GetExcursionDemandsByFilter(
+			[FromQuery] FormParamsForDisplayFormByStatus formParams)
+		{
+			var demands = await _baseDemandService
+				.GetFormsByStatusAsync<ExcursionDemandModel>(
+					formParams,
+					"Demand_Excursion_GetFormsByStatus",
+					FormCategory.Demand,
+					"Excursion",
+					HttpContext);
 
-            return Ok(demands);
-        }
+			return Ok(demands);
+		}
 
 
 		[HttpGet("adminPanel/demand/excursion/answer")]
@@ -361,31 +373,34 @@ namespace BegumYatch.API.Controllers
 		public async Task<IActionResult> AnswerTheExcursionDemand(
 			[FromQuery] FormParamsForAnswerTheForm formParams)
 		{
-			await _baseDemandService.AnswerTheFormAsync(
+			var answeredDate = await _baseDemandService.AnswerTheFormAsync(
 				FormType.ExcursionDemand,
 				formParams.FormId,
 				formParams.FormStatus,
 				HttpContext);
 
-			return NoContent();
+			return Ok(new
+			{
+				AnsweredDate = answeredDate
+			});
 		}
 
 
 		[HttpGet("adminPanel/demand/conciergeService/filter")]
-        [MiarApiAuthorize("Admin")]
-        public async Task<IActionResult> GetConciergeServiceDemandsByFilter(
-            [FromQuery] FormParamsForDisplayFormByStatus formParams)
-        {
-            var demands = await _baseDemandService
-                .GetFormsByStatusAsync<ConciergeServiceDemandModel>(
-                    formParams,
-                    "Demand_ConciergeService_GetFormsByStatus",
-                    FormCategory.Demand,
-                    "ConciergeService",
-                    HttpContext);
+		[MiarApiAuthorize("Admin")]
+		public async Task<IActionResult> GetConciergeServiceDemandsByFilter(
+			[FromQuery] FormParamsForDisplayFormByStatus formParams)
+		{
+			var demands = await _baseDemandService
+				.GetFormsByStatusAsync<ConciergeServiceDemandModel>(
+					formParams,
+					"Demand_ConciergeService_GetFormsByStatus",
+					FormCategory.Demand,
+					"ConciergeService",
+					HttpContext);
 
-            return Ok(demands);
-        }
+			return Ok(demands);
+		}
 
 
 		[HttpGet("adminPanel/demand/conciergeService/answer")]
@@ -393,31 +408,34 @@ namespace BegumYatch.API.Controllers
 		public async Task<IActionResult> AnswerTheConciergeServiceDemand(
 			[FromQuery] FormParamsForAnswerTheForm formParams)
 		{
-			await _baseDemandService.AnswerTheFormAsync(
+			var answeredDate = await _baseDemandService.AnswerTheFormAsync(
 				FormType.ConciergeServiceDemand,
 				formParams.FormId,
 				formParams.FormStatus,
 				HttpContext);
 
-			return NoContent();
+			return Ok(new
+			{
+				AnsweredDate = answeredDate
+			});
 		}
 
 
 		[HttpGet("adminPanel/demand/securityAndProtectionService/filter")]
-        [MiarApiAuthorize("Admin")]
-        public async Task<IActionResult> GetSecurityAndProtectionServiceDemandsByFilter(
-            [FromQuery] FormParamsForDisplayFormByStatus formParams)
-        {
-            var demands = await _baseDemandService
-                .GetFormsByStatusAsync<SecurityAndProtectionServiceDemandModel>(
-                    formParams,
-                    "Demand_SecurityAndProtectionService_GetFormsByStatus",
-                    FormCategory.Demand,
-                    "SecurityAndProtectionService",
-                    HttpContext);
+		[MiarApiAuthorize("Admin")]
+		public async Task<IActionResult> GetSecurityAndProtectionServiceDemandsByFilter(
+			[FromQuery] FormParamsForDisplayFormByStatus formParams)
+		{
+			var demands = await _baseDemandService
+				.GetFormsByStatusAsync<SecurityAndProtectionServiceDemandModel>(
+					formParams,
+					"Demand_SecurityAndProtectionService_GetFormsByStatus",
+					FormCategory.Demand,
+					"SecurityAndProtectionService",
+					HttpContext);
 
-            return Ok(demands);
-        }
+			return Ok(demands);
+		}
 
 
 		[HttpGet("adminPanel/demand/securityAndProtectionService/answer")]
@@ -425,13 +443,16 @@ namespace BegumYatch.API.Controllers
 		public async Task<IActionResult> AnswerTheSecurityAndProtectionServiceDemand(
 			[FromQuery] FormParamsForAnswerTheForm formParams)
 		{
-			await _baseDemandService.AnswerTheFormAsync(
+			var answeredDate = await _baseDemandService.AnswerTheFormAsync(
 				FormType.SecurityAndProtectionServiceDemand,
 				formParams.FormId,
 				formParams.FormStatus,
 				HttpContext);
 
-			return NoContent();
+			return Ok(new
+			{
+				AnsweredDate = answeredDate
+			});
 		}
 	}
 }

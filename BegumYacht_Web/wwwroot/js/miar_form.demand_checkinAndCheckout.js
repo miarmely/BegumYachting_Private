@@ -5,7 +5,7 @@ import {
     addImageToArticleAsync, beforePopulateAsync, click_articleAsync,
     click_backButtonAsync, click_InfoDivAsync, getDefaultValueIfValueNullOrEmpty,
     populateArticlesAsync, addInputsToInfoDivsAsync, resize_windowAsync, click_sidebarMenuAsync,
-    showOrHideAnswererInfosMenuByFormStatusAsync, formStatus
+    showOrHideAnswererInfosMenuAndButtonsByFormStatusAsync, formStatus
 } from "./miar_form.js"
 
 import {
@@ -89,9 +89,10 @@ $(function () {
             populateCheckinAndCheckoutArticlesAsync);
     })
     slct.article_submenu_display.change(async () => {
-        await showOrHideAnswererInfosMenuByFormStatusAsync(
+        await showOrHideAnswererInfosMenuAndButtonsByFormStatusAsync(
             slct.article_submenu_display,
-            div.answererInfos);
+            div.answererInfos,
+            div.buttons);
         await populateCheckinAndCheckoutArticlesAsync();
     })
     spn_eventManager.on("click_article", async (_, event) => {
@@ -105,8 +106,6 @@ $(function () {
             div.panelTitle,
             div.senderInfos_inputs,
             div.answererInfos_inputs,
-            div.answererInfos,
-            div.buttons,
             btn.back,
             async (infosOfLastClickedArticle) => {
                 div.formInfos_inputs.find("#" + inpt_id.yachtName).val(
@@ -152,6 +151,7 @@ $(function () {
             div.senderInfos_inputs,
             div.answererInfos_inputs,
             div.formInfos_inputs,
+            div.buttons,
             btn.back);
         await alignArticlesToCenterAsync();
     })

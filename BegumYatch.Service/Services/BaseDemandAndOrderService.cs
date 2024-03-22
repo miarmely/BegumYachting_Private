@@ -79,7 +79,7 @@ namespace BegumYatch.Service.Services
             return formPagingList;
         }
 
-        public async Task AnswerTheFormAsync(
+        public async Task<string> AnswerTheFormAsync(
             FormType formType,
             int formId,
             FormStatus formStatus,
@@ -89,7 +89,7 @@ namespace BegumYatch.Service.Services
 			var statusCode = new SqlParameter()
 			{
 				ParameterName = "@StatusCode",
-				SqlDbType = SqlDbType.TinyInt,
+				SqlDbType = SqlDbType.Int,
 				Direction = ParameterDirection.Output
 			};
 
@@ -106,14 +106,15 @@ namespace BegumYatch.Service.Services
         		@StatusId = {3},
         		@AnsweredDate = {4},
         		@StatusCode = {5} OUT";
+            var answeredDate = DateTime.UtcNow;
 
             await _repository.ExecuteSqlRawAsync(
                 sql,
-                formType,
+                (byte)formType,
                 formId,
 				answererId,
-				formStatus,
-                DateTime.UtcNow,
+				(byte)formStatus,  // convert int32 to int8
+				answeredDate,
                 statusCode);
             #endregion
 
@@ -124,7 +125,9 @@ namespace BegumYatch.Service.Services
                     "CE-F-A",
                     "Conflict Error - Form - Answer",
                     "form daha önceden yanıtlanmış");
-			#endregion
+            #endregion
+
+            return answeredDate.ToString("s");
 		}
 	}
 }

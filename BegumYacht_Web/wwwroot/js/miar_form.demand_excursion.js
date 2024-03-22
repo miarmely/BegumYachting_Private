@@ -3,7 +3,7 @@ import { convertDateToStrDateAsync, getPassedTimeInStringAsync } from "./miar_mo
 import {
     addImageToArticleAsync, beforePopulateAsync, click_articleAsync, resize_windowAsync,
     click_backButtonAsync, click_InfoDivAsync, getDefaultValueIfValueNullOrEmpty,
-    populateArticlesAsync, addInputsToInfoDivsAsync, click_sidebarMenuAsync, formStatus, showOrHideAnswererInfosMenuByFormStatusAsync
+    populateArticlesAsync, addInputsToInfoDivsAsync, click_sidebarMenuAsync, formStatus, showOrHideAnswererInfosMenuAndButtonsByFormStatusAsync
 } from "./miar_form.js"
 
 import {
@@ -98,9 +98,10 @@ $(function () {
             populateDemandArticlesAsync);
     })
     slct.article_submenu_display.change(async () => {
-        await showOrHideAnswererInfosMenuByFormStatusAsync(
+        await showOrHideAnswererInfosMenuAndButtonsByFormStatusAsync(
             slct.article_submenu_display,
-            div.answererInfos);
+            div.answererInfos,
+            div.buttons);
         await populateDemandArticlesAsync();
     })  // DISABLED
     spn_eventManager.on("click_article", async (_, event) => {
@@ -114,8 +115,6 @@ $(function () {
             div.panelTitle,
             div.senderInfos_inputs,
             div.answererInfos_inputs,
-            div.answererInfos,
-            div.buttons,
             btn.back,
             async (infosOfLastClickedArticle) => {
                 //#region set form infos
@@ -176,6 +175,7 @@ $(function () {
             div.senderInfos_inputs,
             div.answererInfos_inputs,
             div.formInfos_inputs,
+            div.buttons,
             btn.back);
         await alignArticlesToCenterAsync();
     })

@@ -16,7 +16,7 @@ namespace BegumYatch.Core.Services
             HttpContext context)
             where TModel : class;
 
-        Task AnswerTheFormAsync(
+        Task<string> AnswerTheFormAsync(
             FormType formType,
             int formId,
             FormStatus formStatus,

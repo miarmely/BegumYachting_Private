@@ -5,7 +5,7 @@ import { addCriticalSectionAsync, shiftTheChildDivToBottomOfParentDivAsync } fro
 import {
     addImageToArticleAsync, beforePopulateAsync, click_articleAsync, resize_windowAsync,
     click_backButtonAsync, click_InfoDivAsync, getDefaultValueIfValueNullOrEmpty,
-    populateArticlesAsync, addInputsToInfoDivsAsync, click_sidebarMenuAsync, formStatus, showOrHideAnswererInfosMenuByFormStatusAsync, acceptTheFormAsync, infosOfLastClickedArticle,
+    populateArticlesAsync, addInputsToInfoDivsAsync, click_sidebarMenuAsync, formStatus, showOrHideAnswererInfosMenuAndButtonsByFormStatusAsync, acceptTheFormAsync, infosOfLastClickedArticle, rejectTheFormAsync,
 } from "./miar_form.js"
 
 import {
@@ -100,9 +100,10 @@ $(function () {
             populateFuelPurchaseArticlesAsync);
     })
     slct.article_submenu_display.change(async () => {
-        await showOrHideAnswererInfosMenuByFormStatusAsync(
+        await showOrHideAnswererInfosMenuAndButtonsByFormStatusAsync(
             slct.article_submenu_display,
-            div.answererInfos);
+            div.answererInfos,
+            div.buttons);
         await populateFuelPurchaseArticlesAsync();
     })
     spn_eventManager.on("click_article", async (_, event) => {
@@ -116,8 +117,6 @@ $(function () {
             div.panelTitle,
             div.senderInfos_inputs,
             div.answererInfos_inputs,
-            div.answererInfos,
-            div.buttons,
             btn.back,
             async (infosOfLastClickedArticle) => {
                 div.formInfos_inputs.find("#" + inpt_id.yachtName).val(
@@ -149,11 +148,25 @@ $(function () {
         await acceptTheFormAsync(
             "/adminPanel/demand/fuelPurchase/answer",
             infosOfLastClickedArticle.formId,
+            inpt_id,
             p_resultLabel,
             img_loading,
-            inpt_id,
             div.answererInfos,
-            div.answererInfos_inputs);
+            div.answererInfos_inputs,
+            div.buttons);
+        await populateFuelPurchaseArticlesAsync();
+    })
+    btn.reject.click(async () => {
+        await rejectTheFormAsync(
+            "/adminPanel/demand/fuelPurchase/answer",
+            infosOfLastClickedArticle.formId,
+            inpt_id,
+            p_resultLabel,
+            img_loading,
+            div.answererInfos,
+            div.answererInfos_inputs,
+            div.buttons);
+        await populateFuelPurchaseArticlesAsync();
     })
     //#endregion
 
@@ -174,6 +187,7 @@ $(function () {
             div.senderInfos_inputs,
             div.answererInfos_inputs,
             div.formInfos_inputs,
+            div.buttons,
             btn.back);
         await alignArticlesToCenterAsync();
     })

@@ -72,7 +72,7 @@ export async function click_InfoDivAsync(event) {
     if (div_infos_inputs.attr("hidden") == null) {
         div_infos_inputs.attr("hidden", "");
         updateElementText(
-            div_infos_button.children("h4").children(".spn_action"),
+            div_infos_button.find(".spn_action"),
             "Görüntüle");
     }
     //#endregion
@@ -88,7 +88,7 @@ export async function click_InfoDivAsync(event) {
         // show inputs
         div_infos_inputs.removeAttr("hidden");
         updateElementText(
-            div_infos_button.children("h4").children("spn_action"),
+            div_infos_button.find(".spn_action"),
             "Gizle");
     }
     //#endregion
@@ -104,32 +104,14 @@ export async function click_backButtonAsync(
     div_formInfos,
     div_senderInfos_inputs,
     div_answererInfos_inputs,
-    formInfos_inputs,
+    div_formInfos_inputs,
+    div_buttons,
     btn_back
 ) {
-    await resetFormAsync(lbl_result);
     await showOrHideBackButtonAsync(
         div_backButton,
         div_panelTitle,
         btn_back);
-
-    //#region reset info <div>s
-    // hide input <div>s
-    div_senderInfos_inputs.attr("hidden", "");
-    div_answererInfos_inputs.attr("hidden", "");
-    formInfos_inputs.attr("hidden", "");
-
-    // change "Gizle" text to "Görüntüle" text of <div>s
-    updateElementText(
-        div_senderInfos.find("h4 span"),
-        "Görüntüle");
-    updateElementText(
-        div_answererInfos.find("h4 span"),
-        "Görüntüle");
-    updateElementText(
-        div_formInfos.find("h4 span"),
-        "Görüntüle");
-    //#endregion
 
     //#region show user display page
     div_article_display.removeAttr("hidden");
@@ -139,6 +121,30 @@ export async function click_backButtonAsync(
     await controlArticleWidthAsync();
     await alignArticlesToCenterAsync("px");
     await setHeightOfArticlesDivAsync();
+    await resetFormAsync(lbl_result);
+    
+    //#region hide inputs of info menus
+    // hide input <div>s
+    div_senderInfos_inputs.attr("hidden", "");
+    div_answererInfos_inputs.attr("hidden", "");
+    div_formInfos_inputs.attr("hidden", "");
+
+    // change "Gizle" text to "Görüntüle" text of <div>s
+    updateElementText(
+        div_senderInfos.find(".spn_action"),
+        "Görüntüle");
+    updateElementText(
+        div_answererInfos.find(".spn_action"),
+        "Görüntüle");
+    updateElementText(
+        div_formInfos.find(".spn_action"),
+        "Görüntüle");
+    //#endregion
+
+    //#region show form buttons (CONDITION)
+    if (formStatus == "Unanswered")
+        div_buttons.removeAttr("hidden");
+    //#endregion
 }
 export async function click_articleAsync(
     event,
@@ -150,8 +156,6 @@ export async function click_articleAsync(
     div_panelTitle,
     div_senderInfos_inputs,
     div_answererInfos_inputs,
-    div_answererInfos,
-    div_buttons,
     btn_back,
     func_populateFormInfosAsync = (infosOfLastClickedArticle) => { }
 ) {
@@ -166,15 +170,8 @@ export async function click_articleAsync(
 
     //#region populate answerer infos
     if (formStatus == "Accepted"
-        || formStatus == "Rejected"
-    ) {
-        //#region prepare update page
-        div_answererInfos.removeAttr("hidden");  // show "answerer infos" option
-        div_buttons.attr("hidden", "");  // hide "accept" and "reject" buttons
-        //#endregion
-
+        || formStatus == "Rejected")
         await populateAnswererInfosByAnswererIdAsync(inputIds, div_answererInfos_inputs);
-    }
     //#endregion
 
     await func_populateFormInfosAsync(infosOfLastClickedArticle);
@@ -191,7 +188,10 @@ export async function click_articleAsync(
 //#region functions
 
 //#region populate answerer infos
-export async function populateAnswererInfosByAnswererIdAsync(inputIds, div_answererInfos_inputs) {
+export async function populateAnswererInfosByAnswererIdAsync(
+    inputIds,
+    div_answererInfos_inputs
+) {
     // get answerer infos and add to inputs
     $.ajax({
         method: "GET",
@@ -209,21 +209,32 @@ export async function populateAnswererInfosByAnswererIdAsync(inputIds, div_answe
                 await populateAnswererInfosAsync(
                     inputIds,
                     div_answererInfos_inputs,
-                    answererInfos);
+                    answererInfos,
+                    infosOfLastClickedArticle.answeredDate);
 
                 resolve();
             });
             //#endregion
         },
     })
-}
-export async function populateAnswererInfosByAccountInfosAsync(inputIds, div_answererInfos_inputs) {
+}  // i am using when answered article is clicked
+export async function populateAnswererInfosByAccountInfosAsync(
+    answeredDate,
+    inputIds,
+    div_answererInfos_inputs
+) {
     await populateAnswererInfosAsync(
         inputIds,
         div_answererInfos_inputs,
-        accountInfos);
-}
-async function populateAnswererInfosAsync(inputIds, div_answererInfos_inputs, answererInfos) {
+        accountInfos,
+        answeredDate);
+}  // i am using when form is answered
+async function populateAnswererInfosAsync(
+    inputIds,
+    div_answererInfos_inputs,
+    answererInfos,
+    answeredDate
+) {
     div_answererInfos_inputs.find("#" + inputIds.nameSurname).val(answererInfos.nameSurname);
     div_answererInfos_inputs.find("#" + inputIds.phone).val(answererInfos.phoneNumber);
     div_answererInfos_inputs.find("#" + inputIds.email).val(answererInfos.email);
@@ -239,7 +250,7 @@ async function populateAnswererInfosAsync(inputIds, div_answererInfos_inputs, an
         getDefaultValueIfValueNullOrEmpty(answererInfos.gender));
     div_answererInfos_inputs.find("#" + inputIds.answeredDate).val(
         await convertStrUtcDateToStrLocalDateAsync(
-            infosOfLastClickedArticle.answeredDate,
+            answeredDate,
             { hours: true, minutes: true, seconds: false }));
 }
 //#endregion
@@ -248,51 +259,56 @@ async function populateAnswererInfosAsync(inputIds, div_answererInfos_inputs, an
 export async function acceptTheFormAsync(
     specialUrl,
     formId,
+    inputIds,
     lbl_result,
     img_loading,
-    inputIds,
     div_answererInfos,
-    div_answererInfos_inputs
+    div_answererInfos_inputs,
+    div_buttons
 ) {
     await answerTheFormAsync(
         specialUrl,
         formId,
         "Accepted",
+        inputIds,
         lbl_result,
         img_loading,
-        inputIds,
         div_answererInfos,
-        div_answererInfos_inputs);
+        div_answererInfos_inputs,
+        div_buttons);
 
 }
 export async function rejectTheFormAsync(
     specialUrl,
     formId,
+    inputIds,
     lbl_result,
     img_loading,
-    inputIds,
     div_answererInfos,
-    div_answererInfos_inputs
+    div_answererInfos_inputs,
+    div_buttons
 ) {
     await answerTheFormAsync(
         specialUrl,
         formId,
         "Rejected",
+        inputIds,
         lbl_result,
         img_loading,
-        inputIds,
         div_answererInfos,
-        div_answererInfos_inputs);
+        div_answererInfos_inputs,
+        div_buttons);
 }
 async function answerTheFormAsync(
     specialUrl,
     formId,
     formStatus,
+    inputIds,
     lbl_result,
     img_loading,
-    inputIds,
     div_answererInfos,
-    div_answererInfos_inputs
+    div_answererInfos_inputs,
+    div_buttons
 ) {
     $.ajax({
         method: "GET",
@@ -307,24 +323,28 @@ async function answerTheFormAsync(
         beforeSend: () => {
             img_loading.removeAttr("hidden");
         },
-        success: () => {
-            // populate answerer infos
+        success: (response) => {
+            //#region populate answerer infos
             new Promise(async resolve => {
                 await populateAnswererInfosByAccountInfosAsync(
+                    response.answeredDate,
                     inputIds,
                     div_answererInfos_inputs);
-
-                //#region show answerer infos menu
+                
+                //#region show answerer infos and hide buttons
                 div_answererInfos.removeAttr("hidden");
+                div_buttons.attr("hidden", "");
+                //#endregion
+
                 updateResultLabel(
                     lbl_result,
                     "form başarıyla cevaplandı",
                     resultLabel_successColor,
-                    "30px",
+                    "50px",
                     img_loading);  // write success message
                 resolve();
-                //#endregion
             })
+            //#endregion
         },
         error: (response) => {
             // write error message
@@ -332,7 +352,7 @@ async function answerTheFormAsync(
                 lbl_result,
                 JSON.parse(response.responseText).errorMessage,
                 resultLabel_errorColor,
-                "30px",
+                "20px",
                 img_loading);
         }
     });
@@ -612,20 +632,27 @@ export async function resetDivArticlesAsync() {
     articleBuffer.div_articles.empty();
     articleBuffer.div_articles.removeAttr("style");
 }
-export async function showOrHideAnswererInfosMenuByFormStatusAsync(
+export async function showOrHideAnswererInfosMenuAndButtonsByFormStatusAsync(
     slct_article_submenu_display,
-    div_answererInfos) {
-    //#region show
+    div_answererInfos,
+    div_buttons
+) {
+    //#region show answerer infos menu
     formStatus = slct_article_submenu_display.val();
 
     if (formStatus == "Accepted"
-        || formStatus == "Rejected")
+        || formStatus == "Rejected"
+    ) {
         div_answererInfos.removeAttr("hidden");
+        div_buttons.attr("hidden", "");  // hide
+    }
     //#endregion
 
-    //#region hide
-    else
+    //#region hide answerer infos menu
+    else {
         div_answererInfos.attr("hidden", "");
+        div_buttons.removeAttr("hidden");  // show
+    }
     //#endregion
 }
 export function getDefaultValueIfValueNullOrEmpty(value) {

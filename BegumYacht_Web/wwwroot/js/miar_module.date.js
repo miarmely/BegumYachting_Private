@@ -93,7 +93,8 @@ export async function convertStrUtcDateToStrLocalDateAsync(
         formatOptions);
 
     let formattedDate = formatter
-        .format(localDateTime);
+        .format(localDateTime)
+        .replace(", ", "__");
     //#endregion
 
     //#endregion
