@@ -1,4 +1,4 @@
-﻿import { autoObjectMapperAsync } from "./miar_module.js";
+﻿import { autoObjectMapperAsync, paginationInfosInJson, updateElementText } from "./miar_module.js";
 
 //#region variables
 export const a_paginationBack_id = "a_paginationBack";
@@ -100,7 +100,7 @@ export async function setPagingBufferAsync(newBuffer = {
     pageNumber: 0,
     infosInHeader: {}
 }) {
-    await autoObjectMapperAsync(pagingBuffer, newBuffer, true);
+    await autoObjectMapperAsync(pagingBuffer, newBuffer, false);
 }
 export async function addPaginationButtonsAsync(
     paginationInfosInJson,
@@ -140,33 +140,55 @@ export async function addPaginationButtonsAsync(
 	    </li>`);
     //#endregion
 }  // deprecated
-export async function controlPaginationBackAndNextButtonsAsync(paginationInfosInJson) {
-    // when total page count more than 1
-    if (paginationInfosInJson.TotalPage > 1) {
-        //#region for paginationBack button
+export async function controlPaginationButtonsAsync() {
+    //#region set variables
+    let a_paginationBack = $("#" + a_paginationBack_id);
+    let inpt_paginationCurrent = $("#" + a_paginationCurrent_id + " input");
+    let a_paginationNext = $("#" + a_paginationNext_id);
+    let a_paginationLast = $("#" + a_paginationLast_id);
+    let pagingInfosInHeader = pagingBuffer.infosInHeader;
+    //#endregion
+
+    //#region when total page count more than 1
+    if (pagingInfosInHeader != null  // when any entity is exists
+        && pagingInfosInHeader.TotalPage > 1) {
+        //#region hide/show paginationBack button
         // hide
-        if (paginationInfosInJson.CurrentPageNo == 1)
-            $("#" + a_paginationBack_id).attr("hidden", "");
+        if (pagingInfosInHeader.CurrentPageNo == 1)
+            a_paginationBack.attr("hidden", "");
 
         // show
         else
-            $("#" + a_paginationBack_id).removeAttr("hidden");
+            a_paginationBack.removeAttr("hidden");
         //#endregion
 
-        //#region for paginationNext button
+        //#region hide/show paginationNext button
         // hide
-        if (paginationInfosInJson.CurrentPageNo == paginationInfosInJson.TotalPage)
-            $("#" + a_paginationNext_id).attr("hidden", "");
+        if (pagingInfosInHeader.CurrentPageNo == pagingInfosInHeader.TotalPage)
+            a_paginationNext.attr("hidden", "");
 
         // show
         else
-            $("#" + a_paginationNext_id).removeAttr("hidden");
+            a_paginationNext.removeAttr("hidden");
         //#endregion
+
+        updateElementText(
+            a_paginationLast,
+            pagingInfosInHeader.TotalPage);  // paginationLast button
     }
-}
-export async function addValueToPaginationLastButtonAsync(value) {
-    $("#" + a_paginationLast_id).empty();
-    $("#" + a_paginationLast_id).append(value);
+    //#endregion
+
+    //#region when total page count is smallar than 1
+    else {
+        //#region hide pagination back and next buttons
+        $("#" + a_paginationBack_id).attr("hidden", "");
+        $("#" + a_paginationNext_id).attr("hidden", "");
+        //#endregion
+
+        updateElementText(inpt_paginationCurrent, "1"); // paginationCurrent input
+        updateElementText(a_paginationLast, "1");  // paginationLast button
+    }
+    //#endregion
 }
 async function updatePageNumberWhenSeparatorBtnIsClickedAsync() {
     //#region set page number

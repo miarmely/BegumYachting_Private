@@ -383,7 +383,7 @@ export async function alignArticlesToCenterAsync(widthUnit = "px") {
         : $(".article").prop("offsetWidth"));  // widthUnit == "%"
     //#endregion
 
-    //#region set padding left and right of article
+    //#region set padding left of article
     articleCountOnOneRow = await getArticleCountOnOneRowAsync(widthUnit);
     let whiteSpaceWidth = div_articles_width - (article_netCurrentWidth * articleCountOnOneRow);
 

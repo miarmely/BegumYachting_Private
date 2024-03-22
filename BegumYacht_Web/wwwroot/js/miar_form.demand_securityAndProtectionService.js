@@ -1,16 +1,15 @@
 ﻿import { populateInfoMessagesAsync } from "./miar_module.userForm.js"
 import { convertDateToStrDateAsync, getPassedTimeInStringAsync } from "./miar_module.date.js";
-import { addCriticalSectionAsync, shiftTheChildDivToBottomOfParentDivAsync } from "./miar_module.js"
+import { shiftTheChildDivToBottomOfParentDivAsync } from "./miar_module.js"
 
 import {
     addImageToArticleAsync, beforePopulateAsync, click_articleAsync, resize_windowAsync,
     click_backButtonAsync, click_InfoDivAsync, getDefaultValueIfValueNullOrEmpty,
-    populateArticlesAsync, addInputsToInfoDivsAsync, click_sidebarMenuAsync
+    populateArticlesAsync, addInputsToInfoDivsAsync, click_sidebarMenuAsync, formStatus, showOrHideAnswererInfosMenuAsync
 } from "./miar_form.js"
 
 import {
-    alignArticlesToCenterAsync, art_baseId, controlArticleWidthAsync, div_article_info_id,
-    setHeightOfArticlesDivAsync
+    alignArticlesToCenterAsync, art_baseId, div_article_info_id,
 } from "./miar_module.article.js"
 
 import {
@@ -21,37 +20,6 @@ import {
 
 $(function () {
     //#region variables
-    const ul_pagination = $("#ul_pagination");
-    const p_resultLabel = $("#p_resultLabel");
-    const criticalSectionIds = {
-        sidebarMenuButton: "sidebarMenuButton",
-        window: "window",
-        backButton: "backButton"
-    }
-    const div = {
-        article_update: $("#div_article_update"),
-        article_display: $("#div_article_display"),
-        articles: $("#div_articles"),
-        sidebarMenuButton: $("#div_sidebarMenuButton"),
-        senderInfos: $("#div_senderInfos"),
-        answererInfos: $("#div_answererInfos"),
-        demandInfos: $("#div_demandInfos"),
-        backButton: $("#div_backButton"),
-        panelTitle: $("#div_panelTitle"),
-        senderInfos_inputs: $("#div_senderInfos_inputs"),
-        answererInfos_inputs: $("#div_answererInfos_inputs"),
-        demandInfos_inputs: $("#div_demandInfos_inputs"),
-    };
-    const btn = {
-        back: $("#btn_back")
-    };
-    const lbl = {
-        entityQuantity: $("#small_entityQuantity")
-    };
-    const slct = {
-        article_submenu_display: $("#slct_article_submenu_display")
-    };
-    const formType = "SecurityAndProtectionServiceDemand";
     const inputInfos = [
         ["input", "text", "nameSurname", "Ad Soyad", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],  // type for switch/case | type for switch/case | type for input | id | label name | info message | hidden/disabled/readonly of input | place to add
         ["input", "text", "phone", "Telefon", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
@@ -62,12 +30,12 @@ $(function () {
         ["input", "text", "nationality", "Uyruk", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
         ["input", "text", "gender", "Cinsiyet", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
         ["input", "text", "answeredDate", "Cevaplanma Tarihi", false, "readonly", [div.answererInfos_inputs]],
-        ["input", "text", "yachtType", "Yat Tipi", false, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "yachtName", "Yat Adı", false, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "flag", "Bayrak", false, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "requestedService", "İstenen Servis", false, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "createdDate", "Talep Tarihi", false, "readonly", [div.demandInfos_inputs]],
-        ["textarea", "notes", "Notlar", false, "readonly", [div.demandInfos_inputs]],
+        ["input", "text", "yachtType", "Yat Tipi", false, "readonly", [div.formInfos_inputs]],
+        ["input", "text", "yachtName", "Yat Adı", false, "readonly", [div.formInfos_inputs]],
+        ["input", "text", "flag", "Bayrak", false, "readonly", [div.formInfos_inputs]],
+        ["input", "text", "requestedService", "İstenen Servis", false, "readonly", [div.formInfos_inputs]],
+        ["input", "text", "createdDate", "Talep Tarihi", false, "readonly", [div.formInfos_inputs]],
+        ["textarea", "notes", "Notlar", false, "readonly", [div.formInfos_inputs]],
     ];  // for add <input>s and <textarea>s
     const inputIds = {
         nameSurname: "inpt_nameSurname",
@@ -87,7 +55,6 @@ $(function () {
         notes: "txt_notes"
     };  // for populate <input>s and <textarea>s
     let articleIdsAndInfos = {};
-    let formStatus = "Unanswered";
     //#endregion
 
     //#region events
@@ -120,19 +87,9 @@ $(function () {
             populateDemandArticlesAsync);
     })
     slct.article_submenu_display.change(async () => {
-        //#region show/hide anserer infos <div>
-        formStatus = slct.article_submenu_display.val();
-
-        // show
-        if (formStatus == "Accepted"
-            || formStatus == "Rejected")
-            div.answererInfos.removeAttr("hidden");
-
-        // hide
-        else
-            div.answererInfos.attr("hidden", "");
-        //#endregion
-
+        await showOrHideAnswererInfosMenuAsync(
+            slct.article_submenu_display,
+            div.answererInfos);
         await populateDemandArticlesAsync();
     })  // DISABLED
     spn_eventManager.on("click_article", async (_, event) => {
@@ -146,12 +103,13 @@ $(function () {
             div.panelTitle,
             div.senderInfos_inputs,
             div.answererInfos_inputs,
+            div.answererInfos,
+            div.buttons,
             btn.back,
-            formStatus,
             async (infosOfLastClickedArticle) => {
                 //#region set form infos
                 let createdDateInStr = getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.createdDate);
-                
+
                 let formInfos = {
                     yachtName: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtName),
                     yachtType: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtType),
@@ -168,7 +126,7 @@ $(function () {
 
                 //#region populate inputs (DYNAMICALLY)
                 for (let elementName in formInfos)
-                    div.demandInfos_inputs
+                    div.formInfos_inputs
                         .find("#" + inputIds[elementName])
                         .val(formInfos[elementName]);
                 //#endregion
@@ -191,10 +149,10 @@ $(function () {
             div.article_display,
             div.senderInfos,
             div.answererInfos,
-            div.demandInfos,
+            div.formInfos,
             div.senderInfos_inputs,
             div.answererInfos_inputs,
-            div.demandInfos_inputs,
+            div.formInfos_inputs,
             btn.back);
         await alignArticlesToCenterAsync();
     })
@@ -204,14 +162,12 @@ $(function () {
 
     //#region functions
     async function setupPageAsync() {
+        div.panelTitle.append("GÜVENLİK VE KORUMA HİZMETİ TALEBİ");
+        spn.formInfos_formType.append("Talep");
+
         await beforePopulateAsync(300, 580, div.articles);
         await populateDemandArticlesAsync();
         await addInputsToInfoDivsAsync(inputInfos);
-        await populateInfoMessagesAsync({
-            div_senderInfos: ["Şeklin üzerine tıklayarak talebi gönderen personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
-            div_answererInfos: ["Şeklin üzerine tıklayarak talebe cevap veren personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
-            div_demandInfos: ["Şeklin üzerine tıklayarak talep bilgilerini görüntüleyebilir veya gizleyebilirsin.",]
-        });
     }
     async function populateDemandArticlesAsync() {
         await populateArticlesAsync(

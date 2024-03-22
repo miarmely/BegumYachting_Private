@@ -1,0 +1,499 @@
+﻿@{
+	#region get claim infos
+	var claimInfos = new Dictionary<string, string>();
+	var ignoredClaimTypes = new string[] { "iss", "aud" };  // iss: issue | aud: audience
+
+	foreach(var claim in Context.User.Claims)
+		// don't get ignored claim types
+		if(!ignoredClaimTypes.Contains(claim.Type))
+			claimInfos[claim.Type] = claim.Value;
+	#endregion
+
+	var serializedClaimInfos = Json.Serialize(claimInfos);
+}
+
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Begüm Yachting</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="keywords" content="Begüm Yachting Admin Panel">	
+
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap">
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="~/css/bootstrap.min.css" >
+		<link rel='stylesheet' href="~/css/style.css"  type='text/css' />
+		<link rel="stylesheet" href="~/css/style-responsive.css" />
+		<link rel="stylesheet" href="~/css/miar_mainLayout.css"/>
+		<link rel="stylesheet" href="~/css/miar_form.css" />
+		<link rel="stylesheet" href="~/css/miar_module.article.css"/>
+		<link rel="stylesheet" href="~/css/miar_module.pagination.css" />
+		<link rel="stylesheet" href="~/css/miar_module.userForm.css" />
+
+		<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+		<script src="~/js/jquery2.0.3.min.js"></script>
+	</head>
+	<body>
+		<section id="container">
+			@*page menubar*@
+			<header class="header fixed-top clearfix">
+				@*logo*@
+				<div class="brand">
+					<a href="/userDisplay" class="logo">
+						<img id="img_begumLogo" src="~/images/begumLogo2.png"/>
+					</a>
+					<div class="sidebar-toggle-box">
+						<div id="div_sidebarMenuButton" class="fa fa-bars"></div>
+					</div>
+				</div>
+				
+				@*menubar*@
+				<div class="top-nav clearfix">
+					<ul class="nav pull-right top-menu">
+						<!-- search bar start -->
+						@*<li>
+							<input id="inpt_searchBar" type="text" class="form-control search" />
+						</li>*@
+						<!-- search bar end -->
+						@*notifications*@
+						@*<li class="dropdown">
+							<a data-toggle="dropdown" class="dropdown-toggle" href="#">
+								<img src="/images/notification.png"/>
+								<span class="username">Bildirimler</span>
+								<b class="caret"></b>
+							</a>
+							<ul id="ul_notification" class="dropdown-menu extended"></ul>
+						</li>*@
+						@*role name *@
+						<li class="dropdown">
+							<a data-toggle="dropdown" class="dropdown-toggle" href="#">
+								<img src="/images/admin.png"/>
+								<span id="spn_roleName" class="username">ADMIN</span>
+							</a>
+						</li>
+						@*user*@
+						<li class="dropdown">
+							<a data-toggle="dropdown" class="dropdown-toggle" href="#">
+								<img src="/images/user.png"/>
+								<span id="spn_username" class="username"></span>
+								<b class="caret"></b>
+							</a>
+							<ul id="ul_profileOptions" class="dropdown-menu extended logout">
+								@*profile*@
+								<li>
+									<a href="/userProfile"> <i class="fa fa-user"></i>Profil</a>
+								</li>
+								@*logout*@
+								<li>
+									<a id="a_logout" href="/logout"> <i class="fa fa-close"></i>Çıkış Yap</a>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</header>
+			
+			@*sidebar menu*@
+			<aside>
+				<div id="sidebar" class="nav-collapse">
+					<div class="leftside-navigation">
+						<ul class="sidebar-menu">
+							@*homepage*@
+							@*
+							<li>
+								<a href="/homepage">
+									<i class="fa fa-settings"></i>
+									<span>Anasayfa</span>
+								</a>
+							</li>
+							*@
+							
+							@*users*@
+							<li id="li_user_create" class="li_dropdown">
+								<a href="#">
+									<i class="fa fa-settings"></i>
+									<span>Kullanıcılar</span>
+									<b class="caret"></b>
+								</a>
+							</li>
+							<li id="li_user_create_submenu" class="li_submenu" hidden>
+								<ul>
+									<li>
+										<a href="/userCreate">
+											<i class="fa fa-settings"></i>
+											<span>Yeni Kullanıcı</span>
+										</a>
+									</li>
+									<li>
+										<a href="/userDisplay">
+											<i class="fa fa-settings"></i>
+											<span>Kayıtlı Kullanıcılar</span>
+										</a>
+									</li>
+								</ul>
+							</li>
+					
+							@*orders*@
+							<li id="li_orders" class="li_dropdown">
+								<a href="#">
+									<i class="fa fa-settings"></i>
+									<span>Siparişler</span>
+									<b class="caret"></b>
+								</a>
+							</li>
+							<li id="li_orders_submenu" class="li_submenu" hidden>
+								<ul>
+									<li>
+										<a href="/provisionOrder">
+											<i class="fa fa-settings"></i>
+											<span>Genel Sipariş</span>
+										</a>
+									</li>
+									<li>
+										<a href="/flowerOrder">
+											<i class="fa fa-settings"></i>
+											<span>Çiçek Siparişi</span>
+										</a>
+									</li>
+									<li>
+										<a href="/technicalAssistanceAndSparePartOrder">
+											<i class="fa fa-settings"></i>
+											<span>Teknik Yardım / Yedek Parça</span>
+										</a>
+									</li>
+								</ul>
+							</li>
+							
+							@*demands*@
+							<li id="li_demands" class="li_dropdown">
+								<a href="#">
+									<i class="fa fa-settings"></i>
+									<span>Talepler</span>
+									<b class="caret"></b>
+								</a>
+							</li>
+							<li id="li_demands_submenu" class="li_submenu" hidden>
+								<ul>
+									<li>
+										<a href="/fuelPurchaseDemand">
+											<i class="fa fa-settings"></i>
+											<span>Yakıt Alma</span>
+										</a>
+									</li>
+									<li>
+										<a href="/checkinAndCheckoutDemand">
+											<i class="fa fa-settings"></i>
+											<span>Yat Giriş / Çıkış İşlemleri</span>
+										</a>
+									</li>
+									<li>
+										<a href="/berthReservationDemand">
+											<i class="fa fa-settings"></i>
+											<span>Marina Rezervasyonu</span>
+										</a>
+									</li>
+									<li>
+										<a href="/vipTransferDemand">
+											<i class="fa fa-settings"></i>
+											<span>VIP Transfer</span>
+										</a>
+									</li>
+									<li>
+										<a href="/excursionDemand">
+											<i class="fa fa-settings"></i>
+											<span>Gezi İsteği</span>
+										</a>
+									</li>
+									<li>
+										<a href="/conciergeServiceDemand">
+											<i class="fa fa-settings"></i>
+											<span>Konsiyerj Hizmeti</span>
+										</a>
+									</li>
+									<li>
+										<a href="/securityAndProtectionServiceDemand">
+											<i class="fa fa-settings"></i>
+											<span>Güvenlik Ve Koruma Hizmeti</span>
+										</a>
+									</li>
+								</ul>
+							</li>
+
+						</ul>
+					</div>
+				</div>
+			</aside>
+			
+			@*main content*@
+			<section id="main-content">
+				<span id="spn_eventManager"></span>
+				
+				@*main content*@
+				<section class="wrapper">
+					<div class="table-agile-info">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<div id="div_backButton" style="float:right" hidden>
+									<button id="btn_back" type="button" class="btn">
+										<img src="~/images/close.png" alt="close"/>
+									</button>
+								</div>
+								<div id="div_panelTitle"></div>
+							</div>
+							<div class="panel-body">
+								<div id="div_article_update" hidden>
+									<form>
+										<div id="div_form" class="form-horizontal bucket-form">                    
+											@*display sender infos*@
+											<div id="div_senderInfos" class="form-group text-center  div_infos">
+												<div class="col-sm-3"></div>
+												<div class="col-sm-6  div_infos_button">
+													<img src="~/images/captain2.png"/>
+													<h4>Gönderenin Bilgilerini <span class="spn_action">Görüntüle</span></h4>
+												</div>
+												<div class="col-sm-3"></div>
+												<div class="col-sm-3 text-left div_infoMessage">
+													<button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+													<ul role="menu" class="dropdown-menu">
+														<li>* Şeklin üzerine tıklayarak talebi gönderen personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.</li>
+													</ul>
+												</div>   
+											</div>
+											<div id="div_senderInfos_inputs" class="div_infos_inputs" hidden></div>
+
+											@*display answerer infos*@
+											<div id="div_answererInfos" class="form-group text-center  div_infos" hidden>
+												<div class="col-sm-3"></div>
+												<div class="col-sm-6  div_infos_button">
+													<img src="~/images/answerer_man2.png">
+													<h4>Cevaplayanın Bilgilerini <span class="spn_action">Görüntüle</span></h4>
+												</div>
+												<div class="col-sm-3"></div>
+												<div class="col-sm-3 text-left div_infoMessage">
+													<button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+													<ul role="menu" class="dropdown-menu">
+														<li>* Şeklin üzerine tıklayarak talebe cevap veren personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.</li>
+													</ul>
+												</div>   
+											</div>
+											<div id="div_answererInfos_inputs" class="div_infos_inputs" hidden></div>
+
+											@*display form infos*@
+											<div id="div_formInfos" class="form-group text-center  div_infos">
+												<div class="col-sm-3"></div>
+												<div class="col-sm-6  div_infos_button">
+													<img src="~/images/demandForm3.png"/>
+													<h4><span id="spn_formInfos_formType">Talep</span> Bilgilerini <span class="spn_action">Görüntüle</span></h4>
+												</div>
+												<div class="col-sm-3"></div>
+												<div class="col-sm-3 text-left div_infoMessage">
+													<button type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"></button>
+													<ul role="menu" class="dropdown-menu">
+														<li>* Şeklin üzerine tıklayarak form bilgilerini görüntüleyebilir veya gizleyebilirsin.</li>
+													</ul>
+												</div>   
+											</div>
+											<div id="div_formInfos_inputs" class="div_infos_inputs" hidden></div>
+                        
+											@*accept and reject buttons*@
+											<div id="div_buttons" class="form-group">
+												<div class="col-sm-6; text-center">
+													<button id="btn_accept" type="button" class="btn">Onayla</button>
+													<button id="btn_reject" type="button" class="btn">Reddet</button>
+												</div>
+											</div>
+										</div>
+									</form>
+
+									@*result label*@
+									<div style="text-align:center">
+										<p id="p_resultLabel"></p>
+										<img id="img_loading" src="~/images/loading.gif" style="width:40px; height:40px" hidden/>
+									</div>
+								</div>
+								<div id="div_article_display">
+									@*article menubar*@
+									<div class="row w3-res-tb"  style="padding-top:10px">
+										<div class="col-sm-5 m-b-xs">
+											@*main menu*@
+											<select id="slct_article_menu" class="input-sm form-control w-sm inline v-middle" style="float:left">
+												<option value="display">Görüntüle</option>
+												@*<option value="delete">Sil</option>*@
+											</select>
+
+											@*submenu of display menu*@
+											<div>
+												<select id="slct_article_submenu_display" class="input-sm form-control w-sm inline v-middle">
+													<option value="Unanswered" checked>Cevaplanmamış</option>
+													<option value="Accepted">Kabul Edilen</option>
+													<option value="Rejected">Reddedilen</option>
+												</select>
+											</div>
+
+											@*apply button for delete mode (DISABLED)*@
+											<div id="div_menubar_button" hidden>
+												<button id="btn_menubar_apply" class="btn btn-sm btn_menubar_apply ">Uygula</button>
+											</div>
+										</div>
+										<div class="col-sm-4"></div> @*for whitespace*@
+										@*search bar*@
+										@*<div class="col-sm-3">
+											<div class="input-group">
+												<input type="text" class="input-sm form-control" placeholder="Ara">
+												<span class="input-group-btn">
+													<button class="btn btn-sm btn-default" type="button">
+														Ara
+													</button>
+												</span>
+											</div>
+										</div>*@
+										@*/search bar*@
+									</div>
+
+									@*articles*@
+									<div id="div_articles" class="div_articles">
+									</div>
+
+									@*entity count and pagination buttons*@
+									<footer class="panel-footer">
+										<div class="row">
+											@*entity quantity*@
+											<div class="col-sm-5 text-left">
+												<small id="small_entityQuantity" class="text-muted inline m-t-sm m-b-s"><b>0/0</b> Talep Görüntüleniyor</small>
+											</div>
+                        
+											@*pagination buttons*@
+											<div class="col-sm-7 text-right text-center-xs">                
+												<ul id="ul_pagination" class="pagination pagination-sm m-t-rowNone m-b-rowNone">
+													@*info message*@
+													<li>
+														<a id="a_infoMessage" class="paginationButtons" href="#" style="border-width:0px">
+															<div class="div_infoMessage">
+																<input type="button" tabindex="-1" data-toggle="dropdown" class="dropdown-toggle"/>
+																<ul role="menu" class="dropdown-menu">
+																	<li>* Girilen sayfa numarasını açmak için "Enter" tuşuna veya "/" sembolüne tıklanmalıdır.</li>
+																</ul>
+															</div>          
+														</a>
+													</li>
+													<li>
+														<a id="a_paginationBack" class="paginationButtons" href="#" hidden>
+															<i class="fa fa-chevron-left"></i>
+														</a>
+													</li>
+													<li>
+														<a id="a_paginationCurrent" class="paginationButtons" href="#">
+															<input type="number" min="1" value="1"/>
+														</a>
+													</li>
+													<li>
+														<a id="a_separator" class="paginationButtons" href="#" disabled>/</a>
+													</li>
+													<li>
+														<a id="a_paginationLast" class="paginationButtons" href="#" disabled></a>
+													</li>
+													<li>
+														<a id="a_paginationNext" class="paginationButtons" href="#" hidden>
+															<i class="fa fa-chevron-right"></i>
+														</a>
+													</li>
+												</ul>
+											</div>
+										</div>
+									</footer>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					@RenderBody()
+				</section>
+				
+				@*footer*@
+				<div class="footer">
+					<div class="wthree-copyright">
+						<p>
+							<span id="spn_footerInfo">© 2024 Tüm hakları saklıdır. | Designed by </span>
+							<a href="https://mostidea.com.tr">MostIdea</a>
+						</p>
+					</div>
+				</div>
+			</section>
+		</section>
+
+		<script>
+			const baseApiUrl = "https://localhost:7272";  // for local
+			//const baseApiUrl = "http://192.168.200.1:5553"  // for iis in my pc
+			//const baseApiUrl = "http://104.247.163.183:5553"  // for iis in real server
+			const language = "TR";
+			const accountInfos = @serializedClaimInfos;
+			const jwtToken = "Bearer " + accountInfos.token;  // get token from claims	
+			const resultLabel_errorColor = "red";
+			const resultLabel_successColor = "rgb(16, 155, 16)";  // green
+			const spn_eventManager = $("#spn_eventManager");
+			const localKeys = {
+				accountInfos: "accountInfos",
+				username: "username",
+				roleNames: "roleNames"
+			}
+			const headerKeys = {
+				demand: {
+					fuelPurchase: "Demand-FuelPurchase",
+					checkinAndCheckout: "Demand-CheckinAndCheckout",
+					berthReservation: "Demand-BerthReservation",
+					vipTransfer: "Demand-VipTransfer",
+					excursion: "Demand-Excursion",
+					conciergeService: "Demand-ConciergeService",
+					securityAndProtectionService: "Demand-SecurityAndProtectionService"
+				},
+				order: {
+					provision: "Order-Provision",
+					flower: "Order-Flower",
+					technicalAssistanceAndSparePart: "Order-TechnicalAssistanceAndSparePart"
+				}
+			};
+			const criticalSectionIds = {
+				sidebarMenuButton: "sidebarMenuButton",
+				window: "window",
+			}
+			const ul_pagination = $("#ul_pagination");
+			const p_resultLabel = $("#p_resultLabel");
+			const div = {
+				article_update: $("#div_article_update"),
+				article_display: $("#div_article_display"),
+				articles: $("#div_articles"),
+				sidebarMenuButton: $("#div_sidebarMenuButton"),
+				senderInfos: $("#div_senderInfos"),
+				answererInfos: $("#div_answererInfos"),
+				formInfos: $("#div_formInfos"),
+				backButton: $("#div_backButton"),
+				panelTitle: $("#div_panelTitle"),
+				senderInfos_inputs: $("#div_senderInfos_inputs"),
+				answererInfos_inputs: $("#div_answererInfos_inputs"),
+				formInfos_inputs: $("#div_formInfos_inputs"),
+				buttons: $("#div_buttons")
+			};
+			const btn = {
+				back: $("#btn_back")
+			};
+			const lbl = {
+				entityQuantity: $("#small_entityQuantity")
+			};
+			const slct = {
+				article_submenu_display: $("#slct_article_submenu_display")
+			};
+			const spn = {
+				formInfos_formType: $("#spn_formInfos_formType")
+			}
+		</script>
+		<script type="module" src="~/js/miar_mainLayout.js"></script>
+		<script src="~/js/bootstrap.js"></script>
+		<script src="~/js/jquery.dcjqaccordion.2.7.js"></script>
+		<script src="~/js/scripts.js"></script>
+		<script src="~/js/jquery.slimscroll.js"></script>
+		<script src="~/js/jquery.nicescroll.js"></script>
+		<script src="~/js/jquery.scrollTo.js"></script>
+	</body>
+</html>

@@ -10,20 +10,35 @@
 
 
 /*//////////// UPDATE PAGE ////////////*/
-#btn_accept {
-    background-color: forestgreen;
-}
-
-#btn_reject {
-}
-
 #txt_notes {
     min-height: 200px;
     max-height: 500px;
     resize: vertical;
 }
 
-#div_form{
+#btn_accept {
+    background-color: forestgreen;
+}
+
+#btn_reject {
+    background-color: red;
+}
+
+#div_buttons {
+    margin-top: 50px;
+}
+
+    #div_buttons button {
+        color: white;
+        border-radius: 40px;
+        min-width: 80px;
+    }
+
+        #div_buttons button:hover {
+            font-weight: bolder;
+        }
+
+#div_form {
     padding-top: 20px;
 }
 
@@ -67,14 +82,8 @@
     border-color: #EA7A13;
 }
 
-#div_demandInfos .div_infos_button,
-#div_orderInfos .div_infos_button
-{
+#div_formInfos .div_infos_button{
     border-color: #00CAAD
-}
-
-#div_buttons {
-    margin-top: 50px
 }
 
 #slct_article_submenu_display {

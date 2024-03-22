@@ -9,8 +9,7 @@ import {
 } from "./miar_module.article.js";
 
 import {
-    addValueToPaginationLastButtonAsync, controlPaginationBackAndNextButtonsAsync,
-    pagingBuffer, setPagingBufferAsync
+    controlPaginationButtonsAsync, pagingBuffer, setPagingBufferAsync
 } from "./miar_module.pagination.js";
 
 import { convertStrUtcDateToStrLocalDateAsync } from "./miar_module.date.js";
@@ -18,6 +17,7 @@ import { convertStrUtcDateToStrLocalDateAsync } from "./miar_module.date.js";
 
 //#region variables
 export let infosOfLastClickedArticle = {};
+export let formStatus = "Unanswered";  // Unanswered | Accepted | Rejected
 const path = {
     loadingImage: "./images/loading.gif",
     questionImage: "./images/question.png"
@@ -30,15 +30,19 @@ export async function resize_windowAsync(
     criticalSectionId
 ) {
     //#region when display page is open
-    if (div_article_display.attr("hidden") == null)
+    if (div_article_display.attr("hidden") == null
+        && articleBuffer.totalArticleCount > 0) // when any article is exists
         await addCriticalSectionAsync(
             criticalSectionId,
             async () => {
-                await controlArticleWidthAsync();
-                await alignArticlesToCenterAsync("px");
-                await setHeightOfArticlesDivAsync();
+                // when article page is still open
+                if (div_article_display.attr("hidden") == null) {
+                    await controlArticleWidthAsync();
+                    await alignArticlesToCenterAsync("px");
+                    await setHeightOfArticlesDivAsync();
+                }
             },
-            500);
+            1000);
     //#endregion
 }
 export async function click_InfoDivAsync(event) {
@@ -54,7 +58,7 @@ export async function click_InfoDivAsync(event) {
     if (div_infos_inputs.attr("hidden") == null) {
         div_infos_inputs.attr("hidden", "");
         updateElementText(
-            div_infos_button.children("h4").children("span"),
+            div_infos_button.children("h4").children(".spn_action"),
             "Görüntüle");
     }
     //#endregion
@@ -70,7 +74,7 @@ export async function click_InfoDivAsync(event) {
         // show inputs
         div_infos_inputs.removeAttr("hidden");
         updateElementText(
-            div_infos_button.children("h4").children("span"),
+            div_infos_button.children("h4").children("spn_action"),
             "Gizle");
     }
     //#endregion
@@ -83,7 +87,7 @@ export async function click_backButtonAsync(
     div_article_display,
     div_senderInfos,
     div_answererInfos,
-    div_demandInfos,
+    div_formInfos,
     div_senderInfos_inputs,
     div_answererInfos_inputs,
     formInfos_inputs,
@@ -94,7 +98,7 @@ export async function click_backButtonAsync(
         div_backButton,
         div_panelTitle,
         btn_back);
-   
+
     //#region reset info <div>s
     // hide input <div>s
     div_senderInfos_inputs.attr("hidden", "");
@@ -109,7 +113,7 @@ export async function click_backButtonAsync(
         div_answererInfos.find("h4 span"),
         "Görüntüle");
     updateElementText(
-        div_demandInfos.find("h4 span"),
+        div_formInfos.find("h4 span"),
         "Görüntüle");
     //#endregion
 
@@ -132,9 +136,10 @@ export async function click_articleAsync(
     div_panelTitle,
     div_senderInfos_inputs,
     div_answererInfos_inputs,
+    div_answererInfos,
+    div_buttons,
     btn_back,
-    formStatus = "Unanswered|Accepted|Rejected",
-    func_populateDemandInfosAsync = (infosOfLastClickedArticle) => { }
+    func_populateFormInfosAsync = (infosOfLastClickedArticle) => { }
 ) {
     //#region save clicked article infos
     window.scrollTo(0, 0);  // take scroll to start of page
@@ -147,11 +152,18 @@ export async function click_articleAsync(
 
     //#region populate answerer infos
     if (formStatus == "Accepted"
-        || formStatus == "Rejected")
+        || formStatus == "Rejected"
+    ) {
+        //#region prepare update page
+        div_answererInfos.removeAttr("hidden");  // show "answerer infos" option
+        div_buttons.attr("hidden", "");  // hide "accept" and "reject" buttons
+        //#endregion
+
         await populateAnswererInfosByAnswererIdAsync(inputIds, div_answererInfos_inputs);
+    }
     //#endregion
 
-    await func_populateDemandInfosAsync(infosOfLastClickedArticle);
+    await func_populateFormInfosAsync(infosOfLastClickedArticle);
 
     //#region show article update page
     div_article_display.attr("hidden", "");
@@ -161,17 +173,19 @@ export async function click_articleAsync(
     await showOrHideBackButtonAsync(div_backButton, div_panelTitle, btn_back);
 }
 export async function click_sidebarMenuAsync(div_article_display, criticalSectionId) {
-    await addCriticalSectionAsync(
-        criticalSectionId,
-        async () => {
-            // when article page is open
-            if (div_article_display.attr("hidden") == null) {
-                await controlArticleWidthAsync();
-                await alignArticlesToCenterAsync("px");
-                await setHeightOfArticlesDivAsync()
-            }
-        },
-        500);
+    if (div_article_display.attr("hidden") == null
+        && articleBuffer.totalArticleCount > 0)  // when any article is exists
+        await addCriticalSectionAsync(
+            criticalSectionId,
+            async () => {
+                // when article page is still open
+                if (div_article_display.attr("hidden") == null) {
+                    await controlArticleWidthAsync();
+                    await alignArticlesToCenterAsync("px");
+                    await setHeightOfArticlesDivAsync()
+                }
+            },
+            500);
 }
 //#endregion
 
@@ -393,18 +407,30 @@ export async function populateArticlesAsync(
                         lbl_entityQuantity,
                         pagingBuffer.infosInHeader.CurrentPageCount + "/" + pagingBuffer.pageSize
                     );
-                    await addValueToPaginationLastButtonAsync(
-                        pagingBuffer.infosInHeader.TotalPage);
-                    await controlPaginationBackAndNextButtonsAsync(pagingBuffer.infosInHeader);
+                    await controlPaginationButtonsAsync();
                     await func_declareEventsAsync();
                 })
             },
             error: () => {
-                addMsgWithImgToDivArticlesAsync(
-                    path.questionImage,
-                    "Talep Bulunamadı",
-                    "Talep Bulunamadı"
-                );
+                new Promise(async resolve => {
+                    await setArticleBufferAsync({
+                        totalArticleCount: 0  // for if i resize window size
+                    })
+                    await addMsgWithImgToDivArticlesAsync(
+                        path.questionImage,
+                        "Talep Bulunamadı",
+                        "Talep Bulunamadı"
+                    );
+                    await updateEntityQuantityAsync(
+                        lbl_entityQuantity,
+                        0 + "/" + pagingBuffer.pageSize);
+                    await setPagingBufferAsync({
+                        infosInHeader: null
+                    });
+                    await controlPaginationButtonsAsync();
+
+                    resolve();
+                })
             },
             complete: () => {
                 resolve();
@@ -587,6 +613,22 @@ export async function resetDivArticlesAsync() {
     // reset "Loading..." message from div
     articleBuffer.div_articles.empty();
     articleBuffer.div_articles.removeAttr("style");
+}
+export async function showOrHideAnswererInfosMenuAsync(
+    slct_article_submenu_display,
+    div_answererInfos) {
+    //#region show
+    formStatus = slct_article_submenu_display.val();
+
+    if (formStatus == "Accepted"
+        || formStatus == "Rejected")
+        div_answererInfos.removeAttr("hidden");
+    //#endregion
+
+    //#region hide
+    else
+        div_answererInfos.attr("hidden", "");
+    //#endregion
 }
 export function getDefaultValueIfValueNullOrEmpty(value) {
     return value == null || value == "" ?

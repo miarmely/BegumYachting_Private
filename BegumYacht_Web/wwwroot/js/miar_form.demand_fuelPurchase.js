@@ -5,7 +5,7 @@ import { addCriticalSectionAsync, shiftTheChildDivToBottomOfParentDivAsync } fro
 import {
     addImageToArticleAsync, beforePopulateAsync, click_articleAsync, resize_windowAsync,
     click_backButtonAsync, click_InfoDivAsync, getDefaultValueIfValueNullOrEmpty,
-    populateArticlesAsync, addInputsToInfoDivsAsync, click_sidebarMenuAsync,
+    populateArticlesAsync, addInputsToInfoDivsAsync, click_sidebarMenuAsync, formStatus, showOrHideAnswererInfosMenuAsync,
 } from "./miar_form.js"
 
 import {
@@ -21,36 +21,6 @@ import {
 
 $(function () {
     //#region variables
-    const ul_pagination = $("#ul_pagination");
-    const p_resultLabel = $("#p_resultLabel");
-    const criticalSectionIds = {
-        sidebarMenuButton: "sidebarMenuButton",
-        window: "window",
-        backButton: "backButton"
-    }
-    const div = {
-        article_update: $("#div_article_update"),
-        article_display: $("#div_article_display"),
-        articles: $("#div_articles"),
-        sidebarMenuButton: $("#div_sidebarMenuButton"),
-        senderInfos: $("#div_senderInfos"),
-        answererInfos: $("#div_answererInfos"),
-        demandInfos: $("#div_demandInfos"),
-        backButton: $("#div_backButton"),
-        panelTitle: $("#div_panelTitle"),
-        senderInfos_inputs: $("#div_senderInfos_inputs"),
-        answererInfos_inputs: $("#div_answererInfos_inputs"),
-        demandInfos_inputs: $("#div_demandInfos_inputs"),
-    };
-    const btn = {
-        back: $("#btn_back")
-    };
-    const lbl = {
-        entityQuantity: $("#small_entityQuantity")
-    };
-    const slct = {
-        article_submenu_display: $("#slct_article_submenu_display")
-    };
     const inputInfos = [
         ["input", "text", "nameSurname", "Ad Soyad", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],  // type for switch/case | type for switch/case | type for input | id | label name | info message | hidden/disabled/readonly of input | place to add
         ["input", "text", "phone", "Telefon", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
@@ -61,18 +31,18 @@ $(function () {
         ["input", "text", "nationality", "Uyruk", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
         ["input", "text", "gender", "Cinsiyet", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
         ["input", "text", "answeredDate", "Cevaplanma Tarihi", false, "readonly", [div.answererInfos_inputs]],
-        ["input", "text", "yachtType", "Yat Tipi", false, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "yachtName", "Yat Adı", false, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "flag", "Bayrak", false, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "isDutyPaid", "Gümrüklü Mü", false, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "mgo", "MGO", false, "readonly", [div.demandInfos_inputs]],  // marine gas oil
-        ["input", "text", "ago", "AGO", false, "readonly", [div.demandInfos_inputs]],  // automotive gas oil
-        ["input", "text", "fuelType", "Yakıt Tipi", false, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "requestedFuel", "İstenen Yakıt Miktarı (L)", false, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "fuelSupplyPort", "Yakıt İkmal Yeri", false, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "fuelSupplyDate", "Yakıt İkmal Tarihi", false, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "createdDate", "Talep Tarihi", false, "readonly", [div.demandInfos_inputs]],
-        ["textarea", "notes", "Notlar", false, "readonly", [div.demandInfos_inputs]]  // type for switch/case | id | label name | info message | hidden/disabled/readonly of input | place to add
+        ["input", "text", "yachtType", "Yat Tipi", false, "readonly", [div.formInfos_inputs]],
+        ["input", "text", "yachtName", "Yat Adı", false, "readonly", [div.formInfos_inputs]],
+        ["input", "text", "flag", "Bayrak", false, "readonly", [div.formInfos_inputs]],
+        ["input", "text", "isDutyPaid", "Gümrüklü Mü", false, "readonly", [div.formInfos_inputs]],
+        ["input", "text", "mgo", "MGO", false, "readonly", [div.formInfos_inputs]],  // marine gas oil
+        ["input", "text", "ago", "AGO", false, "readonly", [div.formInfos_inputs]],  // automotive gas oil
+        ["input", "text", "fuelType", "Yakıt Tipi", false, "readonly", [div.formInfos_inputs]],
+        ["input", "text", "requestedFuel", "İstenen Yakıt Miktarı (L)", false, "readonly", [div.formInfos_inputs]],
+        ["input", "text", "fuelSupplyPort", "Yakıt İkmal Yeri", false, "readonly", [div.formInfos_inputs]],
+        ["input", "text", "fuelSupplyDate", "Yakıt İkmal Tarihi", false, "readonly", [div.formInfos_inputs]],
+        ["input", "text", "createdDate", "Talep Tarihi", false, "readonly", [div.formInfos_inputs]],
+        ["textarea", "notes", "Notlar", false, "readonly", [div.formInfos_inputs]]  // type for switch/case | id | label name | info message | hidden/disabled/readonly of input | place to add
     ];
     const inpt_id = {
         nameSurname: "inpt_nameSurname",
@@ -100,7 +70,6 @@ $(function () {
         notes: "txt_notes"
     }
     let articleIdsAndInfos = {};
-    let formStatus = "Unanswered";
     //#endregion
 
     //#region events
@@ -133,18 +102,9 @@ $(function () {
             populateFuelPurchaseArticlesAsync);
     })
     slct.article_submenu_display.change(async () => {
-        //#region show/hide anwerer infos <div>
-        // show
-        formStatus = slct.article_submenu_display.val();
-        if (formStatus == "Accepted"
-            || formStatus == "Rejected")
-            div.answererInfos.removeAttr("hidden");
-
-        // hide
-        else  // when it is "Unanswered"
-            div.answererInfos.attr("hidden", "");
-        //#endregion
-
+        await showOrHideAnswererInfosMenuAsync(
+            slct.article_submenu_display,
+            div.answererInfos);
         await populateFuelPurchaseArticlesAsync();
     })
     spn_eventManager.on("click_article", async (_, event) => {
@@ -158,30 +118,31 @@ $(function () {
             div.panelTitle,
             div.senderInfos_inputs,
             div.answererInfos_inputs,
+            div.answererInfos,
+            div.buttons,
             btn.back,
-            formStatus,
             async (infosOfLastClickedArticle) => {
-                div.demandInfos_inputs.find("#" + inpt_id.yachtName).val(
+                div.formInfos_inputs.find("#" + inpt_id.yachtName).val(
                     getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtName));
-                div.demandInfos_inputs.find("#" + inpt_id.yachtType).val(
+                div.formInfos_inputs.find("#" + inpt_id.yachtType).val(
                     getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtType));
-                div.demandInfos_inputs.find("#" + inpt_id.flag).val(
+                div.formInfos_inputs.find("#" + inpt_id.flag).val(
                     getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.flag));
-                div.demandInfos_inputs.find("#" + inpt_id.isDutyPaid).val(infosOfLastClickedArticle.isDutyPaid);
-                div.demandInfos_inputs.find("#" + inpt_id.mgo).val(infosOfLastClickedArticle.mgo);
-                div.demandInfos_inputs.find("#" + inpt_id.ago).val(infosOfLastClickedArticle.ago);
-                div.demandInfos_inputs.find("#" + inpt_id.fuelType).val(infosOfLastClickedArticle.fuelType);
-                div.demandInfos_inputs.find("#" + inpt_id.requestedFuel).val(infosOfLastClickedArticle.requestedFuel);
-                div.demandInfos_inputs.find("#" + inpt_id.fuelSupplyPort).val(infosOfLastClickedArticle.fuelSupplyPort);
-                div.demandInfos_inputs.find("#" + inpt_id.fuelSupplyDate).val(
+                div.formInfos_inputs.find("#" + inpt_id.isDutyPaid).val(infosOfLastClickedArticle.isDutyPaid);
+                div.formInfos_inputs.find("#" + inpt_id.mgo).val(infosOfLastClickedArticle.mgo);
+                div.formInfos_inputs.find("#" + inpt_id.ago).val(infosOfLastClickedArticle.ago);
+                div.formInfos_inputs.find("#" + inpt_id.fuelType).val(infosOfLastClickedArticle.fuelType);
+                div.formInfos_inputs.find("#" + inpt_id.requestedFuel).val(infosOfLastClickedArticle.requestedFuel);
+                div.formInfos_inputs.find("#" + inpt_id.fuelSupplyPort).val(infosOfLastClickedArticle.fuelSupplyPort);
+                div.formInfos_inputs.find("#" + inpt_id.fuelSupplyDate).val(
                     await convertDateToStrDateAsync(
                         new Date(infosOfLastClickedArticle.fuelSupplyDate),
                         { hours: true, minutes: true, seconds: false }));
-                div.demandInfos_inputs.find("#" + inpt_id.createdDate).val(
+                div.formInfos_inputs.find("#" + inpt_id.createdDate).val(
                     await convertDateToStrDateAsync(
                         new Date(infosOfLastClickedArticle.createdDate),
                         { hours: true, minutes: true, seconds: false }));
-                div.demandInfos_inputs.find("#" + txt_id.notes).val(
+                div.formInfos_inputs.find("#" + txt_id.notes).val(
                     getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.notes));
             }  // populate demand inputs
         );
@@ -201,10 +162,10 @@ $(function () {
             div.article_display,
             div.senderInfos,
             div.answererInfos,
-            div.demandInfos,
+            div.formInfos,
             div.senderInfos_inputs,
             div.answererInfos_inputs,
-            div.demandInfos_inputs,
+            div.formInfos_inputs,
             btn.back);
         await alignArticlesToCenterAsync();
     })
@@ -214,14 +175,12 @@ $(function () {
 
     //#region functions
     async function setupPageAsync() {
+        div.panelTitle.append("YAKIT ALIM TALEBİ");
+        spn.formInfos_formType.append("Talep");
+
         await beforePopulateAsync(300, 550, div.articles);
         await populateFuelPurchaseArticlesAsync();
         await addInputsToInfoDivsAsync(inputInfos);
-        await populateInfoMessagesAsync({
-            div_senderInfos: ["Şeklin üzerine tıklayarak talebi gönderen personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
-            div_answererInfos: ["Şeklin üzerine tıklayarak talebe cevap veren personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
-            div_demandInfos: ["Şeklin üzerine tıklayarak talep bilgilerini görüntüleyebilir veya gizleyebilirsin.",]
-        });
     }
     async function populateFuelPurchaseArticlesAsync() {
         await populateArticlesAsync(
