@@ -5,7 +5,7 @@ import { addCriticalSectionAsync, shiftTheChildDivToBottomOfParentDivAsync } fro
 import {
     addImageToArticleAsync, beforePopulateAsync, click_articleAsync, resize_windowAsync,
     click_backButtonAsync, click_InfoDivAsync, getDefaultValueIfValueNullOrEmpty,
-    populateArticlesAsync, addInputsToInfoDivsAsync, click_sidebarMenuAsync, formStatus, showOrHideAnswererInfosMenuAsync,
+    populateArticlesAsync, addInputsToInfoDivsAsync, click_sidebarMenuAsync, formStatus, showOrHideAnswererInfosMenuByFormStatusAsync, acceptTheFormAsync, infosOfLastClickedArticle,
 } from "./miar_form.js"
 
 import {
@@ -81,9 +81,7 @@ $(function () {
             criticalSectionIds.window);
     })
     div.sidebarMenuButton.click(async () => {
-        await click_sidebarMenuAsync(
-            div.article_display,
-            criticalSectionIds.sidebarMenuButton);
+        await click_sidebarMenuAsync(div.article_display);
     })
     $("#" + inpt_paginationCurrent_id).on("input", async () => {
         await change_inpt_paginationCurrentAsync();
@@ -102,7 +100,7 @@ $(function () {
             populateFuelPurchaseArticlesAsync);
     })
     slct.article_submenu_display.change(async () => {
-        await showOrHideAnswererInfosMenuAsync(
+        await showOrHideAnswererInfosMenuByFormStatusAsync(
             slct.article_submenu_display,
             div.answererInfos);
         await populateFuelPurchaseArticlesAsync();
@@ -146,6 +144,16 @@ $(function () {
                     getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.notes));
             }  // populate demand inputs
         );
+    })
+    btn.accept.click(async () => {
+        await acceptTheFormAsync(
+            "/adminPanel/demand/fuelPurchase/answer",
+            infosOfLastClickedArticle.formId,
+            p_resultLabel,
+            img_loading,
+            inpt_id,
+            div.answererInfos,
+            div.answererInfos_inputs);
     })
     //#endregion
 

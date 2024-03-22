@@ -5,7 +5,7 @@ import { shiftTheChildDivToBottomOfParentDivAsync } from "./miar_module.js"
 import {
     addImageToArticleAsync, beforePopulateAsync, click_articleAsync, resize_windowAsync,
     click_backButtonAsync, click_InfoDivAsync, getDefaultValueIfValueNullOrEmpty,
-    populateArticlesAsync, addInputsToInfoDivsAsync, click_sidebarMenuAsync, showOrHideAnswererInfosMenuAsync, formStatus
+    populateArticlesAsync, addInputsToInfoDivsAsync, click_sidebarMenuAsync, showOrHideAnswererInfosMenuByFormStatusAsync, formStatus
 } from "./miar_form.js"
 
 import {
@@ -72,9 +72,7 @@ $(function () {
             criticalSectionIds.window);
     })
     div.sidebarMenuButton.click(async () => {
-        await click_sidebarMenuAsync(
-            div.article_display,
-            criticalSectionIds.sidebarMenuButton);
+        await click_sidebarMenuAsync(div.article_display);
     })
     $("#" + inpt_paginationCurrent_id).on("input", async () => {
         await change_inpt_paginationCurrentAsync();
@@ -93,7 +91,7 @@ $(function () {
             populateDemandArticlesAsync);
     })
     slct.article_submenu_display.change(async () => {
-        await showOrHideAnswererInfosMenuAsync(
+        await showOrHideAnswererInfosMenuByFormStatusAsync(
             slct.article_submenu_display,
             div.answererInfos);
         await populateDemandArticlesAsync();

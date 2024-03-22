@@ -42,8 +42,22 @@ export async function resize_windowAsync(
                     await setHeightOfArticlesDivAsync();
                 }
             },
-            1000);
+            500);
     //#endregion
+}
+export async function click_sidebarMenuAsync(div_article_display) {
+    if (div_article_display.attr("hidden") == null
+        && articleBuffer.totalArticleCount > 0)  // when any article is exists
+        setTimeout(async () => {
+            //#region when article page is still open
+            if (div_article_display.attr("hidden") == null) {
+                await controlArticleWidthAsync();
+                await alignArticlesToCenterAsync("px");
+                await setHeightOfArticlesDivAsync()
+            }
+            //#endregion
+           
+        }, 500);
 }
 export async function click_InfoDivAsync(event) {
     //#region set variables
@@ -171,21 +185,6 @@ export async function click_articleAsync(
     //#endregion
 
     await showOrHideBackButtonAsync(div_backButton, div_panelTitle, btn_back);
-}
-export async function click_sidebarMenuAsync(div_article_display, criticalSectionId) {
-    if (div_article_display.attr("hidden") == null
-        && articleBuffer.totalArticleCount > 0)  // when any article is exists
-        await addCriticalSectionAsync(
-            criticalSectionId,
-            async () => {
-                // when article page is still open
-                if (div_article_display.attr("hidden") == null) {
-                    await controlArticleWidthAsync();
-                    await alignArticlesToCenterAsync("px");
-                    await setHeightOfArticlesDivAsync()
-                }
-            },
-            500);
 }
 //#endregion
 
@@ -315,7 +314,7 @@ async function answerTheFormAsync(
                     inputIds,
                     div_answererInfos_inputs);
 
-                //#region display answerer infos button
+                //#region show answerer infos menu
                 div_answererInfos.removeAttr("hidden");
                 updateResultLabel(
                     lbl_result,
@@ -323,7 +322,6 @@ async function answerTheFormAsync(
                     resultLabel_successColor,
                     "30px",
                     img_loading);  // write success message
-
                 resolve();
                 //#endregion
             })
@@ -614,7 +612,7 @@ export async function resetDivArticlesAsync() {
     articleBuffer.div_articles.empty();
     articleBuffer.div_articles.removeAttr("style");
 }
-export async function showOrHideAnswererInfosMenuAsync(
+export async function showOrHideAnswererInfosMenuByFormStatusAsync(
     slct_article_submenu_display,
     div_answererInfos) {
     //#region show

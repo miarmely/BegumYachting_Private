@@ -5,7 +5,7 @@ import {
     addImageToArticleAsync, beforePopulateAsync, click_articleAsync,
     click_backButtonAsync, click_InfoDivAsync, getDefaultValueIfValueNullOrEmpty,
     populateArticlesAsync, addInputsToInfoDivsAsync, resize_windowAsync, click_sidebarMenuAsync,
-    showOrHideAnswererInfosMenuAsync, formStatus
+    showOrHideAnswererInfosMenuByFormStatusAsync, formStatus
 } from "./miar_form.js"
 
 import {
@@ -70,9 +70,7 @@ $(function () {
             criticalSectionIds.window);
     })
     div.sidebarMenuButton.click(async () => {
-        await click_sidebarMenuAsync(
-            div.article_display,
-            criticalSectionIds.sidebarMenuButton);
+        await click_sidebarMenuAsync(div.article_display);
     })
     $("#" + inpt_paginationCurrent_id).on("input", async () => {
         await change_inpt_paginationCurrentAsync();
@@ -91,7 +89,7 @@ $(function () {
             populateCheckinAndCheckoutArticlesAsync);
     })
     slct.article_submenu_display.change(async () => {
-        await showOrHideAnswererInfosMenuAsync(
+        await showOrHideAnswererInfosMenuByFormStatusAsync(
             slct.article_submenu_display,
             div.answererInfos);
         await populateCheckinAndCheckoutArticlesAsync();
