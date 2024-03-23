@@ -1,21 +1,23 @@
-﻿import { populateInfoMessagesAsync } from "./miar_module.userForm.js"
-import { convertDateToStrDateAsync, getPassedTimeInStringAsync } from "./miar_module.date.js";
-import { addCriticalSectionAsync, shiftTheChildDivToBottomOfParentDivAsync } from "./miar_module.js"
+﻿import { convertDateToStrDateAsync, getPassedTimeInStringAsync } from "./miar_module.date.js";
+import { shiftTheChildDivToBottomOfParentDivAsync } from "./miar_module.js"
 
 import {
-    addImageToArticleAsync, beforePopulateAsync, click_articleAsync, resize_windowAsync,
+    addImageToArticleAsync, click_articleAsync, resize_windowAsync,
     click_backButtonAsync, click_InfoDivAsync, getDefaultValueIfValueNullOrEmpty,
-    populateArticlesAsync, addInputsToInfoDivsAsync, click_sidebarMenuAsync, formStatus, showOrHideAnswererInfosMenuAndButtonsByFormStatusAsync, acceptTheFormAsync, infosOfLastClickedArticle, rejectTheFormAsync,
+    populateArticlesAsync, addInputsToInfoDivsAsync, click_sidebarMenuAsync,
+    formStatus, showOrHideAnswererInfosMenuAndButtonsByFormStatusAsync,
+    acceptTheFormAsync, infosOfLastClickedArticle, rejectTheFormAsync,
+    setPageSizeAsync
 } from "./miar_form.js"
 
 import {
-    alignArticlesToCenterAsync, art_baseId, controlArticleWidthAsync, div_article_info_id,
-    setHeightOfArticlesDivAsync
+    art_baseId, div_article_info_id, setArticleBufferAsync,
+    getValidArticleWidthAsync
 } from "./miar_module.article.js"
 
 import {
-    change_inpt_paginationCurrentAsync, click_ul_paginationAsync, keyup_ul_paginationAsync,
-    inpt_paginationCurrent_id, pagingBuffer
+    change_inpt_paginationCurrentAsync, click_ul_paginationAsync,
+    keyup_ul_paginationAsync, inpt_paginationCurrent_id, pagingBuffer
 } from "./miar_module.pagination.js"
 
 
@@ -144,30 +146,6 @@ $(function () {
             }  // populate demand inputs
         );
     })
-    btn.accept.click(async () => {
-        await acceptTheFormAsync(
-            "/adminPanel/demand/fuelPurchase/answer",
-            infosOfLastClickedArticle.formId,
-            inpt_id,
-            p_resultLabel,
-            img_loading,
-            div.answererInfos,
-            div.answererInfos_inputs,
-            div.buttons);
-        await populateFuelPurchaseArticlesAsync();
-    })
-    btn.reject.click(async () => {
-        await rejectTheFormAsync(
-            "/adminPanel/demand/fuelPurchase/answer",
-            infosOfLastClickedArticle.formId,
-            inpt_id,
-            p_resultLabel,
-            img_loading,
-            div.answererInfos,
-            div.answererInfos_inputs,
-            div.buttons);
-        await populateFuelPurchaseArticlesAsync();
-    })
     //#endregion
 
     //#region update page
@@ -188,8 +166,30 @@ $(function () {
             div.answererInfos_inputs,
             div.formInfos_inputs,
             div.buttons,
-            btn.back);
-        await alignArticlesToCenterAsync();
+            btn.back,
+            populateFuelPurchaseArticlesAsync);
+    })
+    btn.accept.click(async () => {
+        await acceptTheFormAsync(
+            "/adminPanel/demand/fuelPurchase/answer",
+            infosOfLastClickedArticle.formId,
+            inpt_id,
+            p_resultLabel,
+            img_loading,
+            div.answererInfos,
+            div.answererInfos_inputs,
+            div.buttons);
+    })
+    btn.reject.click(async () => {
+        await rejectTheFormAsync(
+            "/adminPanel/demand/fuelPurchase/answer",
+            infosOfLastClickedArticle.formId,
+            inpt_id,
+            p_resultLabel,
+            img_loading,
+            div.answererInfos,
+            div.answererInfos_inputs,
+            div.buttons);
     })
     //#endregion
 
@@ -200,11 +200,36 @@ $(function () {
         div.panelTitle.append("YAKIT ALIM TALEBİ");
         spn.formInfos_formType.append("Talep");
 
-        await beforePopulateAsync(300, 550, div.articles);
         await populateFuelPurchaseArticlesAsync();
         await addInputsToInfoDivsAsync(inputInfos);
     }
     async function populateFuelPurchaseArticlesAsync() {
+        await setArticleBufferAsync({
+            div_articles: div.articles,
+            articleType: "imageAndText",
+            articleStyle: {
+                "width": await getValidArticleWidthAsync({
+                    width: 300,
+                    marginL: 20,
+                    marginR: 20
+                }, div.articles),
+                "height": 550,
+                "marginT": 10,
+                "marginB": 10,
+                "marginR": 20,
+                "marginL": 20,
+                "paddingT": 10,
+                "paddingB": 10,
+                "paddingR": 10,
+                "paddingL": 10,
+                "border": 1,
+                "borderColor": "#0095ff",
+                "boxShadow": "5px 5px 10px rgba(0, 0, 0, 0.3)",
+                "bgColorForDelete": "red"
+            },
+            heightOfPageMenubar: 80
+        });  // i have to define article buffer before setting the page size.
+        await setPageSizeAsync();
         await populateArticlesAsync(
             "/adminPanel/demand/fuelPurchase/filter?" + (
                 `pageSize=${pagingBuffer.pageSize}` +

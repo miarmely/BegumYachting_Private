@@ -1,11 +1,14 @@
-﻿import { addCriticalSectionAsync, updateElementText, updateResultLabel } from "./miar_module.js";
+﻿import {
+    addCriticalSectionAsync, autoObjectMapperAsync, updateElementText,
+    updateResultLabel
+} from "./miar_module.js";
 import { resetFormAsync, showOrHideBackButtonAsync } from "./miar_module.userForm.js";
 
 import {
     addMsgWithImgToDivArticlesAsync, alignArticlesToCenterAsync,
     alignImageToVerticalCenterAsync, controlArticleWidthAsync, div_article_image_id,
     getArticleCountOnOneRowAsync, setHeightOfArticlesDivAsync, articleBuffer,
-    setArticleBufferAsync, getValidArticleWidthAsync, addArticlesAsync
+    setArticleBufferAsync, addArticlesAsync
 } from "./miar_module.article.js";
 
 import {
@@ -18,9 +21,11 @@ import { convertStrUtcDateToStrLocalDateAsync } from "./miar_module.date.js";
 //#region variables
 export let infosOfLastClickedArticle = {};
 export let formStatus = "Unanswered";  // Unanswered | Accepted | Rejected
+export let isFormAnswered = false;
 const path = {
     loadingImage: "./images/loading.gif",
-    questionImage: "./images/question.png"
+    questionImage: "./images/question.png",
+    checkedImage: "./images/checked.png"
 }
 //#endregion
 
@@ -56,7 +61,7 @@ export async function click_sidebarMenuAsync(div_article_display) {
                 await setHeightOfArticlesDivAsync()
             }
             //#endregion
-           
+
         }, 500);
 }
 export async function click_InfoDivAsync(event) {
@@ -106,7 +111,8 @@ export async function click_backButtonAsync(
     div_answererInfos_inputs,
     div_formInfos_inputs,
     div_buttons,
-    btn_back
+    btn_back,
+    func_populateFormsAsync
 ) {
     await showOrHideBackButtonAsync(
         div_backButton,
@@ -116,13 +122,26 @@ export async function click_backButtonAsync(
     //#region show user display page
     div_article_display.removeAttr("hidden");
     div_article_update.attr("hidden", "");
+
+    //#region when form is answered
+    if (isFormAnswered) {
+        await func_populateFormsAsync();
+        isFormAnswered = false;  // reset
+    }
     //#endregion
 
-    await controlArticleWidthAsync();
-    await alignArticlesToCenterAsync("px");
-    await setHeightOfArticlesDivAsync();
+    //#region when form is not answered
+    else {
+        await controlArticleWidthAsync();
+        await alignArticlesToCenterAsync("px");
+        await setHeightOfArticlesDivAsync();
+    }
+    //#endregion
+
+    //#endregion
+
     await resetFormAsync(lbl_result);
-    
+
     //#region hide inputs of info menus
     // hide input <div>s
     div_senderInfos_inputs.attr("hidden", "");
@@ -266,16 +285,17 @@ export async function acceptTheFormAsync(
     div_answererInfos_inputs,
     div_buttons
 ) {
-    await answerTheFormAsync(
-        specialUrl,
-        formId,
-        "Accepted",
-        inputIds,
-        lbl_result,
-        img_loading,
-        div_answererInfos,
-        div_answererInfos_inputs,
-        div_buttons);
+    if (formStatus == "Unanswered")  // for security
+        await answerTheFormAsync(
+            specialUrl,
+            formId,
+            "Accepted",
+            inputIds,
+            lbl_result,
+            img_loading,
+            div_answererInfos,
+            div_answererInfos_inputs,
+            div_buttons);
 
 }
 export async function rejectTheFormAsync(
@@ -288,16 +308,17 @@ export async function rejectTheFormAsync(
     div_answererInfos_inputs,
     div_buttons
 ) {
-    await answerTheFormAsync(
-        specialUrl,
-        formId,
-        "Rejected",
-        inputIds,
-        lbl_result,
-        img_loading,
-        div_answererInfos,
-        div_answererInfos_inputs,
-        div_buttons);
+    if (formStatus == "Unanswered")  // for security
+        await answerTheFormAsync(
+            specialUrl,
+            formId,
+            "Rejected",
+            inputIds,
+            lbl_result,
+            img_loading,
+            div_answererInfos,
+            div_answererInfos_inputs,
+            div_buttons);
 }
 async function answerTheFormAsync(
     specialUrl,
@@ -330,7 +351,7 @@ async function answerTheFormAsync(
                     response.answeredDate,
                     inputIds,
                     div_answererInfos_inputs);
-                
+
                 //#region show answerer infos and hide buttons
                 div_answererInfos.removeAttr("hidden");
                 div_buttons.attr("hidden", "");
@@ -345,6 +366,8 @@ async function answerTheFormAsync(
                 resolve();
             })
             //#endregion
+
+            isFormAnswered = true;
         },
         error: (response) => {
             // write error message
@@ -359,33 +382,8 @@ async function answerTheFormAsync(
 }
 //#endregion
 
-export async function beforePopulateAsync(articleWidth, articleHeight, div_articles) {
-    await setArticleBufferAsync({
-        div_articles: div_articles,
-        articleType: "imageAndText",
-        articleStyle: {
-            "width": await getValidArticleWidthAsync({
-                width: articleWidth,
-                marginL: 20,
-                marginR: 20
-            }, div_articles),
-            "height": articleHeight,
-            "marginT": 10,
-            "marginB": 10,
-            "marginR": 20,
-            "marginL": 20,
-            "paddingT": 10,
-            "paddingB": 10,
-            "paddingR": 10,
-            "paddingL": 10,
-            "border": 1,
-            "borderColor": "#0095ff",
-            "boxShadow": "5px 5px 10px rgba(0, 0, 0, 0.3)",
-            "bgColorForDelete": "red"
-        },
-        heightOfPageMenubar: 80
-    });  // i have to define article buffer before setting the page size.
-    await setPageSizeAsync();
+export async function setFormBufferAsync(newBuffer) {
+    await autoObjectMapperAsync(formBuffer, newBuffer, false);
 }
 export async function populateArticlesAsync(
     specialUrl,
@@ -430,15 +428,28 @@ export async function populateArticlesAsync(
                 })
             },
             error: () => {
-                new Promise(async resolve => {
+                new Promise(async () => {
                     await setArticleBufferAsync({
                         totalArticleCount: 0  // for if i resize window size
                     })
-                    await addMsgWithImgToDivArticlesAsync(
-                        path.questionImage,
-                        "Talep Bulunamadı",
-                        "Talep Bulunamadı"
-                    );
+
+                    //#region add message with image to div_articles
+                    // add message with "checked" image
+                    if (formStatus == "Unanswered")
+                        await addMsgWithImgToDivArticlesAsync(
+                            path.checkedImage,
+                            "Tüm Formlar Cevaplandı",
+                            "Tüm Formlar Cevaplandı");
+
+                    // add message with "question" image
+                    else
+                        await addMsgWithImgToDivArticlesAsync(
+                            path.questionImage,
+                            "Talep Bulunamadı",
+                            "Talep Bulunamadı"
+                        );
+                    //#endregion
+
                     await updateEntityQuantityAsync(
                         lbl_entityQuantity,
                         0 + "/" + pagingBuffer.pageSize);
@@ -446,8 +457,6 @@ export async function populateArticlesAsync(
                         infosInHeader: null
                     });
                     await controlPaginationButtonsAsync();
-
-                    resolve();
                 })
             },
             complete: () => {
