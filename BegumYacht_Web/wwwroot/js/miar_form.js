@@ -143,7 +143,7 @@ export async function click_backButtonAsync(
     await resetFormAsync(lbl_result);
 
     //#region hide inputs of info menus
-    // hide input <div>s
+    // hide input of all <div>s
     div_senderInfos_inputs.attr("hidden", "");
     div_answererInfos_inputs.attr("hidden", "");
     div_formInfos_inputs.attr("hidden", "");
@@ -158,9 +158,13 @@ export async function click_backButtonAsync(
     updateElementText(
         div_formInfos.find(".spn_action"),
         "Görüntüle");
+
+    // hide answerer infos menu
+    if (formStatus == "Unanswered")
+        div_answererInfos.attr("hidden", "");
     //#endregion
 
-    //#region show form buttons (CONDITION)
+    //#region show form buttons
     if (formStatus == "Unanswered")
         div_buttons.removeAttr("hidden");
     //#endregion

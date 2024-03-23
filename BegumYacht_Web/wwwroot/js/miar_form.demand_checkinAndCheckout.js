@@ -2,14 +2,16 @@
 import { shiftTheChildDivToBottomOfParentDivAsync } from "./miar_module.js"
 
 import {
-    addImageToArticleAsync, beforePopulateAsync, click_articleAsync,
+    addImageToArticleAsync, click_articleAsync,
     click_backButtonAsync, click_InfoDivAsync, getDefaultValueIfValueNullOrEmpty,
     populateArticlesAsync, addInputsToInfoDivsAsync, resize_windowAsync, click_sidebarMenuAsync,
-    showOrHideAnswererInfosMenuAndButtonsByFormStatusAsync, formStatus
+    showOrHideAnswererInfosMenuAndButtonsByFormStatusAsync, formStatus, acceptTheFormAsync,
+    rejectTheFormAsync, infosOfLastClickedArticle, setPageSizeAsync
 } from "./miar_form.js"
 
 import {
-    alignArticlesToCenterAsync, art_baseId, div_article_info_id
+    alignArticlesToCenterAsync, art_baseId, div_article_info_id, getValidArticleWidthAsync,
+    setArticleBufferAsync
 } from "./miar_module.article.js"
 
 import {
@@ -152,8 +154,31 @@ $(function () {
             div.answererInfos_inputs,
             div.formInfos_inputs,
             div.buttons,
-            btn.back);
+            btn.back,
+            populateCheckinAndCheckoutArticlesAsync);
         await alignArticlesToCenterAsync();
+    })
+    btn.accept.click(async () => {
+        await acceptTheFormAsync(
+            "/adminPanel/demand/checkinAndCheckout/answer",
+            infosOfLastClickedArticle.formId,
+            inpt_id,
+            p_resultLabel,
+            img_loading,
+            div.answererInfos,
+            div.answererInfos_inputs,
+            div.buttons);
+    })
+    btn.reject.click(async () => {
+        await rejectTheFormAsync(
+            "/adminPanel/demand/checkinAndCheckout/answer",
+            infosOfLastClickedArticle.formId,
+            inpt_id,
+            p_resultLabel,
+            img_loading,
+            div.answererInfos,
+            div.answererInfos_inputs,
+            div.buttons);
     })
     //#endregion
 
@@ -164,11 +189,36 @@ $(function () {
         div.panelTitle.append("YAT GİRİŞ/ÇIKIŞ TALEBİ");
         spn.formInfos_formType.append("Talep");
 
-        await beforePopulateAsync(300, 400, div.articles);
         await populateCheckinAndCheckoutArticlesAsync();
         await addInputsToInfoDivsAsync(inputInfos);
     }
     async function populateCheckinAndCheckoutArticlesAsync() {
+        await setArticleBufferAsync({
+            div_articles: div.articles,
+            articleType: "imageAndText",
+            articleStyle: {
+                "width": await getValidArticleWidthAsync({
+                    width: 300,
+                    marginL: 20,
+                    marginR: 20
+                }, div.articles),
+                "height": 400,
+                "marginT": 10,
+                "marginB": 10,
+                "marginR": 20,
+                "marginL": 20,
+                "paddingT": 10,
+                "paddingB": 10,
+                "paddingR": 10,
+                "paddingL": 10,
+                "border": 1,
+                "borderColor": "#0095ff",
+                "boxShadow": "5px 5px 10px rgba(0, 0, 0, 0.3)",
+                "bgColorForDelete": "red"
+            },
+            heightOfPageMenubar: 80
+        });  // i have to define article buffer before setting the page size.
+        await setPageSizeAsync();
         await populateArticlesAsync(
             "/adminPanel/demand/checkinAndCheckout/filter?" + (
                 `pageSize=${pagingBuffer.pageSize}` +
