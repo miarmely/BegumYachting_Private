@@ -34,25 +34,6 @@ const slct = {
     roles: $("#slct_roles")
 };
 const p_resultLabel = $("#p_resultLabel");
-const infoMessages = {
-    "div_firstnameLastname": ["Bu alan doldurulacak."],
-    "div_phone": ["bu alan doldurulacak"],
-    "div_email": ["bu alan doldurulacak"],
-    "div_flag": ["bu alan doldurulacak"],
-    "div_newPassportNo": ["bu alan doldurulacak"],
-    "div_oldPassportNo": ["bu alan doldurulacak"],
-    "div_rank": ["bu alan doldurulacak"],
-    "div_issueDate": ["bu alan doldurulacak"],
-    "div_passportExpiration": ["bu alan doldurulacak"],
-    "div_nationality": ["bu alan doldurulacak"],
-    //"div_birthDate": ["bu alan doldurulacak"],
-    "div_birthPlace": ["bu alan doldurulacak"],
-    "div_gender": ["bu alan doldurulacak"],
-    "div_yachtType": ["bu alan doldurulacak"],
-    "div_yachtName": ["bu alan doldurulacak"],
-    //"div_isPersonal": ["bu alan doldurulacak"],
-    "div_password": ["bu alan doldurulacak"]
-}
 //#endregion
 
 //#region events
@@ -160,8 +141,6 @@ async function populateFormAsync() {
         slct.roles,
         roleNames);
     //#endregion
-
-    await populateInfoMessagesAsync(infoMessages);
 }
 //#endregion
 

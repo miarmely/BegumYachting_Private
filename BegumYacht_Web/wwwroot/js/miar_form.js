@@ -1,8 +1,10 @@
-﻿import {
+﻿import { resetFormAsync, showOrHideBackButtonAsync } from "./miar_module.userForm.js";
+import { convertStrUtcDateToStrLocalDateAsync } from "./miar_module.date.js";
+
+import {
     addCriticalSectionAsync, autoObjectMapperAsync, updateElementText,
     updateResultLabel
 } from "./miar_module.js";
-import { resetFormAsync, showOrHideBackButtonAsync } from "./miar_module.userForm.js";
 
 import {
     addMsgWithImgToDivArticlesAsync, alignArticlesToCenterAsync,
@@ -14,8 +16,6 @@ import {
 import {
     controlPaginationButtonsAsync, pagingBuffer, setPagingBufferAsync
 } from "./miar_module.pagination.js";
-
-import { convertStrUtcDateToStrLocalDateAsync } from "./miar_module.date.js";
 
 
 //#region variables
@@ -205,6 +205,18 @@ export async function click_articleAsync(
     //#endregion
 
     await showOrHideBackButtonAsync(div_backButton, div_panelTitle, btn_back);
+}
+export async function change_submenuOfDisplayOptionAsync(
+    slct_article_submenu_display,
+    div_answererInfos,
+    div_buttons,
+    func_populateFormArticlesAsync
+) {
+    await showOrHideAnswererInfosMenuAndButtonsByFormStatusAsync(
+        slct_article_submenu_display,
+        div_answererInfos,
+        div_buttons);
+    await func_populateFormArticlesAsync();
 }
 //#endregion
 
@@ -396,7 +408,6 @@ export async function populateArticlesAsync(
     func_populateInsideOfArticleAsync = (demands) => { },
     func_declareEventsAsync = () => { }
 ) {
-    // populate article
     await new Promise((resolve) => {
         $.ajax({
             method: "GET",
@@ -413,7 +424,7 @@ export async function populateArticlesAsync(
             },
             success: (demands, status, xhr) => {
                 new Promise(async () => {
-                    await resetDivArticlesAsync(); // remove loading img
+                    resetDivArticles(); // remove loading img
                     await setArticleBufferAsync({
                         "totalArticleCount": demands.length
                     });
@@ -436,6 +447,9 @@ export async function populateArticlesAsync(
                     await setArticleBufferAsync({
                         totalArticleCount: 0  // for if i resize window size
                     })
+                    await setPagingBufferAsync({
+                        infosInHeader: null
+                    });
 
                     //#region add message with image to div_articles
                     // add message with "checked" image
@@ -457,9 +471,6 @@ export async function populateArticlesAsync(
                     await updateEntityQuantityAsync(
                         lbl_entityQuantity,
                         0 + "/" + pagingBuffer.pageSize);
-                    await setPagingBufferAsync({
-                        infosInHeader: null
-                    });
                     await controlPaginationButtonsAsync();
                 })
             },
@@ -640,11 +651,6 @@ export async function addImageToArticleAsync(
 
     await alignImageToVerticalCenterAsync(articleId);
 }
-export async function resetDivArticlesAsync() {
-    // reset "Loading..." message from div
-    articleBuffer.div_articles.empty();
-    articleBuffer.div_articles.removeAttr("style");
-}
 export async function showOrHideAnswererInfosMenuAndButtonsByFormStatusAsync(
     slct_article_submenu_display,
     div_answererInfos,
@@ -667,6 +673,11 @@ export async function showOrHideAnswererInfosMenuAndButtonsByFormStatusAsync(
         div_buttons.removeAttr("hidden");  // show
     }
     //#endregion
+}
+export function resetDivArticles() {
+    // reset "Loading..." message from div
+    articleBuffer.div_articles.empty();
+    articleBuffer.div_articles.removeAttr("style");
 }
 export function getDefaultValueIfValueNullOrEmpty(value) {
     return value == null || value == "" ?

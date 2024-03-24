@@ -5,8 +5,8 @@ import {
     addImageToArticleAsync, click_articleAsync,
     click_backButtonAsync, click_InfoDivAsync, getDefaultValueIfValueNullOrEmpty,
     populateArticlesAsync, addInputsToInfoDivsAsync, resize_windowAsync, click_sidebarMenuAsync,
-    showOrHideAnswererInfosMenuAndButtonsByFormStatusAsync, formStatus, acceptTheFormAsync,
-    rejectTheFormAsync, infosOfLastClickedArticle, setPageSizeAsync
+    formStatus, acceptTheFormAsync, rejectTheFormAsync, infosOfLastClickedArticle, setPageSizeAsync,
+    change_submenuOfDisplayOptionAsync
 } from "./miar_form.js"
 
 import {
@@ -91,11 +91,11 @@ $(function () {
             populateCheckinAndCheckoutArticlesAsync);
     })
     slct.article_submenu_display.change(async () => {
-        await showOrHideAnswererInfosMenuAndButtonsByFormStatusAsync(
+        await change_submenuOfDisplayOptionAsync(
             slct.article_submenu_display,
             div.answererInfos,
-            div.buttons);
-        await populateCheckinAndCheckoutArticlesAsync();
+            div.buttons,
+            populateCheckinAndCheckoutArticlesAsync);
     })
     spn_eventManager.on("click_article", async (_, event) => {
         await click_articleAsync(
@@ -156,7 +156,6 @@ $(function () {
             div.buttons,
             btn.back,
             populateCheckinAndCheckoutArticlesAsync);
-        await alignArticlesToCenterAsync();
     })
     btn.accept.click(async () => {
         await acceptTheFormAsync(

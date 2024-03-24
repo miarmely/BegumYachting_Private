@@ -3,13 +3,14 @@ import { convertDateToStrDateAsync, getPassedTimeInStringAsync } from "./miar_mo
 import { shiftTheChildDivToBottomOfParentDivAsync } from "./miar_module.js"
 
 import {
-    addImageToArticleAsync, beforePopulateAsync, click_articleAsync, resize_windowAsync,
-    click_backButtonAsync, click_InfoDivAsync, getDefaultValueIfValueNullOrEmpty,
-    populateArticlesAsync, addInputsToInfoDivsAsync, click_sidebarMenuAsync, formStatus, showOrHideAnswererInfosMenuAndButtonsByFormStatusAsync
+    addImageToArticleAsync, click_articleAsync, resize_windowAsync, click_backButtonAsync,
+    click_InfoDivAsync, getDefaultValueIfValueNullOrEmpty, populateArticlesAsync,
+    addInputsToInfoDivsAsync, click_sidebarMenuAsync, formStatus, setPageSizeAsync,
+    infosOfLastClickedArticle, change_submenuOfDisplayOptionAsync
 } from "./miar_form.js"
 
 import {
-    alignArticlesToCenterAsync, art_baseId, div_article_info_id,
+    art_baseId, div_article_info_id, getValidArticleWidthAsync, setArticleBufferAsync,
 } from "./miar_module.article.js"
 
 import {
@@ -89,11 +90,11 @@ $(function () {
             populateOrderArticlesAsync);
     })
     slct.article_submenu_display.change(async () => {
-        await showOrHideAnswererInfosMenuAndButtonsByFormStatusAsync(
+        await change_submenuOfDisplayOptionAsync(
             slct.article_submenu_display,
             div.answererInfos,
-            div.buttons);
-        await populateOrderArticlesAsync();
+            div.buttons,
+            populateOrderArticlesAsync);
     })
     spn_eventManager.on("click_article", async (_, event) => {
         await click_articleAsync(
@@ -162,8 +163,30 @@ $(function () {
             div.answererInfos_inputs,
             div.formInfos_inputs,
             div.buttons,
-            btn.back);
-        await alignArticlesToCenterAsync();
+            btn.back,
+            populateOrderArticlesAsync);
+    })
+    btn.accept.click(async () => {
+        await acceptTheFormAsync(
+            "/adminPanel/order/provision/answer",
+            infosOfLastClickedArticle.formId,
+            inputIds,
+            p_resultLabel,
+            img_loading,
+            div.answererInfos,
+            div.answererInfos_inputs,
+            div.buttons);
+    })
+    btn.reject.click(async () => {
+        await rejectTheFormAsync(
+            "/adminPanel/order/provision/answer",
+            infosOfLastClickedArticle.formId,
+            inputIds,
+            p_resultLabel,
+            img_loading,
+            div.answererInfos,
+            div.answererInfos_inputs,
+            div.buttons);
     })
     //#endregion
 
@@ -174,7 +197,6 @@ $(function () {
         div.panelTitle.append("GENEL SİPARİŞ");
         spn.formInfos_formType.append("Sipariş");
 
-        await beforePopulateAsync(300, 580, div.articles);
         await populateOrderArticlesAsync();
         await addInputsToInfoDivsAsync(inputInfos);
         await populateInfoMessagesAsync({
@@ -182,6 +204,32 @@ $(function () {
         });
     }
     async function populateOrderArticlesAsync() {
+        await setArticleBufferAsync({
+            div_articles: div.articles,
+            articleType: "imageAndText",
+            articleStyle: {
+                "width": await getValidArticleWidthAsync({
+                    width: 300,
+                    marginL: 20,
+                    marginR: 20
+                }, div.articles),
+                "height": 580,
+                "marginT": 10,
+                "marginB": 10,
+                "marginR": 20,
+                "marginL": 20,
+                "paddingT": 10,
+                "paddingB": 10,
+                "paddingR": 10,
+                "paddingL": 10,
+                "border": 1,
+                "borderColor": "#0095ff",
+                "boxShadow": "5px 5px 10px rgba(0, 0, 0, 0.3)",
+                "bgColorForDelete": "red"
+            },
+            heightOfPageMenubar: 80
+        });  // i have to define article buffer before setting the page size.
+        await setPageSizeAsync();
         await populateArticlesAsync(
             "/adminPanel/order/provision/filter?" + (
                 `pageSize=${pagingBuffer.pageSize}` +

@@ -2,12 +2,11 @@
 import { shiftTheChildDivToBottomOfParentDivAsync } from "./miar_module.js"
 
 import {
-    addImageToArticleAsync, click_articleAsync, resize_windowAsync,
+    addImageToArticleAsync, click_articleAsync, resize_windowAsync, change_submenuOfDisplayOptionAsync
     click_backButtonAsync, click_InfoDivAsync, getDefaultValueIfValueNullOrEmpty,
     populateArticlesAsync, addInputsToInfoDivsAsync, click_sidebarMenuAsync,
-    formStatus, showOrHideAnswererInfosMenuAndButtonsByFormStatusAsync,
-    acceptTheFormAsync, infosOfLastClickedArticle, rejectTheFormAsync,
-    setPageSizeAsync
+    formStatus acceptTheFormAsync, infosOfLastClickedArticle, rejectTheFormAsync, setPageSizeAsync,
+    
 } from "./miar_form.js"
 
 import {
@@ -102,11 +101,11 @@ $(function () {
             populateFuelPurchaseArticlesAsync);
     })
     slct.article_submenu_display.change(async () => {
-        await showOrHideAnswererInfosMenuAndButtonsByFormStatusAsync(
+        await change_submenuOfDisplayOptionAsync(
             slct.article_submenu_display,
             div.answererInfos,
-            div.buttons);
-        await populateFuelPurchaseArticlesAsync();
+            div.buttons,
+            populateFuelPurchaseArticlesAsync);
     })
     spn_eventManager.on("click_article", async (_, event) => {
         await click_articleAsync(
