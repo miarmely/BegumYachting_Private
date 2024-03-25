@@ -6,11 +6,12 @@ import {
     addImageToArticleAsync, click_articleAsync, resize_windowAsync, click_backButtonAsync,
     click_InfoDivAsync, getDefaultValueIfValueNullOrEmpty, populateArticlesAsync,
     addInputsToInfoDivsAsync, click_sidebarMenuAsync, formStatus, setPageSizeAsync,
-    infosOfLastClickedArticle, change_submenuOfDisplayOptionAsync
+    infosOfLastClickedArticle, change_submenuOfDisplayOptionAsync, acceptTheFormAsync,
+    rejectTheFormAsync
 } from "./miar_form.js"
 
 import {
-    art_baseId, div_article_info_id, getValidArticleWidthAsync, setArticleBufferAsync,
+    art_baseId, div_article_info_id, getValidArticleWidthAsync, setArticleBufferAsync
 } from "./miar_module.article.js"
 
 import {

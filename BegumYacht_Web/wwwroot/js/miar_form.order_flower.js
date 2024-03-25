@@ -6,7 +6,8 @@ import {
     addImageToArticleAsync, click_articleAsync, resize_windowAsync,
     click_backButtonAsync, click_InfoDivAsync, getDefaultValueIfValueNullOrEmpty,
     populateArticlesAsync, addInputsToInfoDivsAsync, click_sidebarMenuAsync, formStatus,
-    infosOfLastClickedArticle, setPageSizeAsync, change_submenuOfDisplayOptionAsync
+    infosOfLastClickedArticle, setPageSizeAsync, change_submenuOfDisplayOptionAsync,
+    acceptTheFormAsync, rejectTheFormAsync
 } from "./miar_form.js"
 
 import {

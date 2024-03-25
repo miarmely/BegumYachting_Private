@@ -6,7 +6,7 @@ import {
     addImageToArticleAsync, click_articleAsync, resize_windowAsync,
     click_backButtonAsync, click_InfoDivAsync, getDefaultValueIfValueNullOrEmpty,
     populateArticlesAsync, addInputsToInfoDivsAsync, click_sidebarMenuAsync, formStatus,
-    infosOfLastClickedArticle, setPageSizeAsync
+    infosOfLastClickedArticle, setPageSizeAsync, acceptTheFormAsync, rejectTheFormAsync, change_submenuOfDisplayOptionAsync
 } from "./miar_form.js"
 
 import {
@@ -88,7 +88,7 @@ $(function () {
             populateOrderArticlesAsync);
     })
     slct.article_submenu_display.change(async () => {
-        await change_submenuOfDisplayOptionAsyn(
+        await change_submenuOfDisplayOptionAsync(
             slct.article_submenu_display,
             div.answererInfos,
             div.buttons,
