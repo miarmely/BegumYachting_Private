@@ -17,7 +17,7 @@ export let pagingBuffer = {
 
 //#region events
 export async function click_ul_paginationAsync(event, func_populateArticleAsync) {
-    //#region remove "red" bg-color of "paginationCurrent" input
+    //#region remove "red" bg-color of paginationCurrent
     event.preventDefault();
 
     let inpt_paginationCurrent = $("#" + inpt_paginationCurrent_id);
@@ -37,50 +37,49 @@ export async function click_ul_paginationAsync(event, func_populateArticleAsync)
     //#endregion
 
     //#region set new page number
-    // when any entity is exists
-    if (pagingBuffer.infosInHeader != null) {
-        switch (clickedElementId) {
-            case a_paginationBack_id:
-                pagingBuffer.pageNumber--;
+    switch (clickedElementId) {
+        case a_paginationBack_id:
+            pagingBuffer.pageNumber--;
 
-                break;
-            case a_separator_id:
-                if (!await updatePageNumberWhenSeparatorBtnIsClickedAsync())
-                    return;
-
-                break;
-            case a_paginationLast_id:
-                pagingBuffer.pageNumber = pagingBuffer.infosInHeader.TotalPage;
-
-                break;
-            case a_paginationNext_id:
-                pagingBuffer.pageNumber++;
-
-                break;
-            default:
-                //#region when icon of btn_paginationBack is clicked
-                let parentId = event.target.parentNode.id;
-
-                if (parentId == a_paginationBack_id) {
-                    pagingBuffer.pageNumber--;
-                    break;
-                }
-                //#endregion
-
-                //#region when icon of btn_paginationNext is clicked
-                else if (parentId == a_paginationNext_id) {
-                    pagingBuffer.pageNumber++;
-                    break;
-                }
-                //#endregion
-
+            break;
+        case a_separator_id:
+            if (!isPaginationCurrentValueValid()) {
+                // add "red" bg-color
+                inpt_paginationCurrent.css("background-color", "red");
                 return;
-        }
-    }
+            }
 
-    // when any entity is not exists
-    else
-        pagingBuffer.pageNumber = 1;
+            pagingBuffer.pageNumber = inpt_paginationCurrent.val();
+            break;
+        case a_paginationLast_id:
+            pagingBuffer.pageNumber = (pagingBuffer.infosInHeader != null ?
+                pagingBuffer.infosInHeader.TotalPage
+                : 1);
+
+            break;
+        case a_paginationNext_id:
+            pagingBuffer.pageNumber++;
+
+            break;
+        default:
+            //#region when icon of btn_paginationBack is clicked
+            let parentId = event.target.parentNode.id;
+
+            if (parentId == a_paginationBack_id) {
+                pagingBuffer.pageNumber--;
+                break;
+            }
+            //#endregion
+
+            //#region when icon of btn_paginationNext is clicked
+            else if (parentId == a_paginationNext_id) {
+                pagingBuffer.pageNumber++;
+                break;
+            }
+            //#endregion
+
+            return;
+    }
     //#endregion
 
     await func_populateArticleAsync();
@@ -88,22 +87,20 @@ export async function click_ul_paginationAsync(event, func_populateArticleAsync)
 export async function keyup_ul_paginationAsync(event, func_populateArticleAsync) {
     switch (event.key) {
         case "Enter":  // when entered key is "Enter"
-            //#region remove "red"" bg-color of input
+            //#region remove "red" bg-color of input
             let inpt_paginationCurrent = $("#" + inpt_paginationCurrent_id);
             inpt_paginationCurrent.removeAttr("style");
             //#endregion
 
-            //#region when any entity is not exists
-            if (pagingBuffer.infosInHeader == null) {
-                // add "red" bg-color to input
+            if (!isPaginationCurrentValueValid()) {
+                // add "red" bg-color
                 inpt_paginationCurrent.css("background-color", "red");
-                return false;
+                return;
             }
-            //#endregion
 
-            //#region when page number updating is successful
-            if (await updatePageNumberWhenSeparatorBtnIsClickedAsync())
-                await func_populateArticleAsync();
+            //#region populate articles
+            pagingBuffer.pageNumber = inpt_paginationCurrent.val();
+            await func_populateArticleAsync();
             //#endregion
 
             break;
@@ -135,50 +132,45 @@ export async function controlPaginationButtonsAsync() {
     inpt_paginationCurrent.removeAttr("style");
     //#endregion
 
-    //#region when total page count more than 1
-    if (pagingInfosInHeader != null  // when any entity is exists
-        && pagingInfosInHeader.TotalPage > 1) {
-        //#region hide/show paginationBack button
-        // hide
-        if (pagingInfosInHeader.CurrentPageNo == 1)
-            a_paginationBack.attr("hidden", "");
+    //#region when any entity is not exists
+    if (pagingInfosInHeader == null) {
+        // hide pagination back and next buttons
+        a_paginationBack.attr("hidden", "");
+        a_paginationNext.attr("hidden", "");
 
-        // show
-        else
-            a_paginationBack.removeAttr("hidden");
-        //#endregion
+        // reset values of pagination current and last
+        inpt_paginationCurrent.val("1");
+        updateElementText(a_paginationLast, "1");
 
-        //#region hide/show paginationNext button
-        // hide
-        if (pagingInfosInHeader.CurrentPageNo == pagingInfosInHeader.TotalPage)
-            a_paginationNext.attr("hidden", "");
-
-        // show
-        else
-            a_paginationNext.removeAttr("hidden");
-        //#endregion
-
-        //#region add values to pagination current and last
-        inpt_paginationCurrent.val(pagingBuffer.infosInHeader.CurrentPageNo);
-        updateElementText(
-            a_paginationLast,
-            pagingInfosInHeader.TotalPage);  // paginationLast button
-        //#endregion
+        return;
     }
     //#endregion
 
-    //#region when total page count is smallar than 1
-    else {
-        //#region hide pagination back and next buttons
+    //#region hide/show paginationBack button
+    // hide
+    if (pagingInfosInHeader.CurrentPageNo == 1)
         a_paginationBack.attr("hidden", "");
-        a_paginationBack.attr("hidden", "");
-        //#endregion
 
-        //#region reset values of pagination current and last
-        inpt_paginationCurrent.val("1");
-        updateElementText(a_paginationLast, "1");
-        //#endregion
-    }
+    // show
+    else
+        a_paginationBack.removeAttr("hidden");
+    //#endregion
+
+    //#region hide/show paginationNext button
+    // hide
+    if (pagingInfosInHeader.CurrentPageNo == pagingInfosInHeader.TotalPage)
+        a_paginationNext.attr("hidden", "");
+
+    // show
+    else
+        a_paginationNext.removeAttr("hidden");
+    //#endregion
+
+    //#region add values to pagination current and last
+    inpt_paginationCurrent.val(pagingBuffer.infosInHeader.CurrentPageNo);
+    updateElementText(
+        a_paginationLast,
+        pagingInfosInHeader.TotalPage);  // paginationLast button
     //#endregion
 }
 export async function addPaginationButtonsAsync(
@@ -219,22 +211,22 @@ export async function addPaginationButtonsAsync(
 	    </li>`);
     //#endregion
 }  // deprecated
-async function updatePageNumberWhenSeparatorBtnIsClickedAsync() {
-    //#region when entered page number bigger than total page count
+function isPaginationCurrentValueValid() {
+    //#region set variables
     let inpt_paginationCurrent = $("#" + inpt_paginationCurrent_id);
     let inpt_paginationCurrent_value = inpt_paginationCurrent.val();
-
-    // add "red" color when value is invalid
-    if (inpt_paginationCurrent_value == ""
-        || inpt_paginationCurrent_value < 1
-        || inpt_paginationCurrent_value > pagingBuffer.infosInHeader.TotalPage
-    ) {
-        inpt_paginationCurrent.css("background-color", "red");
-        return false;
-    }
+    let totalPage = (pagingBuffer.infosInHeader != null ?
+        pagingBuffer.infosInHeader.TotalPage
+        : 1);
     //#endregion
 
-    pagingBuffer.pageNumber = inpt_paginationCurrent_value;
+    //#region when input value is invalid
+    if (inpt_paginationCurrent_value == ""
+        || inpt_paginationCurrent_value < 1
+        || inpt_paginationCurrent_value > totalPage)
+        return false;
+    //#endregion
+
     return true;
 }
 //#endregion
