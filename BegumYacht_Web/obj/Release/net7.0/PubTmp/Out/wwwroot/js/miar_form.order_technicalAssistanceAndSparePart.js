@@ -1,16 +1,16 @@
 ﻿import { populateInfoMessagesAsync } from "./miar_module.userForm.js"
 import { convertDateToStrDateAsync, getPassedTimeInStringAsync } from "./miar_module.date.js";
-import { addCriticalSectionAsync, shiftTheChildDivToBottomOfParentDivAsync } from "./miar_module.js"
+import { shiftTheChildDivToBottomOfParentDivAsync } from "./miar_module.js"
 
 import {
-    addImageToArticleAsync, beforePopulateAsync, click_articleAsync, resize_windowAsync,
+    addImageToArticleAsync, click_articleAsync, resize_windowAsync,
     click_backButtonAsync, click_InfoDivAsync, getDefaultValueIfValueNullOrEmpty,
-    populateArticlesAsync, addInputsToInfoDivsAsync, click_sidebarMenuAsync
+    populateArticlesAsync, addInputsToInfoDivsAsync, click_sidebarMenuAsync, formStatus,
+    infosOfLastClickedArticle, setPageSizeAsync, acceptTheFormAsync, rejectTheFormAsync, change_submenuOfDisplayOptionAsync
 } from "./miar_form.js"
 
 import {
-    alignArticlesToCenterAsync, art_baseId, controlArticleWidthAsync, div_article_info_id,
-    setHeightOfArticlesDivAsync
+    art_baseId, div_article_info_id, getValidArticleWidthAsync, setArticleBufferAsync,
 } from "./miar_module.article.js"
 
 import {
@@ -21,37 +21,6 @@ import {
 
 $(function () {
     //#region variables
-    const ul_pagination = $("#ul_pagination");
-    const p_resultLabel = $("#p_resultLabel");
-    const criticalSectionIds = {
-        sidebarMenuButton: "sidebarMenuButton",
-        window: "window",
-        backButton: "backButton"
-    }
-    const div = {
-        article_update: $("#div_article_update"),
-        article_display: $("#div_article_display"),
-        articles: $("#div_articles"),
-        sidebarMenuButton: $("#div_sidebarMenuButton"),
-        senderInfos: $("#div_senderInfos"),
-        answererInfos: $("#div_answererInfos"),
-        orderInfos: $("#div_orderInfos"),
-        backButton: $("#div_backButton"),
-        panelTitle: $("#div_panelTitle"),
-        senderInfos_inputs: $("#div_senderInfos_inputs"),
-        answererInfos_inputs: $("#div_answererInfos_inputs"),
-        orderInfos_inputs: $("#div_orderInfos_inputs"),
-    };
-    const btn = {
-        back: $("#btn_back")
-    };
-    const lbl = {
-        entityQuantity: $("#small_entityQuantity")
-    };
-    const slct = {
-        article_submenu_display: $("#slct_article_submenu_display")
-    };
-    const formType = "FlowerOrder";
     const inputInfos = [
         ["input", "text", "nameSurname", "Ad Soyad", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],  // type for switch/case | type for switch/case | type for input | id | label name | info message | hidden/disabled/readonly of input | place to add
         ["input", "text", "phone", "Telefon", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
@@ -62,13 +31,13 @@ $(function () {
         ["input", "text", "nationality", "Uyruk", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
         ["input", "text", "gender", "Cinsiyet", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
         ["input", "text", "answeredDate", "Cevaplanma Tarihi", false, "readonly", [div.answererInfos_inputs]],
-        ["input", "text", "yachtType", "Yat Tipi", false, "readonly", [div.orderInfos_inputs]],
-        ["input", "text", "yachtName", "Yat Adı", false, "readonly", [div.orderInfos_inputs]],
-        ["input", "text", "flag", "Bayrak", false, "readonly", [div.orderInfos_inputs]],
-        ["input", "text", "requestedService", "İstenen Servis", true, "readonly", [div.orderInfos_inputs]],
-        ["input", "text", "sparePart", "Yedek Parça", true, "readonly", [div.orderInfos_inputs]],
-        ["textarea", "notes", "Notlar", false, "readonly", [div.orderInfos_inputs]],
-        
+        ["input", "text", "yachtType", "Yat Tipi", false, "readonly", [div.formInfos_inputs]],
+        ["input", "text", "yachtName", "Yat Adı", false, "readonly", [div.formInfos_inputs]],
+        ["input", "text", "flag", "Bayrak", false, "readonly", [div.formInfos_inputs]],
+        ["input", "text", "requestedService", "İstenen Servis", true, "readonly", [div.formInfos_inputs]],
+        ["input", "text", "sparePart", "Yedek Parça", true, "readonly", [div.formInfos_inputs]],
+        ["textarea", "notes", "Notlar", false, "readonly", [div.formInfos_inputs]],
+
     ];  // for add <input>s and <textarea>s
     const inputIds = {
         nameSurname: "inpt_nameSurname",
@@ -89,7 +58,6 @@ $(function () {
         notes: "txt_notes"
     };  // for populate <input>s and <textarea>s  (keys for ajax data; values for elements)
     let articleIdsAndInfos = {};
-    let formStatus = "Unanswered";
     //#endregion
 
     //#region events
@@ -101,9 +69,7 @@ $(function () {
             criticalSectionIds.window);
     })
     div.sidebarMenuButton.click(async () => {
-        await click_sidebarMenuAsync(
-            div.article_display,
-            criticalSectionIds.sidebarMenuButton);
+        await click_sidebarMenuAsync(div.article_display);
     })
     $("#" + inpt_paginationCurrent_id).on("input", async () => {
         await change_inpt_paginationCurrentAsync();
@@ -122,21 +88,12 @@ $(function () {
             populateOrderArticlesAsync);
     })
     slct.article_submenu_display.change(async () => {
-        //#region show/hide anserer infos <div>
-        formStatus = slct.article_submenu_display.val();
-
-        // show
-        if (formStatus == "Accepted"
-            || formStatus == "Rejected")
-            div.answererInfos.removeAttr("hidden");
-
-        // hide
-        else
-            div.answererInfos.attr("hidden", "");
-        //#endregion
-
-        await populateOrderArticlesAsync();
-    })  // DISABLED
+        await change_submenuOfDisplayOptionAsync(
+            slct.article_submenu_display,
+            div.answererInfos,
+            div.buttons,
+            populateOrderArticlesAsync);
+    })
     spn_eventManager.on("click_article", async (_, event) => {
         await click_articleAsync(
             event,
@@ -149,11 +106,10 @@ $(function () {
             div.senderInfos_inputs,
             div.answererInfos_inputs,
             btn.back,
-            formStatus,
             async (infosOfLastClickedArticle) => {
                 //#region set form infos
                 let createdDateInStr = getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.createdDate);
-                
+
                 let orderInfos = {
                     yachtName: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtName),
                     yachtType: getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtType),
@@ -171,7 +127,7 @@ $(function () {
 
                 //#region populate inputs (DYNAMICALLY)
                 for (let elementName in orderInfos)
-                    div.orderInfos_inputs
+                    div.formInfos_inputs
                         .find("#" + inputIds[elementName])
                         .val(orderInfos[elementName]);
                 //#endregion
@@ -194,31 +150,79 @@ $(function () {
             div.article_display,
             div.senderInfos,
             div.answererInfos,
-            div.orderInfos,
+            div.formInfos,
             div.senderInfos_inputs,
             div.answererInfos_inputs,
-            div.orderInfos_inputs,
-            btn.back);
-        await alignArticlesToCenterAsync();
+            div.formInfos_inputs,
+            div.buttons,
+            btn.back,
+            populateOrderArticlesAsync);
+    })
+    btn.accept.click(async () => {
+        await acceptTheFormAsync(
+            "/adminPanel/order/technicalAssistanceAndSparePart/answer",
+            infosOfLastClickedArticle.formId,
+            inputIds,
+            p_resultLabel,
+            img_loading,
+            div.answererInfos,
+            div.answererInfos_inputs,
+            div.buttons);
+    })
+    btn.reject.click(async () => {
+        await rejectTheFormAsync(
+            "/adminPanel/order/technicalAssistanceAndSparePart/answer",
+            infosOfLastClickedArticle.formId,
+            inputIds,
+            p_resultLabel,
+            img_loading,
+            div.answererInfos,
+            div.answererInfos_inputs,
+            div.buttons);
     })
     //#endregion
 
-    //#endregion
+    //#endregions
 
     //#region functions
     async function setupPageAsync() {
-        await beforePopulateAsync(300, 650, div.articles);
+        div.panelTitle.append("TEKNİK YARDIM / YEDEK PARÇA SİPARİŞİ");
+        spn.formInfos_formType.append("Sipariş");
+
         await populateOrderArticlesAsync();
         await addInputsToInfoDivsAsync(inputInfos);
         await populateInfoMessagesAsync({
-            div_senderInfos: ["Şeklin üzerine tıklayarak talebi gönderen personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
-            div_answererInfos: ["Şeklin üzerine tıklayarak talebe cevap veren personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
-            div_orderInfos: ["Şeklin üzerine tıklayarak talep bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
             div_requestedService: ["Talep edilen teknik servis bilgisidir.",],
             div_sparePart: ["Talep edilen yedek parça bilgisidir.",]
         });
     }
     async function populateOrderArticlesAsync() {
+        await setArticleBufferAsync({
+            div_articles: div.articles,
+            articleType: "imageAndText",
+            articleStyle: {
+                "width": await getValidArticleWidthAsync({
+                    width: 300,
+                    marginL: 20,
+                    marginR: 20
+                }, div.articles),
+                "height": 650,
+                "marginT": 10,
+                "marginB": 10,
+                "marginR": 20,
+                "marginL": 20,
+                "paddingT": 10,
+                "paddingB": 10,
+                "paddingR": 10,
+                "paddingL": 10,
+                "border": 1,
+                "borderColor": "#0095ff",
+                "boxShadow": "5px 5px 10px rgba(0, 0, 0, 0.3)",
+                "bgColorForDelete": "red"
+            },
+            heightOfPageMenubar: 80
+        });  // i have to define article buffer before setting the page size.
+        await setPageSizeAsync();
         await populateArticlesAsync(
             "/adminPanel/order/technicalAssistanceAndSparePart/filter?" + (
                 `pageSize=${pagingBuffer.pageSize}` +

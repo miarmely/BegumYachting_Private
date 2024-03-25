@@ -11,8 +11,8 @@ $(function () {
         if (usernameForLogin != null)
             localStorage.setItem(localKeys.username, usernameForLogin);
     })
-    $(".li_dropdown").click(async () => {
-        await openOrCloseTheSubmenuAsync($(":focus"));
+    $(".li_dropdown").click(async (event) => {
+        await openOrCloseTheSubmenuAsync($(event.currentTarget));
     }) // submenus of sidebar
     //#endregion
 

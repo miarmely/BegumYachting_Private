@@ -1,4 +1,5 @@
-﻿import { autoObjectMapperAsync } from "./miar_module.js";
+﻿import { autoObjectMapperAsync, updateElementText } from "./miar_module.js";
+
 
 //#region variables
 export const a_paginationBack_id = "a_paginationBack";
@@ -10,46 +11,54 @@ export const inpt_paginationCurrent_id = a_paginationCurrent_id + " input";
 export let pagingBuffer = {
     pageSize: 0,
     pageNumber: 1,
-    infosInHeader: {}
+    infosInHeader: null // object
 };
 //#endregion
 
 //#region events
 export async function click_ul_paginationAsync(event, func_populateArticleAsync) {
-    //#region reset "red" bg-color of "paginationCurrent" input
+    //#region remove "red" bg-color of paginationCurrent
     event.preventDefault();
 
     let inpt_paginationCurrent = $("#" + inpt_paginationCurrent_id);
     inpt_paginationCurrent.removeAttr("style");
     //#endregion
 
-    //#region set new page number
+    //#region when invalid places is clicked (RETURN)
+    var ClickedElementLocalName = event.target.localName;
     let clickedElementId = event.target.id;
 
+    if (ClickedElementLocalName == "input"  // info message button and paginationCurrent input
+        || (clickedElementId != a_paginationBack_id
+            && clickedElementId != a_separator_id
+            && clickedElementId != a_paginationLast_id
+            && clickedElementId != a_paginationNext_id))
+        return;
+    //#endregion
+
+    //#region set new page number
     switch (clickedElementId) {
         case a_paginationBack_id:
-            // update input
             pagingBuffer.pageNumber--;
-            inpt_paginationCurrent.val(pagingBuffer.pageNumber);
 
             break;
         case a_separator_id:
-            //#region when page number updating is unsuccessful
-            if (!await updatePageNumberWhenSeparatorBtnIsClickedAsync())
+            if (!isPaginationCurrentValueValid()) {
+                // add "red" bg-color
+                inpt_paginationCurrent.css("background-color", "red");
                 return;
-            //#endregion
+            }
 
+            pagingBuffer.pageNumber = inpt_paginationCurrent.val();
             break;
         case a_paginationLast_id:
-            // update input 
-            pagingBuffer.pageNumber = pagingBuffer.infosInHeader.TotalPage;
-            inpt_paginationCurrent.val(pagingBuffer.pageNumber);
+            pagingBuffer.pageNumber = (pagingBuffer.infosInHeader != null ?
+                pagingBuffer.infosInHeader.TotalPage
+                : 1);
 
             break;
         case a_paginationNext_id:
-            // update input
             pagingBuffer.pageNumber++;
-            inpt_paginationCurrent.val(pagingBuffer.pageNumber);
 
             break;
         default:
@@ -58,7 +67,6 @@ export async function click_ul_paginationAsync(event, func_populateArticleAsync)
 
             if (parentId == a_paginationBack_id) {
                 pagingBuffer.pageNumber--;
-                inpt_paginationCurrent.val(pagingBuffer.pageNumber);
                 break;
             }
             //#endregion
@@ -66,7 +74,6 @@ export async function click_ul_paginationAsync(event, func_populateArticleAsync)
             //#region when icon of btn_paginationNext is clicked
             else if (parentId == a_paginationNext_id) {
                 pagingBuffer.pageNumber++;
-                inpt_paginationCurrent.val(pagingBuffer.pageNumber);
                 break;
             }
             //#endregion
@@ -80,9 +87,20 @@ export async function click_ul_paginationAsync(event, func_populateArticleAsync)
 export async function keyup_ul_paginationAsync(event, func_populateArticleAsync) {
     switch (event.key) {
         case "Enter":  // when entered key is "Enter"
-            //#region when page number updating is successful
-            if(await updatePageNumberWhenSeparatorBtnIsClickedAsync())
-                await func_populateArticleAsync();
+            //#region remove "red" bg-color of input
+            let inpt_paginationCurrent = $("#" + inpt_paginationCurrent_id);
+            inpt_paginationCurrent.removeAttr("style");
+            //#endregion
+
+            if (!isPaginationCurrentValueValid()) {
+                // add "red" bg-color
+                inpt_paginationCurrent.css("background-color", "red");
+                return;
+            }
+
+            //#region populate articles
+            pagingBuffer.pageNumber = inpt_paginationCurrent.val();
+            await func_populateArticleAsync();
             //#endregion
 
             break;
@@ -100,7 +118,60 @@ export async function setPagingBufferAsync(newBuffer = {
     pageNumber: 0,
     infosInHeader: {}
 }) {
-    await autoObjectMapperAsync(pagingBuffer, newBuffer, true);
+    await autoObjectMapperAsync(pagingBuffer, newBuffer, false);
+}
+export async function controlPaginationButtonsAsync() {
+    //#region set variables
+    let a_paginationBack = $("#" + a_paginationBack_id);
+    let inpt_paginationCurrent = $("#" + a_paginationCurrent_id + " input");
+    let a_paginationNext = $("#" + a_paginationNext_id);
+    let a_paginationLast = $("#" + a_paginationLast_id);
+    let pagingInfosInHeader = pagingBuffer.infosInHeader;
+
+    // reset "red" bg color
+    inpt_paginationCurrent.removeAttr("style");
+    //#endregion
+
+    //#region when any entity is not exists
+    if (pagingInfosInHeader == null) {
+        // hide pagination back and next buttons
+        a_paginationBack.attr("hidden", "");
+        a_paginationNext.attr("hidden", "");
+
+        // reset values of pagination current and last
+        inpt_paginationCurrent.val("1");
+        updateElementText(a_paginationLast, "1");
+
+        return;
+    }
+    //#endregion
+
+    //#region hide/show paginationBack button
+    // hide
+    if (pagingInfosInHeader.CurrentPageNo == 1)
+        a_paginationBack.attr("hidden", "");
+
+    // show
+    else
+        a_paginationBack.removeAttr("hidden");
+    //#endregion
+
+    //#region hide/show paginationNext button
+    // hide
+    if (pagingInfosInHeader.CurrentPageNo == pagingInfosInHeader.TotalPage)
+        a_paginationNext.attr("hidden", "");
+
+    // show
+    else
+        a_paginationNext.removeAttr("hidden");
+    //#endregion
+
+    //#region add values to pagination current and last
+    inpt_paginationCurrent.val(pagingBuffer.infosInHeader.CurrentPageNo);
+    updateElementText(
+        a_paginationLast,
+        pagingInfosInHeader.TotalPage);  // paginationLast button
+    //#endregion
 }
 export async function addPaginationButtonsAsync(
     paginationInfosInJson,
@@ -140,57 +211,22 @@ export async function addPaginationButtonsAsync(
 	    </li>`);
     //#endregion
 }  // deprecated
-export async function controlPaginationBackAndNextButtonsAsync(paginationInfosInJson) {
-    // when total page count more than 1
-    if (paginationInfosInJson.TotalPage > 1) {
-        //#region for paginationBack button
-        // hide
-        if (paginationInfosInJson.CurrentPageNo == 1)
-            $("#" + a_paginationBack_id).attr("hidden", "");
-
-        // show
-        else
-            $("#" + a_paginationBack_id).removeAttr("hidden");
-        //#endregion
-
-        //#region for paginationNext button
-        // hide
-        if (paginationInfosInJson.CurrentPageNo == paginationInfosInJson.TotalPage)
-            $("#" + a_paginationNext_id).attr("hidden", "");
-
-        // show
-        else
-            $("#" + a_paginationNext_id).removeAttr("hidden");
-        //#endregion
-    }
-}
-export async function addValueToPaginationLastButtonAsync(value) {
-    $("#" + a_paginationLast_id).empty();
-    $("#" + a_paginationLast_id).append(value);
-}
-async function updatePageNumberWhenSeparatorBtnIsClickedAsync() {
-    //#region set page number
-
-    //#region when entered page number bigger than total page count
+function isPaginationCurrentValueValid() {
+    //#region set variables
     let inpt_paginationCurrent = $("#" + inpt_paginationCurrent_id);
     let inpt_paginationCurrent_value = inpt_paginationCurrent.val();
+    let totalPage = (pagingBuffer.infosInHeader != null ?
+        pagingBuffer.infosInHeader.TotalPage
+        : 1);
+    //#endregion
 
+    //#region when input value is invalid
     if (inpt_paginationCurrent_value == ""
         || inpt_paginationCurrent_value < 1
-        || inpt_paginationCurrent_value > pagingBuffer.infosInHeader.TotalPage
-    ) {
-        inpt_paginationCurrent.css("background-color", "red");
+        || inpt_paginationCurrent_value > totalPage)
         return false;
-    }
     //#endregion
 
-    //#region update page number
-    pagingBuffer.pageNumber = inpt_paginationCurrent_value;
-    inpt_paginationCurrent.removeAttr("style");  // reset red border-color
-    //#endregion
-
-    //#endregion
-
-    return true; // when new page number is valid
+    return true;
 }
 //#endregion

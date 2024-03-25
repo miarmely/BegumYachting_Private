@@ -1,16 +1,17 @@
-﻿import { populateInfoMessagesAsync } from "./miar_module.userForm.js"
-import { convertDateToStrDateAsync, getPassedTimeInStringAsync } from "./miar_module.date.js";
-import { addCriticalSectionAsync, shiftTheChildDivToBottomOfParentDivAsync } from "./miar_module.js"
+﻿import { convertDateToStrDateAsync, getPassedTimeInStringAsync } from "./miar_module.date.js";
+import { shiftTheChildDivToBottomOfParentDivAsync } from "./miar_module.js"
 
 import {
-    addImageToArticleAsync, beforePopulateAsync, click_articleAsync,
+    addImageToArticleAsync, click_articleAsync,
     click_backButtonAsync, click_InfoDivAsync, getDefaultValueIfValueNullOrEmpty,
-    populateArticlesAsync, addInputsToInfoDivsAsync, resize_windowAsync, click_sidebarMenuAsync
+    populateArticlesAsync, addInputsToInfoDivsAsync, resize_windowAsync, click_sidebarMenuAsync,
+    formStatus, acceptTheFormAsync, rejectTheFormAsync, infosOfLastClickedArticle, setPageSizeAsync,
+    change_submenuOfDisplayOptionAsync
 } from "./miar_form.js"
 
 import {
-    alignArticlesToCenterAsync, art_baseId, controlArticleWidthAsync, div_article_info_id,
-    setHeightOfArticlesDivAsync
+    alignArticlesToCenterAsync, art_baseId, div_article_info_id, getValidArticleWidthAsync,
+    setArticleBufferAsync
 } from "./miar_module.article.js"
 
 import {
@@ -21,37 +22,6 @@ import {
 
 $(function () {
     //#region variables
-    const ul_pagination = $("#ul_pagination");
-    const p_resultLabel = $("#p_resultLabel");
-    const criticalSectionIds = {
-        sidebarMenuButton: "sidebarMenuButton",
-        window: "window",
-        backButton: "backButton"
-    }
-    const div = {
-        article_update: $("#div_article_update"),
-        article_display: $("#div_article_display"),
-        articles: $("#div_articles"),
-        sidebarMenuButton: $("#div_sidebarMenuButton"),
-        senderInfos: $("#div_senderInfos"),
-        answererInfos: $("#div_answererInfos"),
-        demandInfos: $("#div_demandInfos"),
-        backButton: $("#div_backButton"),
-        panelTitle: $("#div_panelTitle"),
-        senderInfos_inputs: $("#div_senderInfos_inputs"),
-        answererInfos_inputs: $("#div_answererInfos_inputs"),
-        demandInfos_inputs: $("#div_demandInfos_inputs"),
-    };
-    const btn = {
-        back: $("#btn_back")
-    };
-    const lbl = {
-        entityQuantity: $("#small_entityQuantity")
-    };
-    const slct = {
-        article_submenu_display: $("#slct_article_submenu_display")
-    };
-    const formType = "CheckinAndCheckoutDemand";
     const inputInfos = [
         ["input", "text", "nameSurname", "Ad Soyad", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],  // type for switch/case | type for switch/case | type for input | id | label name | info message | hidden/disabled/readonly of input | place to add
         ["input", "text", "phone", "Telefon", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
@@ -62,14 +32,14 @@ $(function () {
         ["input", "text", "nationality", "Uyruk", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
         ["input", "text", "gender", "Cinsiyet", false, "readonly", [div.senderInfos_inputs, div.answererInfos_inputs]],
         ["input", "text", "answeredDate", "Cevaplanma Tarihi", false, "readonly", [div.answererInfos_inputs]],
-        ["input", "text", "yachtType", "Yat Tipi", false, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "yachtName", "Yat Adı", false, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "flag", "Bayrak", false, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "checkinDate", "Giriş Tarihi", false, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "arrivalPort", "Giriş Yeri", false, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "checkoutDate", "Çıkış Tarihi", false, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "departurePort", "Varış Yeri", false, "readonly", [div.demandInfos_inputs]],
-        ["input", "text", "createdDate", "Talep Tarihi", false, "readonly", [div.demandInfos_inputs]],
+        ["input", "text", "yachtType", "Yat Tipi", false, "readonly", [div.formInfos_inputs]],
+        ["input", "text", "yachtName", "Yat Adı", false, "readonly", [div.formInfos_inputs]],
+        ["input", "text", "flag", "Bayrak", false, "readonly", [div.formInfos_inputs]],
+        ["input", "text", "checkinDate", "Giriş Tarihi", false, "readonly", [div.formInfos_inputs]],
+        ["input", "text", "arrivalPort", "Giriş Yeri", false, "readonly", [div.formInfos_inputs]],
+        ["input", "text", "checkoutDate", "Çıkış Tarihi", false, "readonly", [div.formInfos_inputs]],
+        ["input", "text", "departurePort", "Varış Yeri", false, "readonly", [div.formInfos_inputs]],
+        ["input", "text", "createdDate", "Talep Tarihi", false, "readonly", [div.formInfos_inputs]],
     ];
     const inpt_id = {
         nameSurname: "inpt_nameSurname",
@@ -91,7 +61,6 @@ $(function () {
         departurePort: "inpt_departurePort"
     };
     let articleIdsAndInfos = {};
-    let formStatus = "Unanswered";
     //#endregion
 
     //#region events
@@ -103,9 +72,7 @@ $(function () {
             criticalSectionIds.window);
     })
     div.sidebarMenuButton.click(async () => {
-        await click_sidebarMenuAsync(
-            div.article_display,
-            criticalSectionIds.sidebarMenuButton);
+        await click_sidebarMenuAsync(div.article_display);
     })
     $("#" + inpt_paginationCurrent_id).on("input", async () => {
         await change_inpt_paginationCurrentAsync();
@@ -124,21 +91,12 @@ $(function () {
             populateCheckinAndCheckoutArticlesAsync);
     })
     slct.article_submenu_display.change(async () => {
-        //#region show/hide anserer infos <div>
-        formStatus = slct.article_submenu_display.val();
-
-        // show
-        if (formStatus == "Accepted"
-            || formStatus == "Rejected")
-            div.answererInfos.removeAttr("hidden");
-
-        // hide
-        else
-            div.answererInfos.attr("hidden", "");
-        //#endregion
-
-        await populateCheckinAndCheckoutArticlesAsync();
-    })  // DISABLED
+        await change_submenuOfDisplayOptionAsync(
+            slct.article_submenu_display,
+            div.answererInfos,
+            div.buttons,
+            populateCheckinAndCheckoutArticlesAsync);
+    })
     spn_eventManager.on("click_article", async (_, event) => {
         await click_articleAsync(
             event,
@@ -151,32 +109,30 @@ $(function () {
             div.senderInfos_inputs,
             div.answererInfos_inputs,
             btn.back,
-            formStatus,
             async (infosOfLastClickedArticle) => {
-                div.demandInfos_inputs.find("#" + inpt_id.yachtName).val(
+                div.formInfos_inputs.find("#" + inpt_id.yachtName).val(
                     getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtName));
-                div.demandInfos_inputs.find("#" + inpt_id.yachtType).val(
+                div.formInfos_inputs.find("#" + inpt_id.yachtType).val(
                     getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.yachtType));
-                div.demandInfos_inputs.find("#" + inpt_id.flag).val(
+                div.formInfos_inputs.find("#" + inpt_id.flag).val(
                     getDefaultValueIfValueNullOrEmpty(infosOfLastClickedArticle.flag));
-                div.demandInfos_inputs.find("#" + inpt_id.checkinDate).val(
+                div.formInfos_inputs.find("#" + inpt_id.checkinDate).val(
                     await convertDateToStrDateAsync(
                         new Date(infosOfLastClickedArticle.checkInDate),
                         { hours: true, minutes: true, seconds: false }));
-                div.demandInfos_inputs.find("#" + inpt_id.arrivalPort).val(
+                div.formInfos_inputs.find("#" + inpt_id.arrivalPort).val(
                     infosOfLastClickedArticle.arrivalPort);
-                div.demandInfos_inputs.find("#" + inpt_id.checkoutDate).val(
+                div.formInfos_inputs.find("#" + inpt_id.checkoutDate).val(
                     await convertDateToStrDateAsync(
                         new Date(infosOfLastClickedArticle.checkOutDate),
                         { hours: true, minutes: true, seconds: false }));
-                div.demandInfos_inputs.find("#" + inpt_id.departurePort).val(
+                div.formInfos_inputs.find("#" + inpt_id.departurePort).val(
                     infosOfLastClickedArticle.departurePort);
-                div.demandInfos_inputs.find("#" + inpt_id.createdDate).val(
+                div.formInfos_inputs.find("#" + inpt_id.createdDate).val(
                     await convertDateToStrDateAsync(
                         new Date(infosOfLastClickedArticle.createdDate),
                         { hours: true, minutes: true, seconds: false }));
-            }  // populate demand inputs
-        );
+            });  // populate demand inputs  
     })
     //#endregion
 
@@ -193,12 +149,35 @@ $(function () {
             div.article_display,
             div.senderInfos,
             div.answererInfos,
-            div.demandInfos,
+            div.formInfos,
             div.senderInfos_inputs,
             div.answererInfos_inputs,
-            div.demandInfos_inputs,
-            btn.back);
-        await alignArticlesToCenterAsync();
+            div.formInfos_inputs,
+            div.buttons,
+            btn.back,
+            populateCheckinAndCheckoutArticlesAsync);
+    })
+    btn.accept.click(async () => {
+        await acceptTheFormAsync(
+            "/adminPanel/demand/checkinAndCheckout/answer",
+            infosOfLastClickedArticle.formId,
+            inpt_id,
+            p_resultLabel,
+            img_loading,
+            div.answererInfos,
+            div.answererInfos_inputs,
+            div.buttons);
+    })
+    btn.reject.click(async () => {
+        await rejectTheFormAsync(
+            "/adminPanel/demand/checkinAndCheckout/answer",
+            infosOfLastClickedArticle.formId,
+            inpt_id,
+            p_resultLabel,
+            img_loading,
+            div.answererInfos,
+            div.answererInfos_inputs,
+            div.buttons);
     })
     //#endregion
 
@@ -206,16 +185,39 @@ $(function () {
 
     //#region functions
     async function setupPageAsync() {
-        await beforePopulateAsync(300, 400, div.articles);
+        div.panelTitle.append("YAT GİRİŞ/ÇIKIŞ TALEBİ");
+        spn.formInfos_formType.append("Talep");
+
         await populateCheckinAndCheckoutArticlesAsync();
         await addInputsToInfoDivsAsync(inputInfos);
-        await populateInfoMessagesAsync({
-            div_senderInfos: ["Şeklin üzerine tıklayarak talebi gönderen personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
-            div_answererInfos: ["Şeklin üzerine tıklayarak talebe cevap veren personelin bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
-            div_demandInfos: ["Şeklin üzerine tıklayarak talep bilgilerini görüntüleyebilir veya gizleyebilirsin.",],
-        });
     }
     async function populateCheckinAndCheckoutArticlesAsync() {
+        await setArticleBufferAsync({
+            div_articles: div.articles,
+            articleType: "imageAndText",
+            articleStyle: {
+                "width": await getValidArticleWidthAsync({
+                    width: 300,
+                    marginL: 20,
+                    marginR: 20
+                }, div.articles),
+                "height": 400,
+                "marginT": 10,
+                "marginB": 10,
+                "marginR": 20,
+                "marginL": 20,
+                "paddingT": 10,
+                "paddingB": 10,
+                "paddingR": 10,
+                "paddingL": 10,
+                "border": 1,
+                "borderColor": "#0095ff",
+                "boxShadow": "5px 5px 10px rgba(0, 0, 0, 0.3)",
+                "bgColorForDelete": "red"
+            },
+            heightOfPageMenubar: 80
+        });  // i have to define article buffer before setting the page size.
+        await setPageSizeAsync();
         await populateArticlesAsync(
             "/adminPanel/demand/checkinAndCheckout/filter?" + (
                 `pageSize=${pagingBuffer.pageSize}` +

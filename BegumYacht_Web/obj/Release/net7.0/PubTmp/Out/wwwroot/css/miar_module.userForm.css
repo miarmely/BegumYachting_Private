@@ -1,9 +1,6 @@
-﻿.div_infoMessage > button[class= dropdown-toggle]
-{
-    width: 20px;
-    height: 20px;
-    position: relative;
-    top: 3.5px;
+﻿.div_infoMessage > button[class= dropdown-toggle] {
+    width: 17px;
+    height: 17px;
     background-image: url("../images/info.png");
     background-color: transparent;
     background-size: cover;
@@ -50,12 +47,12 @@ select option:disabled {
         background-color: darkgray
     }
 
-.help-block{
+.help-block {
     color: red;
-    text-align:center
+    text-align: center
 }
 
 
-form input[type= radio]{
+form input[type= radio] {
     cursor: pointer;
 }

@@ -1,26 +1,31 @@
-﻿import { addCriticalSectionAsync, updateElementText } from "./miar_module.js";
-import { resetFormAsync, showOrHideBackButtonAsync } from "./miar_module.userForm.js";
+﻿import { resetFormAsync, showOrHideBackButtonAsync } from "./miar_module.userForm.js";
+import { convertStrUtcDateToStrLocalDateAsync } from "./miar_module.date.js";
+
+import {
+    addCriticalSectionAsync, autoObjectMapperAsync, updateElementText,
+    updateResultLabel
+} from "./miar_module.js";
 
 import {
     addMsgWithImgToDivArticlesAsync, alignArticlesToCenterAsync,
     alignImageToVerticalCenterAsync, controlArticleWidthAsync, div_article_image_id,
     getArticleCountOnOneRowAsync, setHeightOfArticlesDivAsync, articleBuffer,
-    setArticleBufferAsync, getValidArticleWidthAsync, addArticlesAsync
+    setArticleBufferAsync, addArticlesAsync
 } from "./miar_module.article.js";
 
 import {
-    addValueToPaginationLastButtonAsync, controlPaginationBackAndNextButtonsAsync,
-    pagingBuffer, setPagingBufferAsync
+    controlPaginationButtonsAsync, pagingBuffer, setPagingBufferAsync
 } from "./miar_module.pagination.js";
-
-import { convertStrUtcDateToStrLocalDateAsync } from "./miar_module.date.js";
 
 
 //#region variables
 export let infosOfLastClickedArticle = {};
+export let formStatus = "Unanswered";  // Unanswered | Accepted | Rejected
+export let isFormAnswered = false;
 const path = {
     loadingImage: "./images/loading.gif",
-    questionImage: "./images/question.png"
+    questionImage: "./images/question.png",
+    checkedImage: "./images/checked.png"
 }
 //#endregion
 
@@ -30,16 +35,34 @@ export async function resize_windowAsync(
     criticalSectionId
 ) {
     //#region when display page is open
-    if (div_article_display.attr("hidden") == null)
+    if (div_article_display.attr("hidden") == null
+        && articleBuffer.totalArticleCount > 0) // when any article is exists
         await addCriticalSectionAsync(
             criticalSectionId,
             async () => {
-                await controlArticleWidthAsync();
-                await alignArticlesToCenterAsync("px");
-                await setHeightOfArticlesDivAsync();
+                // when article page is still open
+                if (div_article_display.attr("hidden") == null) {
+                    await controlArticleWidthAsync();
+                    await alignArticlesToCenterAsync("px");
+                    await setHeightOfArticlesDivAsync();
+                }
             },
             500);
     //#endregion
+}
+export async function click_sidebarMenuAsync(div_article_display) {
+    if (div_article_display.attr("hidden") == null
+        && articleBuffer.totalArticleCount > 0)  // when any article is exists
+        setTimeout(async () => {
+            //#region when article page is still open
+            if (div_article_display.attr("hidden") == null) {
+                await controlArticleWidthAsync();
+                await alignArticlesToCenterAsync("px");
+                await setHeightOfArticlesDivAsync()
+            }
+            //#endregion
+
+        }, 500);
 }
 export async function click_InfoDivAsync(event) {
     //#region set variables
@@ -54,7 +77,7 @@ export async function click_InfoDivAsync(event) {
     if (div_infos_inputs.attr("hidden") == null) {
         div_infos_inputs.attr("hidden", "");
         updateElementText(
-            div_infos_button.children("h4").children("span"),
+            div_infos_button.find(".spn_action"),
             "Görüntüle");
     }
     //#endregion
@@ -70,7 +93,7 @@ export async function click_InfoDivAsync(event) {
         // show inputs
         div_infos_inputs.removeAttr("hidden");
         updateElementText(
-            div_infos_button.children("h4").children("span"),
+            div_infos_button.find(".spn_action"),
             "Gizle");
     }
     //#endregion
@@ -83,39 +106,67 @@ export async function click_backButtonAsync(
     div_article_display,
     div_senderInfos,
     div_answererInfos,
-    div_demandInfos,
+    div_formInfos,
     div_senderInfos_inputs,
     div_answererInfos_inputs,
-    formInfos_inputs,
-    btn_back
+    div_formInfos_inputs,
+    div_buttons,
+    btn_back,
+    func_populateFormsAsync
 ) {
-    await resetFormAsync(lbl_result);
     await showOrHideBackButtonAsync(
         div_backButton,
         div_panelTitle,
         btn_back);
 
-    //#region reset info <div>s
-    // hide <div>s
+    //#region show user display page
+    div_article_display.removeAttr("hidden");
+    div_article_update.attr("hidden", "");
+
+    //#region when form is answered
+    if (isFormAnswered) {
+        await func_populateFormsAsync();
+        isFormAnswered = false;  // reset
+    }
+    //#endregion
+
+    //#region when form is not answered
+    else {
+        await controlArticleWidthAsync();
+        await alignArticlesToCenterAsync("px");
+        await setHeightOfArticlesDivAsync();
+    }
+    //#endregion
+
+    //#endregion
+
+    await resetFormAsync(lbl_result);
+
+    //#region hide inputs of info menus
+    // hide input of all <div>s
     div_senderInfos_inputs.attr("hidden", "");
     div_answererInfos_inputs.attr("hidden", "");
-    formInfos_inputs.attr("hidden", "");
+    div_formInfos_inputs.attr("hidden", "");
 
     // change "Gizle" text to "Görüntüle" text of <div>s
     updateElementText(
-        div_senderInfos.find("h4 span"),
+        div_senderInfos.find(".spn_action"),
         "Görüntüle");
     updateElementText(
-        div_answererInfos.find("h4 span"),
+        div_answererInfos.find(".spn_action"),
         "Görüntüle");
     updateElementText(
-        div_demandInfos.find("h4 span"),
+        div_formInfos.find(".spn_action"),
         "Görüntüle");
+
+    // hide answerer infos menu
+    if (formStatus == "Unanswered")
+        div_answererInfos.attr("hidden", "");
     //#endregion
 
-    //#region show user display page
-    div_article_update.attr("hidden", "");
-    div_article_display.removeAttr("hidden");
+    //#region show form buttons
+    if (formStatus == "Unanswered")
+        div_buttons.removeAttr("hidden");
     //#endregion
 }
 export async function click_articleAsync(
@@ -129,8 +180,7 @@ export async function click_articleAsync(
     div_senderInfos_inputs,
     div_answererInfos_inputs,
     btn_back,
-    formStatus = "Unanswered|Accepted|Rejected",
-    func_populateDemandInfosAsync = (infosOfLastClickedArticle) => { }
+    func_populateFormInfosAsync = (infosOfLastClickedArticle) => { }
 ) {
     //#region save clicked article infos
     window.scrollTo(0, 0);  // take scroll to start of page
@@ -144,10 +194,10 @@ export async function click_articleAsync(
     //#region populate answerer infos
     if (formStatus == "Accepted"
         || formStatus == "Rejected")
-        await populateAnswererInfosAsync(inputIds, div_answererInfos_inputs);
+        await populateAnswererInfosByAnswererIdAsync(inputIds, div_answererInfos_inputs);
     //#endregion
 
-    await func_populateDemandInfosAsync(infosOfLastClickedArticle);
+    await func_populateFormInfosAsync(infosOfLastClickedArticle);
 
     //#region show article update page
     div_article_display.attr("hidden", "");
@@ -156,49 +206,200 @@ export async function click_articleAsync(
 
     await showOrHideBackButtonAsync(div_backButton, div_panelTitle, btn_back);
 }
-export async function click_sidebarMenuAsync(div_article_display, criticalSectionId) {
-    await addCriticalSectionAsync(
-        criticalSectionId,
-        async () => {
-            // when article page is open
-            if (div_article_display.attr("hidden") == null) {
-                await controlArticleWidthAsync();
-                await alignArticlesToCenterAsync("px");
-                await setHeightOfArticlesDivAsync()
-            }
-        },
-        500);
+export async function change_submenuOfDisplayOptionAsync(
+    slct_article_submenu_display,
+    div_answererInfos,
+    div_buttons,
+    func_populateFormArticlesAsync
+) {
+    await showOrHideAnswererInfosMenuAndButtonsByFormStatusAsync(
+        slct_article_submenu_display,
+        div_answererInfos,
+        div_buttons);
+    await func_populateFormArticlesAsync();
 }
 //#endregion
 
 //#region functions
-export async function beforePopulateAsync(articleWidth, articleHeight, div_articles) {
-    await setArticleBufferAsync({
-        div_articles: div_articles,
-        articleType: "imageAndText",
-        articleStyle: {
-            "width": await getValidArticleWidthAsync({
-                width: articleWidth,
-                marginL: 20,
-                marginR: 20
-            }, div_articles),
-            "height": articleHeight,
-            "marginT": 10,
-            "marginB": 10,
-            "marginR": 20,
-            "marginL": 20,
-            "paddingT": 10,
-            "paddingB": 10,
-            "paddingR": 10,
-            "paddingL": 10,
-            "border": 1,
-            "borderColor": "#0095ff",
-            "boxShadow": "5px 5px 10px rgba(0, 0, 0, 0.3)",
-            "bgColorForDelete": "red"
+
+//#region populate answerer infos
+export async function populateAnswererInfosByAnswererIdAsync(
+    inputIds,
+    div_answererInfos_inputs
+) {
+    // get answerer infos and add to inputs
+    $.ajax({
+        method: "GET",
+        url: (baseApiUrl + "/adminPanel/userDisplay/id?" +
+            `userId=${infosOfLastClickedArticle.answererId}` +
+            `&checkIsDeleted=false`),  // get deleted users too
+        headers: {
+            authorization: jwtToken
         },
-        heightOfPageMenubar: 80
-    });  // i have to define article buffer before setting the page size.
-    await setPageSizeAsync();
+        contentType: "application/json",
+        dataType: "json",
+        success: (answererInfos) => {
+            //#region populate inputs belong to answerer
+            new Promise(async resolve => {
+                await populateAnswererInfosAsync(
+                    inputIds,
+                    div_answererInfos_inputs,
+                    answererInfos,
+                    infosOfLastClickedArticle.answeredDate);
+
+                resolve();
+            });
+            //#endregion
+        },
+    })
+}  // i am using when answered article is clicked
+export async function populateAnswererInfosByAccountInfosAsync(
+    answeredDate,
+    inputIds,
+    div_answererInfos_inputs
+) {
+    await populateAnswererInfosAsync(
+        inputIds,
+        div_answererInfos_inputs,
+        accountInfos,
+        answeredDate);
+}  // i am using when form is answered
+async function populateAnswererInfosAsync(
+    inputIds,
+    div_answererInfos_inputs,
+    answererInfos,
+    answeredDate
+) {
+    div_answererInfos_inputs.find("#" + inputIds.nameSurname).val(answererInfos.nameSurname);
+    div_answererInfos_inputs.find("#" + inputIds.phone).val(answererInfos.phoneNumber);
+    div_answererInfos_inputs.find("#" + inputIds.email).val(answererInfos.email);
+    div_answererInfos_inputs.find("#" + inputIds.newPassportNo).val(
+        getDefaultValueIfValueNullOrEmpty(answererInfos.newPassportNo));
+    div_answererInfos_inputs.find("#" + inputIds.oldPassportNo).val(
+        getDefaultValueIfValueNullOrEmpty(answererInfos.oldPassportNo));
+    div_answererInfos_inputs.find("#" + inputIds.rank).val(
+        getDefaultValueIfValueNullOrEmpty(answererInfos.rank));
+    div_answererInfos_inputs.find("#" + inputIds.nationality).val(
+        getDefaultValueIfValueNullOrEmpty(answererInfos.nationality));
+    div_answererInfos_inputs.find("#" + inputIds.gender).val(
+        getDefaultValueIfValueNullOrEmpty(answererInfos.gender));
+    div_answererInfos_inputs.find("#" + inputIds.answeredDate).val(
+        await convertStrUtcDateToStrLocalDateAsync(
+            answeredDate,
+            { hours: true, minutes: true, seconds: false }));
+}
+//#endregion
+
+//#region answer the form
+export async function acceptTheFormAsync(
+    specialUrl,
+    formId,
+    inputIds,
+    lbl_result,
+    img_loading,
+    div_answererInfos,
+    div_answererInfos_inputs,
+    div_buttons
+) {
+    if (formStatus == "Unanswered")  // for security
+        await answerTheFormAsync(
+            specialUrl,
+            formId,
+            "Accepted",
+            inputIds,
+            lbl_result,
+            img_loading,
+            div_answererInfos,
+            div_answererInfos_inputs,
+            div_buttons);
+
+}
+export async function rejectTheFormAsync(
+    specialUrl,
+    formId,
+    inputIds,
+    lbl_result,
+    img_loading,
+    div_answererInfos,
+    div_answererInfos_inputs,
+    div_buttons
+) {
+    if (formStatus == "Unanswered")  // for security
+        await answerTheFormAsync(
+            specialUrl,
+            formId,
+            "Rejected",
+            inputIds,
+            lbl_result,
+            img_loading,
+            div_answererInfos,
+            div_answererInfos_inputs,
+            div_buttons);
+}
+async function answerTheFormAsync(
+    specialUrl,
+    formId,
+    formStatus,
+    inputIds,
+    lbl_result,
+    img_loading,
+    div_answererInfos,
+    div_answererInfos_inputs,
+    div_buttons
+) {
+    $.ajax({
+        method: "GET",
+        url: (baseApiUrl + specialUrl +
+            `?formId=${formId}` +
+            `&FormStatus=${formStatus}`),
+        headers: {
+            authorization: jwtToken
+        },
+        contentType: "application/json",
+        dataType: "json",
+        beforeSend: () => {
+            img_loading.removeAttr("hidden");
+        },
+        success: (response) => {
+            //#region populate answerer infos
+            new Promise(async resolve => {
+                await populateAnswererInfosByAccountInfosAsync(
+                    response.answeredDate,
+                    inputIds,
+                    div_answererInfos_inputs);
+
+                //#region show answerer infos and hide buttons
+                div_answererInfos.removeAttr("hidden");
+                div_buttons.attr("hidden", "");
+                //#endregion
+
+                updateResultLabel(
+                    lbl_result,
+                    "form başarıyla cevaplandı",
+                    resultLabel_successColor,
+                    "50px",
+                    img_loading);  // write success message
+                resolve();
+            })
+            //#endregion
+
+            isFormAnswered = true;
+        },
+        error: (response) => {
+            // write error message
+            updateResultLabel(
+                lbl_result,
+                JSON.parse(response.responseText).errorMessage,
+                resultLabel_errorColor,
+                "20px",
+                img_loading);
+        }
+    });
+}
+//#endregion
+
+export async function setFormBufferAsync(newBuffer) {
+    await autoObjectMapperAsync(formBuffer, newBuffer, false);
 }
 export async function populateArticlesAsync(
     specialUrl,
@@ -207,7 +408,6 @@ export async function populateArticlesAsync(
     func_populateInsideOfArticleAsync = (demands) => { },
     func_declareEventsAsync = () => { }
 ) {
-    // populate article
     await new Promise((resolve) => {
         $.ajax({
             method: "GET",
@@ -224,7 +424,7 @@ export async function populateArticlesAsync(
             },
             success: (demands, status, xhr) => {
                 new Promise(async () => {
-                    await resetDivArticlesAsync(); // remove loading img
+                    resetDivArticles(); // remove loading img
                     await setArticleBufferAsync({
                         "totalArticleCount": demands.length
                     });
@@ -238,24 +438,47 @@ export async function populateArticlesAsync(
                         lbl_entityQuantity,
                         pagingBuffer.infosInHeader.CurrentPageCount + "/" + pagingBuffer.pageSize
                     );
-                    await addValueToPaginationLastButtonAsync(
-                        pagingBuffer.infosInHeader.TotalPage);
-                    await controlPaginationBackAndNextButtonsAsync(pagingBuffer.infosInHeader);
+                    await controlPaginationButtonsAsync();
                     await func_declareEventsAsync();
                 })
             },
             error: () => {
-                addMsgWithImgToDivArticlesAsync(
-                    path.questionImage,
-                    "Talep Bulunamadı",
-                    "Talep Bulunamadı"
-                );
+                new Promise(async () => {
+                    await setArticleBufferAsync({
+                        totalArticleCount: 0  // for if i resize window size
+                    })
+                    await setPagingBufferAsync({
+                        infosInHeader: null
+                    });
+
+                    //#region add message with image to div_articles
+                    // add message with "checked" image
+                    if (formStatus == "Unanswered")
+                        await addMsgWithImgToDivArticlesAsync(
+                            path.checkedImage,
+                            "Tüm Formlar Cevaplandı",
+                            "Tüm Formlar Cevaplandı");
+
+                    // add message with "question" image
+                    else
+                        await addMsgWithImgToDivArticlesAsync(
+                            path.questionImage,
+                            "Talep Bulunamadı",
+                            "Talep Bulunamadı"
+                        );
+                    //#endregion
+
+                    await updateEntityQuantityAsync(
+                        lbl_entityQuantity,
+                        0 + "/" + pagingBuffer.pageSize);
+                    await controlPaginationButtonsAsync();
+                })
             },
             complete: () => {
                 resolve();
             }
         })
-    });  
+    });
 }
 export async function populateSenderInfosAsync(inputIds, div_senderInfos_inputs) {
     // get senderer infos and add to inputs
@@ -283,43 +506,7 @@ export async function populateSenderInfosAsync(inputIds, div_senderInfos_inputs)
             div_senderInfos_inputs.find("#" + inputIds.nationality).val(
                 getDefaultValueIfValueNullOrEmpty(senderInfos.nationality));
             div_senderInfos_inputs.find("#" + inputIds.gender).val(
-            getDefaultValueIfValueNullOrEmpty(senderInfos.gender));
-            //#endregion
-        },
-    })
-}
-export async function populateAnswererInfosAsync(inputIds, div_answererInfos_inputs) {
-    // get answerer infos and add to inputs
-    $.ajax({
-        method: "GET",
-        url: (baseApiUrl + "/adminPanel/userDisplay/id?" +
-            `userId=${infosOfLastClickedArticle.answererId}` +
-            `&checkIsDeleted=false`),
-        contentType: "application/json",
-        dataType: "json",
-        success: (answererInfos) => {
-            //#region populate inputs
-            new Promise(async resolve => {
-                div_answererInfos_inputs.find("#" + inputIds.nameSurname).val(answererInfos.nameSurname);
-                div_answererInfos_inputs.find("#" + inputIds.phone).val(answererInfos.phoneNumber);
-                div_answererInfos_inputs.find("#" + inputIds.email).val(answererInfos.email);
-                div_answererInfos_inputs.find("#" + inputIds.newPassportNo).val(
-                    getDefaultValueIfValueNullOrEmpty(answererInfos.newPassportNo));
-                div_answererInfos_inputs.find("#" + inputIds.oldPassportNo).val(
-                    getDefaultValueIfValueNullOrEmpty(answererInfos.oldPassportNo));
-                div_answererInfos_inputs.find("#" + inputIds.rank).val(
-                    getDefaultValueIfValueNullOrEmpty(answererInfos.rank));
-                div_answererInfos_inputs.find("#" + inputIds.nationality).val(
-                    getDefaultValueIfValueNullOrEmpty(answererInfos.nationality));
-                div_answererInfos_inputs.find("#" + inputIds.gender).val(
-                    getDefaultValueIfValueNullOrEmpty(answererInfos.gender));
-                div_answererInfos_inputs.find("#" + inputIds.answeredDate).val(
-                    await convertStrUtcDateToStrLocalDateAsync(
-                        infosOfLastClickedArticle.answeredDate,
-                        { hours: true, minutes: true, seconds: false }));
-
-                resolve();
-            });
+                getDefaultValueIfValueNullOrEmpty(senderInfos.gender));
             //#endregion
         },
     })
@@ -431,7 +618,7 @@ export async function addImageToArticleAsync(
     articleId,
     yachtType,
     imageWidthRate,  // ex: 65 / 100
-    imageHeightRate  
+    imageHeightRate
 ) {
     //#region set image path by yacht type
     let path_image = "";
@@ -464,7 +651,31 @@ export async function addImageToArticleAsync(
 
     await alignImageToVerticalCenterAsync(articleId);
 }
-export async function resetDivArticlesAsync() {
+export async function showOrHideAnswererInfosMenuAndButtonsByFormStatusAsync(
+    slct_article_submenu_display,
+    div_answererInfos,
+    div_buttons
+) {
+    //#region show answerer infos menu
+    formStatus = slct_article_submenu_display.val();
+
+    if (formStatus == "Accepted"
+        || formStatus == "Rejected"
+    ) {
+        div_answererInfos.removeAttr("hidden");
+        div_buttons.attr("hidden", "");  // hide
+    }
+    //#endregion
+
+    //#region hide answerer infos menu
+    else {
+        div_answererInfos.attr("hidden", "");
+        div_buttons.removeAttr("hidden");  // show
+    }
+    //#endregion
+}
+export function resetDivArticles() {
+    // reset "Loading..." message from div
     articleBuffer.div_articles.empty();
     articleBuffer.div_articles.removeAttr("style");
 }

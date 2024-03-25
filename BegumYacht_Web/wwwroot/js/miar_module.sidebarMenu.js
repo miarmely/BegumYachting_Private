@@ -1,12 +1,6 @@
-﻿export async function openOrCloseTheSubmenuAsync(clickedElement) {
-    //#region find submenu of clicked <li>
-    let li_clicked_id = clickedElement
-        .closest("li")
-        .attr("id");
-    //#endregion
-
+﻿export async function openOrCloseTheSubmenuAsync(li_clicked) {
     //#region auto open/close the submenu
-    let li_clicked_submenu = $("#" + li_clicked_id + "_submenu");
+    let li_clicked_submenu = $("#" + li_clicked.attr("id") + "_submenu");
 
     // open
     if (li_clicked_submenu.attr("hidden") != null)
