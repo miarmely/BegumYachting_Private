@@ -419,28 +419,5 @@ namespace BegumYatch.API.Controllers
 
 			return NoContent();
 		}
-
-
-		//[HttpGet("adminPanel/getAllUsers/paging")]
-		//public async Task<IActionResult> GetAllUsers(
-		//    [FromQuery(Name = "start")] int start = 1,
-		//    [FromQuery(Name = "length")] int length = 10)
-		//{
-		//    #region get users as pagined
-		//    //var offset = (pageNumber - 1) * pageSize;
-		//    var allUsers = await _userService.GetAllUsers<GetUsersDto>();
-		//    var paginedUsers = allUsers
-		//        .Skip(start - 1)
-		//        .Take(length);
-		//    #endregion
-
-		//    return Ok(new
-		//    {
-		//        Data = paginedUsers,
-		//        RecordsFiltered = paginedUsers.Count(),
-		//        RecordsTotal = allUsers.Count,
-		//        Draw = 1
-		//    });
-		//}
 	}
 }
